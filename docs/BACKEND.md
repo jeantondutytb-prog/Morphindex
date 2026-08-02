@@ -113,6 +113,21 @@ Remplacer `assets/auth.js` (comptes `localStorage`, SHA-256 sans sel) par Supaba
 hachages SHA-256 non salés côté navigateur, inutilisables par Supabase. Les
 utilisateurs actuels devront recréer un compte. Prévoir un message dédié.
 
+### Variables d'environnement (phase 2)
+
+| Variable | Obligatoire | Rôle |
+|---|---|---|
+| `SUPABASE_URL` | oui | URL du projet Supabase |
+| `SUPABASE_ANON_KEY` | oui | Clé anon (exposée via `/api/config.js`) |
+| `AUTH_REDIRECT_URL` | non | Origine des liens e-mail (confirmation, reset). **Nom retenu dans Vercel.** Alias accepté : `REDIRECT_AFTER_LOGIN`. Si vide, `authRedirectOrigin()` retombe sur `window.location.origin` — correct en preview `*.vercel.app` comme en production. |
+
+Ne pas mettre d'URL en dur dans `api/config.js` : `morphindex.com` pointe encore
+vers GitHub Pages (sans `/auth/callback/` ni `/nouveau-mot-de-passe/`).
+
+Le client Supabase est vendorisé dans `assets/vendor/supabase-2.111.0.js`
+(pas de CDN tiers) : un blocage ou une compromission d'un CDN empêcherait
+`window.MorphAuth` d'être défini et l'app resterait sur « Chargement… ».
+
 ## Phase 3 — Données et photos
 
 - `GET/POST /api/scan` → table `analyses` via `service_role`

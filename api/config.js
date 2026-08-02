@@ -4,8 +4,8 @@ module.exports = (req, res) => {
     supabaseAnonKey: process.env.SUPABASE_ANON_KEY || '',
     redirectAfterLogin:
       process.env.REDIRECT_AFTER_LOGIN ||
-      process.env.APP_ORIGIN ||
-      'https://morphindex.com'
+      process.env.AUTH_REDIRECT_URL ||
+      ''
   };
 
   res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
