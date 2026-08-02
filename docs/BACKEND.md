@@ -70,6 +70,12 @@ Storage → **New bucket**, tous en **privé** (jamais public) :
 3. Déployer → une URL `*.vercel.app` apparaît. **Vérifier le site dessus avant de
    toucher au DNS.**
 
+> ⚠️ `vercel.json` ne contient volontairement **aucun bloc `functions`** tant que le
+> dossier `api/` n'existe pas : Vercel fait échouer le build si un glob `functions`
+> ne correspond à aucun fichier. À rajouter en phase 2, en même temps que
+> `api/config.js`, et **sans** propriété `runtime` (réservée aux runtimes tiers ;
+> pour Node, Vercel l'infère). Utiliser `maxDuration` seul si besoin.
+
 ### 1.5 Basculer le DNS (OVH)
 
 ⚠️ **Seulement après validation sur l'URL `*.vercel.app`.**
