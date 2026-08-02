@@ -44,8 +44,12 @@
     root.querySelector('[data-action="finish"]').addEventListener('click', finishAndGoToUpload);
   }
 
-  function init() {
-    session = MorphAuth.Auth.requireAuth();
+  async function init() {
+    document.documentElement.classList.add('auth-booting');
+    await MorphAuth.ready;
+
+    session = await MorphAuth.Auth.requireAuth();
+    document.documentElement.classList.remove('auth-booting');
     if (!session) return;
 
     if (MorphAuth.Auth.isOnboardingComplete(session.email)) {

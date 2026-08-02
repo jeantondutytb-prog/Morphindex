@@ -4,36 +4,61 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#080808">
-  <meta name="description" content="Réinitialisation du mot de passe Morphindex.">
-  <title>Mot de passe oublié — Morphindex</title>
+  <meta name="description" id="meta-description" content="Réinitialisez votre mot de passe Morphindex.">
+  <title id="meta-title">Mot de passe oublié — Morphindex</title>
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="canonical" href="https://morphindex.com/mot-de-passe-oublie/">
   <script>document.documentElement.setAttribute('data-theme', 'dark');</script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/assets/auth.css?v=4">
+  <link rel="stylesheet" href="/assets/auth.css?v=5">
 </head>
 <body>
+  <div id="auth-loading" class="auth-loading-overlay" hidden>Chargement…</div>
+
   <div class="auth-page">
     <header class="auth-header">
       <a href="/" class="auth-logo">Morph<span>index</span></a>
       <div class="auth-header-nav">
-        <a href="/login/" class="auth-link-login">Connexion</a>
-        <a href="/register/" class="auth-header-cta">Créer un compte</a>
+        <a href="/login/" class="auth-link-login" data-i18n="nav.login">Connexion</a>
+        <a href="/register/" class="auth-header-cta" data-i18n="nav.register">Créer un compte</a>
       </div>
     </header>
 
     <main class="auth-main">
       <div class="auth-card">
-        <h1>Mot de passe oublié</h1>
-        <p class="auth-subtitle">La réinitialisation par e-mail n'est pas encore disponible — Morphindex est en version MVP et les comptes sont stockés localement dans ton navigateur.</p>
-        <p class="auth-subtitle" style="margin-bottom:0">Tu peux créer un nouveau compte avec une autre adresse e-mail, ou effacer les données du site dans les paramètres de ton navigateur pour repartir de zéro.</p>
-        <div class="app-actions" style="margin-top:28px;display:flex;flex-direction:column;gap:12px">
-          <a href="/register/" class="btn btn-primary btn-block">Créer un nouveau compte</a>
-          <a href="/login/" class="btn btn-secondary btn-block">Retour à la connexion</a>
+        <h1 data-i18n="forgot.title">Mot de passe oublié</h1>
+        <p class="auth-subtitle" data-i18n="forgot.subtitle">Entre ton adresse e-mail — nous t'enverrons un lien pour choisir un nouveau mot de passe.</p>
+
+        <div class="auth-alert auth-alert-error" id="auth-alert" role="alert"></div>
+
+        <form class="auth-form" id="forgot-form" novalidate>
+          <div class="form-group">
+            <label for="email" data-i18n="forgot.email">Adresse e-mail</label>
+            <input class="form-input" type="email" id="email" name="email" autocomplete="email" required data-i18n-placeholder="forgot.emailPlaceholder" placeholder="vous@exemple.com">
+            <span class="form-error" aria-live="polite"></span>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block" data-i18n="forgot.submit">Envoyer le lien</button>
+        </form>
+
+        <div id="forgot-success" hidden>
+          <h1 data-i18n="forgot.successTitle">E-mail envoyé</h1>
+          <p class="auth-subtitle" data-i18n="forgot.successSubtitle">Si un compte existe pour cette adresse, tu recevras un lien de réinitialisation.</p>
+          <a href="/login/" class="btn btn-secondary btn-block" style="margin-top:24px" data-i18n="forgot.back">Retour à la connexion</a>
         </div>
+
+        <p class="auth-footer">
+          <a href="/login/" data-i18n="forgot.back">Retour à la connexion</a>
+        </p>
       </div>
     </main>
   </div>
+
+  <script src="/api/config.js"></script>
+  <script type="module">
+    import { initAuthPage } from '/assets/auth.js?v=5';
+    initAuthPage('forgot');
+  </script>
 </body>
 </html>

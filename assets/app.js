@@ -149,7 +149,7 @@
 
   async function getFaceAnalysisModule() {
     if (!faceAnalysisModule) {
-      faceAnalysisModule = await import('/assets/face-analysis.js?v=2');
+      faceAnalysisModule = await import('/assets/face-analysis.js?v=3');
     }
     return faceAnalysisModule;
   }
@@ -678,8 +678,9 @@
         break;
       }
       case 'logout':
-        MorphAuth.Auth.logout();
-        window.location.href = '/login/';
+        MorphAuth.Auth.logout().then(() => {
+          window.location.href = '/login/';
+        });
         break;
     }
   }
@@ -887,8 +888,14 @@
     navigate('analyses', { flow: 'result' });
   }
 
-  function init() {
-    session = MorphAuth.Auth.requireAuth();
+  async function init() {
+    const root = document.getElementById('app-content');
+    if (root) {
+      root.innerHTML = '<div class="fiq-empty"><h2>Chargement…</h2></div>';
+    }
+
+    await MorphAuth.ready;
+    session = await MorphAuth.Auth.requireAuth();
     if (!session) return;
 
     if (!MorphAuth.Auth.isOnboardingComplete(session.email)) {

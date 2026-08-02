@@ -13,15 +13,18 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/assets/faceiq.css?v=6">
+  <link rel="stylesheet" href="/assets/auth.css?v=5">
 </head>
-<body class="fiq-root">
+<body class="fiq-root auth-booting">
+  <div id="auth-loading" class="auth-loading-overlay">Chargement…</div>
   <div id="app-content"></div>
   <div id="app-toast" class="fiq-toast" aria-live="polite"></div>
 
+  <script src="/api/config.js"></script>
   <script src="/assets/plan-data.js?v=2"></script>
   <script src="/assets/morph-utils.js?v=1"></script>
-  <script src="/assets/auth.js?v=4"></script>
+  <script type="module" src="/assets/auth.js?v=5"></script>
   <script src="/assets/faceiq-ui.js?v=9"></script>
-  <script src="/assets/app.js?v=18"></script>
+  <script src="/assets/app.js?v=19"></script>
 </body>
 </html>

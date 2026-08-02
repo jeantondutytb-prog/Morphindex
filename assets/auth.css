@@ -698,3 +698,53 @@ a {
   font-size: 0.875rem;
   color: var(--text-muted, #939DAD);
 }
+
+.auth-notice {
+  margin-bottom: 20px;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  background: var(--accent-dim);
+  border: 1px solid var(--accent-border);
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.auth-alert-success {
+  background: rgba(34, 197, 94, 0.12);
+  border-color: rgba(34, 197, 94, 0.35);
+  color: #86efac;
+}
+
+.verify-email-panel h1 {
+  font-size: 1.5rem;
+  margin-bottom: 12px;
+}
+
+.verify-email-hint {
+  margin-bottom: 0;
+}
+
+.auth-loading-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  color: var(--text-muted);
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+}
+
+.auth-booting .auth-page,
+.auth-booting .onboarding-page,
+.auth-booting .fiq-root #app-content {
+  visibility: hidden;
+}
+
+.auth-booting .auth-loading-overlay {
+  visibility: visible;
+}
+
