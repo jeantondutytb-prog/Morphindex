@@ -53,9 +53,9 @@
     return String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
   }
 
-  function round1(n) {
-    return Math.round(n * 10) / 10;
-  }
+  const MU = window.MorphUtils || {};
+  const round1 = MU.round1 || ((n) => Math.round(n * 10) / 10);
+  const ANALYSIS_STEPS = MU.ANALYSIS_STEPS || ['Analyse en cours…'];
 
   function ratioStatus(label, val) {
     const v = parseFloat(val);
@@ -676,7 +676,7 @@
         <img class="fiq-analyzing-photo" src="${esc(photo)}" alt="">
         <h2>Analyse de ton visage en cours…</h2>
         <p class="fiq-muted">Analyse faciale par IA en cours</p>
-        <div class="fiq-analyzing-step" id="analysis-step">Chargement du modèle IA…</div>
+        <div class="fiq-analyzing-step" id="analysis-step">${esc(ANALYSIS_STEPS[0])}</div>
         <div class="fiq-progress-bar"><i id="progress-fill" style="width:0%"></i></div>
         <div class="fiq-analyzing-pct" id="progress-pct">0%</div>
       </div>`;
