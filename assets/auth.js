@@ -1,13 +1,14 @@
 /**
  * Morphindex auth — Supabase Auth (phase 2).
  *
- * Client Supabase : chargé en ESM depuis esm.sh (@supabase/supabase-js@2).
- * Pas de bundler : ce fichier est un module ES (`type="module"`) qui expose
- * `window.MorphAuth` pour compatibilité avec app.js / onboarding.js (IIFE).
- * esm.sh est préféré à UMD car createClient est tree-shakeable et la version
- * est épinglée (@2) sans script global supplémentaire.
+ * VIGILANCE : `window.MorphAuth` doit être affecté avant DOMContentLoaded
+ * (app.js / onboarding.js l'utilisent au démarrage). Aucun `await` de premier
+ * niveau ne doit précéder la ligne `window.MorphAuth = {…}` — sinon le module
+ * reste bloqué et l'app plante sur « Chargement… » sans message.
+ *
+ * Client Supabase vendorisé localement (pas de CDN tiers).
  */
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { createClient } from './vendor/supabase-2.111.0.js';
 
 const AUTH_PERSIST_KEY = 'morphindex-auth-persist';
 
@@ -449,6 +450,18 @@ const Auth = {
 
 const ready = Auth.ensureReady();
 
+window.MorphAuth = {
+  initAuthPage,
+  initAppPage,
+  initAuthCallback,
+  initProtectedShell,
+  Auth,
+  initTheme,
+  getUserPrefs,
+  hasExistingAnalyses,
+  ready
+};
+
 function isValidEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
@@ -826,18 +839,6 @@ async function initProtectedShell() {
   await Auth.ensureReady();
   showAuthLoading(false);
 }
-
-window.MorphAuth = {
-  initAuthPage,
-  initAppPage,
-  initAuthCallback,
-  initProtectedShell,
-  Auth,
-  initTheme,
-  getUserPrefs,
-  hasExistingAnalyses,
-  ready
-};
 
 export {
   Auth,
