@@ -149,7 +149,7 @@
 
   async function getFaceAnalysisModule() {
     if (!faceAnalysisModule) {
-      faceAnalysisModule = await import('/assets/face-analysis.js?v=1');
+      faceAnalysisModule = await import('/assets/face-analysis.js?v=2');
     }
     return faceAnalysisModule;
   }

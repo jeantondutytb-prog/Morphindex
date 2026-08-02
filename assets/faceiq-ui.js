@@ -55,7 +55,7 @@
 
   const MU = window.MorphUtils || {};
   const round1 = MU.round1 || ((n) => Math.round(n * 10) / 10);
-  const ANALYSIS_STEPS = MU.ANALYSIS_STEPS || [];
+  const ANALYSIS_STEPS = MU.ANALYSIS_STEPS || ['Analyse en cours…'];
 
   function ratioStatus(label, val) {
     const v = parseFloat(val);
