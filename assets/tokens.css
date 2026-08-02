@@ -1,0 +1,17 @@
+:root {
+  --accent: #3D9EFF;
+  --accent-dim: rgba(61, 158, 255, 0.12);
+  --accent-border: rgba(61, 158, 255, 0.35);
+  --bg: #080808;
+  --bg-elevated: #121214;
+  --text: #fafafa;
+  --text-muted: #a1a1aa;
+  --focus-ring: #3D9EFF;
+  --error: #f87171;
+  --error-bg: rgba(248, 113, 113, 0.12);
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#080808">
+  <meta name="description" id="meta-description" content="Connectez-vous à votre compte Morphindex.">
+  <title id="meta-title">Connexion — Morphindex</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="canonical" href="https://morphindex.com/login/">
+  <script>document.documentElement.setAttribute('data-theme', 'dark');</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/auth.css?v=1">
+</head>
+<body>
+  <div class="auth-page">
+    <header class="auth-header">
+      <a href="/" class="auth-logo">Morph<span>index</span></a>
+      <div class="auth-header-nav">
+        <a href="/register/" class="auth-header-cta" data-i18n="nav.register">Créer un compte</a>
+      </div>
+    </header>
+
+    <main class="auth-main">
+      <div class="auth-card">
+        <h1 data-i18n="login.title">Bon retour</h1>
+        <p class="auth-subtitle" data-i18n="login.subtitle">Connectez-vous pour accéder à vos analyses PSL.</p>
+
+        <div class="auth-alert auth-alert-error" id="auth-alert" role="alert"></div>
+
+        <form class="auth-form" id="login-form" novalidate>
+          <div class="form-group">
+            <label for="email" data-i18n="login.email">Adresse e-mail</label>
+            <input class="form-input" type="email" id="email" name="email" autocomplete="email" required data-i18n-placeholder="login.emailPlaceholder" placeholder="vous@exemple.com">
+            <span class="form-error" aria-live="polite"></span>
+          </div>
+
+          <div class="form-group">
+            <label for="password" data-i18n="login.password">Mot de passe</label>
+            <input class="form-input" type="password" id="password" name="password" autocomplete="current-password" required data-i18n-placeholder="login.passwordPlaceholder" placeholder="Votre mot de passe">
+            <span class="form-error" aria-live="polite"></span>
+          </div>
+
+          <div class="form-row">
+            <label class="checkbox-label">
+              <input type="checkbox" name="remember" checked>
+              <span data-i18n="login.remember">Se souvenir de moi</span>
+            </label>
+            <a href="/mot-de-passe-oublie/" class="forgot-link" data-i18n="login.forgot">Mot de passe oublié ?</a>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block" data-i18n="login.submit">Se connecter</button>
+        </form>
+
+        <p class="auth-footer">
+          <span data-i18n="login.noAccount">Pas encore de compte ?</span>
+          <a href="/register/" data-i18n="login.createAccount">Créer un compte</a>
+        </p>
+      </div>
+    </main>
+  </div>
+
+  <script src="/assets/auth.js?v=4"></script>
+  <script>MorphAuth.initAuthPage('login');</script>
+</body>
+</html>

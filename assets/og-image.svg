@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" fill="none">
+  <rect width="1200" height="630" fill="#080808"/>
+  <rect x="80" y="80" width="1040" height="470" rx="32" fill="#121214" stroke="rgba(255,255,255,0.08)"/>
+  <text x="120" y="220" font-family="system-ui,sans-serif" font-size="72" font-weight="700" fill="#ffffff">Morph<tspan fill="#3D9EFF">index</tspan></text>
+  <text x="120" y="310" font-family="system-ui,sans-serif" font-size="36" fill="#a1a1aa">Analyse PSL en 30 secondes</text>
+  <text x="120" y="380" font-family="system-ui,sans-serif" font-size="28" fill="#71717a">Score · Plan · Progression · 100% navigateur</text>
+  <rect x="120" y="430" width="280" height="64" rx="16" fill="#ffffff"/>
+  <text x="260" y="472" text-anchor="middle" font-family="system-ui,sans-serif" font-size="24" font-weight="600" fill="#080808">Analyser mon visage</text>
+</svg>

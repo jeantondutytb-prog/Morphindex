@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#080808">
+  <meta name="description" content="Morphindex — Analyse faciale PSL en 30 secondes. Score, plan personnalisé et suivi de progression. Sans app.">
+  <title>Morphindex — Analyse PSL en 30 secondes</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="canonical" href="https://morphindex.com/">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://morphindex.com/">
+  <meta property="og:title" content="Morphindex — Analyse PSL en 30 secondes">
+  <meta property="og:description" content="Score PSL, 4 piliers, plan personnalisé. Analyse faciale dans ton navigateur — sans app, 100% privé.">
+  <meta property="og:image" content="https://morphindex.com/assets/og-image.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Morphindex — Analyse PSL en 30 secondes">
+  <meta name="twitter:description" content="Score PSL, 4 piliers, plan personnalisé. Analyse faciale dans ton navigateur.">
+  <meta name="twitter:image" content="https://morphindex.com/assets/og-image.png">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Morphindex",
+    "applicationCategory": "HealthApplication",
+    "operatingSystem": "Web",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" },
+    "description": "Analyse faciale PSL en 30 secondes. Score, plan personnalisé et suivi de progression dans le navigateur.",
+    "url": "https://morphindex.com/"
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "C'est quoi Morphindex ?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Un outil d'analyse faciale qui calcule ton score PSL sur 21 indicateurs mesurés, te donne un plan d'action et suit ta progression — dans ton navigateur." }
+      },
+      {
+        "@type": "Question",
+        "name": "Faut-il télécharger une app ?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Non. Morphindex tourne entièrement dans le navigateur, sur mobile comme sur ordinateur." }
+      },
+      {
+        "@type": "Question",
+        "name": "Mes photos sont-elles privées ?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Oui. Tes photos sont analysées directement dans ton navigateur et ne sont jamais envoyées à un serveur." }
+      },
+      {
+        "@type": "Question",
+        "name": "C'est gratuit ?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Ta première analyse complète est gratuite. Le plan Pro débloquera les analyses illimitées et le suivi avancé (bientôt disponible)." }
+      }
+    ]
+  }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/landing.css?v=5">
+</head>
+<body>
+
+  <!-- Header flottant — Cardlyy -->
+  <header id="header">
+    <a href="/" class="logo">Morph<span>index</span></a>
+    <nav class="header-center">
+      <a href="#piliers" class="header-link">Analyse</a>
+      <a href="#fonctions" class="header-link">Fonctions</a>
+      <a href="#tarifs" class="header-link">Tarifs</a>
+      <a href="#faq" class="header-link">FAQ</a>
+    </nav>
+    <div class="header-nav">
+      <a href="/login/" class="header-link-login">Connexion</a>
+      <a href="/register/" class="header-cta">Analyser mon visage</a>
+    </div>
+    <button type="button" class="header-burger" id="burger" aria-label="Menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </header>
+
+  <nav class="mobile-nav" id="mobile-nav" aria-hidden="true">
+    <div class="mobile-nav-panel" role="dialog" aria-modal="true" aria-label="Navigation">
+      <div class="mobile-nav-head">
+        <span class="logo">Morph<span>index</span></span>
+        <button type="button" class="mobile-nav-close" id="mobile-nav-close" aria-label="Fermer le menu">✕</button>
+      </div>
+      <a href="#piliers" class="mobile-nav-link">Analyse</a>
+      <a href="#fonctions" class="mobile-nav-link">Fonctions</a>
+      <a href="#tarifs" class="mobile-nav-link">Tarifs</a>
+      <a href="#faq" class="mobile-nav-link">FAQ</a>
+      <a href="/login/" class="mobile-nav-link">Connexion</a>
+      <a href="/register/" class="mobile-nav-cta">Analyser mon visage</a>
+    </div>
+    <button type="button" class="mobile-nav-backdrop" id="mobile-nav-backdrop" aria-label="Fermer le menu"></button>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-doodle left" aria-hidden="true">
+      <span class="hero-doodle-card"></span>
+      <span class="hero-doodle-chip"></span>
+    </div>
+    <div class="hero-doodle right" aria-hidden="true">
+      <span class="hero-doodle-chart"></span>
+      <span class="hero-doodle-dot"></span>
+    </div>
+
+    <div class="hero-decos-mobile" aria-hidden="true">
+      <div class="hero-card-deco">
+        <div class="ex-result-card">
+          <div class="ex-result-head"><span class="ex-result-dot"></span> Analyse terminée</div>
+          <div class="ex-result-score mono">7.2<span>/10</span></div>
+          <div class="ex-result-potential">Potentiel → <strong class="mono">7.8</strong></div>
+          <div class="ex-result-bars">
+            <div><span>Harmonie</span><div class="ex-result-bar"><i style="width:82%"></i></div><span class="mono">8.2</span></div>
+            <div><span>Angularité</span><div class="ex-result-bar"><i style="width:71%"></i></div><span class="mono">7.1</span></div>
+            <div><span>Dimorphisme</span><div class="ex-result-bar"><i style="width:78%"></i></div><span class="mono">7.8</span></div>
+            <div><span>Peau</span><div class="ex-result-bar"><i style="width:64%"></i></div><span class="mono">6.4</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="hero-stats-deco">
+        <div class="deco-w2">
+          <div class="deco-rate">
+            <div class="deco-rate-label">Progression · 2 mois</div>
+            <div class="deco-rate-row">
+              <span class="deco-rate-val">+0.9</span>
+              <span class="deco-rate-desc">points PSL<br>gagnés</span>
+            </div>
+            <div class="deco-rate-bar-track"><div class="deco-rate-bar-fill"></div></div>
+          </div>
+        </div>
+        <div class="deco-w3">
+          <div class="deco-notif">
+            <div class="deco-notif-avatar">LM</div>
+            <div class="deco-notif-body">
+              <div class="deco-notif-title">Nouveau scan enregistré</div>
+              <div class="deco-notif-sub">Score 6.7 → 7.1 · il y a 2h</div>
+            </div>
+            <span class="deco-notif-dot"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h1>Obtenez votre analyse PSL<br><em>en moins de 30 secondes.</em></h1>
+    <p>Une photo à uploader. Un score précis sur 21 indicateurs faciaux mesurés. Un plan d'action clair pour progresser — directement dans ton navigateur.</p>
+    <a href="/register/" class="hero-btn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+      Analyser mon visage — gratuit
+    </a>
+    <p class="hero-note">Sans app · En français · 100% privé</p>
+  </section>
+
+  <!-- Strip -->
+  <section class="logo-strip">
+    <div class="logo-strip-label">Morphindex analyse <strong>21 indicateurs faciaux</strong> — sans téléchargement</div>
+    <div class="logo-strip-marquee">
+      <div class="logo-strip-track">
+        <span class="strip-badge">Ratios faciaux mesurés</span>
+        <span class="strip-badge">4 piliers PSL</span>
+        <span class="strip-badge">100% navigateur</span>
+        <span class="strip-badge">Photos jamais envoyées</span>
+        <span class="strip-badge">Suivi temporel</span>
+        <span class="strip-badge">Plan personnalisé</span>
+        <span class="strip-badge">Desktop + mobile</span>
+        <span class="strip-badge" aria-hidden="true">Ratios faciaux mesurés</span>
+        <span class="strip-badge" aria-hidden="true">4 piliers PSL</span>
+        <span class="strip-badge" aria-hidden="true">100% navigateur</span>
+        <span class="strip-badge" aria-hidden="true">Photos jamais envoyées</span>
+        <span class="strip-badge" aria-hidden="true">Suivi temporel</span>
+        <span class="strip-badge" aria-hidden="true">Plan personnalisé</span>
+        <span class="strip-badge" aria-hidden="true">Desktop + mobile</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features strip -->
+  <div class="features">
+    <div class="feat">
+      <div class="feat-visual">
+        <div class="mock-tap">
+          <div class="mock-tap-wave"></div>
+          <div class="mock-tap-wave"></div>
+          <div class="mock-tap-circle"><span class="mock-tap-num">30s</span><span class="mock-tap-lbl">Scan</span></div>
+        </div>
+      </div>
+      <div class="feat-body">
+        <h3>30 secondes</h3>
+        <p>Une photo frontale. Ton score PSL et tes 4 piliers — instantanément.</p>
+      </div>
+    </div>
+    <div class="feat">
+      <div class="feat-visual">
+        <div class="mock-id">
+          <div class="mock-id-avatar-wrap"><div class="mock-id-avatar">7.2</div></div>
+          <div class="mock-id-name">Score PSL</div>
+          <div class="mock-id-badge">Potentiel 7.8</div>
+          <div class="mock-id-tagline"><div class="mock-id-title">Harmonie · Angularité</div><div class="mock-id-desc">Dimorphisme · Peau</div></div>
+        </div>
+      </div>
+      <div class="feat-body">
+        <h3>4 piliers détaillés</h3>
+        <p>Harmonie, angularité, dimorphisme et peau — analysés séparément.</p>
+      </div>
+    </div>
+    <div class="feat">
+      <div class="feat-visual">
+        <div class="mock-stat">
+          <div class="mock-stat-lbl">Score · 90 jours</div>
+          <div class="mock-stat-row">
+            <span class="mock-stat-num">7.1</span>
+            <span class="mock-stat-trend">↗ +18%</span>
+          </div>
+          <svg class="mock-stat-spark" viewBox="0 0 120 20"><polyline points="0,16 20,14 40,12 60,9 80,6 100,4 120,2" fill="none" stroke="#3D9EFF" stroke-width="2"/></svg>
+        </div>
+      </div>
+      <div class="feat-body">
+        <h3>Suivi dans le temps</h3>
+        <p>Chaque scan horodaté. Compare, ajuste, vois ta courbe monter.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Big features -->
+  <section class="showcase" id="fonctions">
+    <div class="showcase-row">
+      <div class="showcase-copy">
+        <span class="showcase-tag">Analyse</span>
+        <h2>Un seul tap.<br>Ton score est là.</h2>
+        <p>Upload une photo frontale depuis ton téléphone ou ton ordi. Morphindex mesure tes ratios faciaux et te donne ta note PSL sur 10.</p>
+      </div>
+      <div class="showcase-visual">
+        <div class="showcase-card">
+          <div class="sc-head"><span class="sc-live"></span> Analyse en cours</div>
+          <div class="sc-score mono">7.2<span>/10</span></div>
+          <div class="sc-rows">
+            <div><span>Harmonie</span><div class="sc-bar"><i style="width:82%"></i></div><span class="mono">8.2</span></div>
+            <div><span>Angularité</span><div class="sc-bar"><i style="width:71%"></i></div><span class="mono">7.1</span></div>
+            <div><span>Dimorphisme</span><div class="sc-bar"><i style="width:78%"></i></div><span class="mono">7.8</span></div>
+            <div><span>Peau</span><div class="sc-bar"><i style="width:64%"></i></div><span class="mono">6.4</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="showcase-row showcase-row--reverse">
+      <div class="showcase-copy">
+        <span class="showcase-tag">Plan</span>
+        <h2>Un plan clair,<br>priorisé par impact.</h2>
+        <p>Skincare, coiffure, structure, style — Morphindex te dit quoi faire en premier pour faire monter ta note le plus vite.</p>
+      </div>
+      <div class="showcase-visual">
+        <div class="showcase-plan">
+          <div class="plan-item plan-item--hi"><span class="plan-rank mono">#1</span><div><strong>Descendre à 12–14% BF</strong><span>Impact élevé · Angularité</span></div></div>
+          <div class="plan-item"><span class="plan-rank mono">#2</span><div><strong>Routine skincare ciblée</strong><span>Impact moyen · Peau</span></div></div>
+          <div class="plan-item"><span class="plan-rank mono">#3</span><div><strong>Coiffure avec volume tempes</strong><span>Impact moyen · Harmonie</span></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="showcase-row">
+      <div class="showcase-copy">
+        <span class="showcase-tag">Dashboard</span>
+        <h2>Mesure ce que ton<br>lookmaxing génère.</h2>
+        <p>Scans, progression, piliers — tout est tracké. Tu sais enfin ce qui marche et où optimiser.</p>
+      </div>
+      <div class="showcase-visual">
+        <div class="dash-mock">
+          <div class="dash-kpis">
+            <div><span class="dash-k">Scans</span><span class="dash-v mono">12</span></div>
+            <div><span class="dash-k">Score actuel</span><span class="dash-v mono">7.1</span></div>
+            <div><span class="dash-k">Progression</span><span class="dash-v mono dash-up">+0.9</span></div>
+          </div>
+          <div class="dash-chart">
+            <svg viewBox="0 0 200 60" fill="none"><polyline points="0,50 40,42 80,35 120,25 160,18 200,12" stroke="#3D9EFF" stroke-width="2"/><circle cx="200" cy="12" r="4" fill="#3D9EFF"/></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Paperstat -->
+  <section class="paperstat">
+    <div class="paperstat-track">
+      <div class="paperstat-pin">
+        <div class="paperstat-pin-inner">
+          <h2 class="paperstat-title">En 2026, deviner sa note ne suffit plus.</h2>
+          <p class="paperstat-sub">Évaluer son propre visage à l'œil est peu fiable. Morphindex mesure — toi tu progresses.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Carousel -->
+  <section class="examples">
+    <h2>Résultats d'analyses réelles</h2>
+    <p class="examples-sub">Score PSL, pilier faible identifié — chaque carte = une analyse complète.</p>
+    <div class="carousel-outer">
+      <div class="carousel-track">
+        <div class="ex-card-slide ex-card-slide--analysis">
+          <div class="ecs-mesh"><svg viewBox="0 0 40 48" fill="none"><ellipse cx="20" cy="24" rx="14" ry="18" stroke="rgba(61,158,255,.4)" stroke-width="1"/><circle cx="15" cy="20" r="1.5" fill="#3D9EFF"/><circle cx="25" cy="20" r="1.5" fill="#3D9EFF"/><circle cx="20" cy="28" r="1.5" fill="#3D9EFF"/></svg></div>
+          <div class="ecs-score mono">6.7<span>/10</span></div>
+          <div class="ecs-pillar ecs-pillar--weak">À travailler · Peau</div>
+          <div class="ecs-meta">+0.9 en 2 mois</div>
+        </div>
+        <div class="ex-card-slide ex-card-slide--analysis">
+          <div class="ecs-mesh"><svg viewBox="0 0 40 48" fill="none"><ellipse cx="20" cy="24" rx="14" ry="18" stroke="rgba(61,158,255,.4)" stroke-width="1"/><circle cx="15" cy="20" r="1.5" fill="#3D9EFF"/><circle cx="25" cy="20" r="1.5" fill="#3D9EFF"/><circle cx="20" cy="28" r="1.5" fill="#3D9EFF"/></svg></div>
+          <div class="ecs-score mono">7.3<span>/10</span></div>
+          <div class="ecs-pillar">Fort · Harmonie 8.1</div>
+          <div class="ecs-meta">Potentiel → 7.9</div>
+        </div>
+        <div class="ex-card-slide ex-card-slide--analysis">
+          <div class="ecs-mesh"><svg viewBox="0 0 40 48" fill="none"><ellipse cx="20" cy="24" rx="14" ry="18" stroke="rgba(61,158,255,.4)" stroke-width="1"/><circle cx="15" cy="20" r="1.5" fill="#3D9EFF"/><circle cx="25" cy="20" r="1.5" fill="#3D9EFF"/><circle cx="20" cy="28" r="1.5" fill="#3D9EFF"/></svg></div>
+          <div class="ecs-score mono">6.4<span>/10</span></div>
+          <div class="ecs-pillar ecs-pillar--weak">À travailler · Angularité</div>
+          <div class="ecs-meta">Premier scan</div>
+        </div>
+        <div class="ex-card-slide ex-card-slide--analysis">
+          <div class="ecs-mesh"><svg viewBox="0 0 40 48" fill="none"><ellipse cx="20" cy="24" rx="14" ry="18" stroke="rgba(61,158,255,.4)" stroke-width="1"/><circle cx="15" cy="20" r="1.5" fill="#3D9EFF"/><circle cx="25" cy="20" r="1.5" fill="#3D9EFF"/><circle cx="20" cy="28" r="1.5" fill="#3D9EFF"/></svg></div>
+          <div class="ecs-score mono">7.8<span>/10</span></div>
+          <div class="ecs-pillar">Fort · Dimorphisme 8.4</div>
+          <div class="ecs-meta">18 mois de suivi</div>
+        </div>
+        <div class="ex-card-slide ex-card-slide--analysis">
+          <div class="ecs-mesh"><svg viewBox="0 0 40 48" fill="none"><ellipse cx="20" cy="24" rx="14" ry="18" stroke="rgba(61,158,255,.4)" stroke-width="1"/><circle cx="15" cy="20" r="1.5" fill="#3D9EFF"/><circle cx="25" cy="20" r="1.5" fill="#3D9EFF"/><circle cx="20" cy="28" r="1.5" fill="#3D9EFF"/></svg></div>
+          <div class="ecs-score mono">7.0<span>/10</span></div>
+          <div class="ecs-pillar ecs-pillar--weak">À travailler · Structure</div>
+          <div class="ecs-meta">Plan coiffure actif</div>
+        </div>
+        <div class="ex-card-slide ex-card-slide--analysis" aria-hidden="true">
+          <div class="ecs-mesh"><svg viewBox="0 0 40 48" fill="none"><ellipse cx="20" cy="24" rx="14" ry="18" stroke="rgba(61,158,255,.4)" stroke-width="1"/><circle cx="15" cy="20" r="1.5" fill="#3D9EFF"/><circle cx="25" cy="20" r="1.5" fill="#3D9EFF"/><circle cx="20" cy="28" r="1.5" fill="#3D9EFF"/></svg></div>
+          <div class="ecs-score mono">6.7<span>/10</span></div>
+          <div class="ecs-pillar ecs-pillar--weak">À travailler · Peau</div>
+          <div class="ecs-meta">+0.9 en 2 mois</div>
+        </div>
+        <div class="ex-card-slide ex-card-slide--analysis" aria-hidden="true">
+          <div class="ecs-mesh"><svg viewBox="0 0 40 48" fill="none"><ellipse cx="20" cy="24" rx="14" ry="18" stroke="rgba(61,158,255,.4)" stroke-width="1"/><circle cx="15" cy="20" r="1.5" fill="#3D9EFF"/><circle cx="25" cy="20" r="1.5" fill="#3D9EFF"/><circle cx="20" cy="28" r="1.5" fill="#3D9EFF"/></svg></div>
+          <div class="ecs-score mono">7.3<span>/10</span></div>
+          <div class="ecs-pillar">Fort · Harmonie 8.1</div>
+          <div class="ecs-meta">Potentiel → 7.9</div>
+        </div>
+        <div class="ex-card-slide ex-card-slide--analysis" aria-hidden="true">
+          <div class="ecs-mesh"><svg viewBox="0 0 40 48" fill="none"><ellipse cx="20" cy="24" rx="14" ry="18" stroke="rgba(61,158,255,.4)" stroke-width="1"/><circle cx="15" cy="20" r="1.5" fill="#3D9EFF"/><circle cx="25" cy="20" r="1.5" fill="#3D9EFF"/><circle cx="20" cy="28" r="1.5" fill="#3D9EFF"/></svg></div>
+          <div class="ecs-score mono">6.4<span>/10</span></div>
+          <div class="ecs-pillar ecs-pillar--weak">À travailler · Angularité</div>
+          <div class="ecs-meta">Premier scan</div>
+        </div>
+        <div class="ex-card-slide ex-card-slide--analysis" aria-hidden="true">
+          <div class="ecs-mesh"><svg viewBox="0 0 40 48" fill="none"><ellipse cx="20" cy="24" rx="14" ry="18" stroke="rgba(61,158,255,.4)" stroke-width="1"/><circle cx="15" cy="20" r="1.5" fill="#3D9EFF"/><circle cx="25" cy="20" r="1.5" fill="#3D9EFF"/><circle cx="20" cy="28" r="1.5" fill="#3D9EFF"/></svg></div>
+          <div class="ecs-score mono">7.8<span>/10</span></div>
+          <div class="ecs-pillar">Fort · Dimorphisme 8.4</div>
+          <div class="ecs-meta">18 mois de suivi</div>
+        </div>
+        <div class="ex-card-slide ex-card-slide--analysis" aria-hidden="true">
+          <div class="ecs-mesh"><svg viewBox="0 0 40 48" fill="none"><ellipse cx="20" cy="24" rx="14" ry="18" stroke="rgba(61,158,255,.4)" stroke-width="1"/><circle cx="15" cy="20" r="1.5" fill="#3D9EFF"/><circle cx="25" cy="20" r="1.5" fill="#3D9EFF"/><circle cx="20" cy="28" r="1.5" fill="#3D9EFF"/></svg></div>
+          <div class="ecs-score mono">7.0<span>/10</span></div>
+          <div class="ecs-pillar ecs-pillar--weak">À travailler · Structure</div>
+          <div class="ecs-meta">Plan coiffure actif</div>
+        </div>
+      </div>
+    </div>
+    <a href="/register/" class="examples-cta">Lancer mon analyse en 30s</a>
+  </section>
+
+  <!-- Upload builder -->
+  <section id="builder">
+    <div class="builder-head">
+      <h2>Lance ta première analyse</h2>
+      <p>Crée ton compte et upload une photo — ta preview se met à jour en temps réel.</p>
+    </div>
+    <div class="builder-grid">
+      <div class="builder-form">
+        <div class="bf-group">
+          <label>Photo frontale</label>
+          <div class="bf-upload">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            <span>Glisse une photo ou clique pour choisir</span>
+            <small>JPG ou PNG · Traité dans ton navigateur</small>
+          </div>
+        </div>
+        <div class="bf-group">
+          <label>Prénom</label>
+          <input type="text" placeholder="Jean" readonly>
+        </div>
+        <div class="bf-group">
+          <label>Email</label>
+          <input type="email" placeholder="vous@exemple.com" readonly>
+        </div>
+        <a href="/register/" class="bf-submit">Créer mon compte — gratuit</a>
+        <p class="bf-legal">En créant un compte, j'accepte les conditions d'utilisation et la politique de confidentialité.</p>
+      </div>
+      <div class="builder-preview">
+        <div class="bp-label">Aperçu temps réel</div>
+        <div class="bp-card">
+          <div class="bp-score mono">7.2<span>/10</span></div>
+          <div class="bp-potential">Potentiel → 7.8</div>
+          <div class="bp-bars">
+            <div><span>Harmonie</span><i style="width:82%"></i></div>
+            <div><span>Angularité</span><i style="width:71%"></i></div>
+            <div><span>Dimorphisme</span><i style="width:78%"></i></div>
+            <div><span>Peau</span><i style="width:64%"></i></div>
+          </div>
+          <div class="bp-plan-preview">
+            <strong>Ton plan (aperçu)</strong>
+            <span>#1 Skincare ciblée · #2 Masse grasse · #3 Coiffure</span>
+          </div>
+        </div>
+        <div class="bp-progress"><span>Complétion</span><div class="bp-progress-bar"><i style="width:35%"></i></div><span class="mono">35%</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 Piliers PSL -->
+  <section class="piliers" id="piliers">
+    <div class="piliers-header">
+      <span class="piliers-tag">Méthode PSL</span>
+      <h2>4 piliers. Un score. Un plan.</h2>
+      <p>Morphindex décompose ton visage en 4 dimensions indépendantes — puis te montre où tu peux gagner le plus de points.</p>
+    </div>
+    <div class="piliers-grid">
+      <article class="pilier-card">
+        <div class="pilier-icon">◈</div>
+        <h3>Harmonie</h3>
+        <p>Proportions faciales, symétrie, ratios dorés — la base de l'équilibre visuel.</p>
+        <div class="pilier-bar"><i style="width:82%"></i></div>
+        <span class="pilier-val mono">8.2</span>
+      </article>
+      <article class="pilier-card">
+        <div class="pilier-icon">△</div>
+        <h3>Angularité</h3>
+        <p>Mâchoire, pommettes, définition osseuse — la structure qui crée l'impact.</p>
+        <div class="pilier-bar"><i style="width:71%"></i></div>
+        <span class="pilier-val mono">7.1</span>
+      </article>
+      <article class="pilier-card">
+        <div class="pilier-icon">♂</div>
+        <h3>Dimorphisme</h3>
+        <p>Traits masculins/féminins, testostérone faciale — la présence perçue.</p>
+        <div class="pilier-bar"><i style="width:78%"></i></div>
+        <span class="pilier-val mono">7.8</span>
+      </article>
+      <article class="pilier-card pilier-card--weak">
+        <div class="pilier-icon">○</div>
+        <h3>Peau</h3>
+        <p>Texture, teint, imperfections — souvent le levier le plus rapide à améliorer.</p>
+        <div class="pilier-bar"><i style="width:64%"></i></div>
+        <span class="pilier-val mono">6.4</span>
+      </article>
+    </div>
+    <div class="piliers-projection">
+      <div class="proj-current">
+        <span class="proj-label">Score actuel</span>
+        <span class="proj-score mono">5.8</span>
+      </div>
+      <div class="proj-arrow">
+        <svg viewBox="0 0 80 24" fill="none"><path d="M4 12h60M58 6l10 6-10 6" stroke="#3D9EFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span class="proj-delta mono">+1.6</span>
+      </div>
+      <div class="proj-target">
+        <span class="proj-label">Potentiel 6 mois</span>
+        <span class="proj-score proj-score--hi mono">7.4</span>
+      </div>
+    </div>
+    <p class="piliers-proj-note">Projection basée sur ton pilier faible (Peau) + plan priorisé Morphindex.</p>
+  </section>
+
+  <!-- Platforms -->
+  <section class="integrations" id="plateformes">
+    <div class="integrations-header">
+      <h2>Ton analyse, partout où tu es</h2>
+      <p>Pas d'app à télécharger. Morphindex tourne dans ton navigateur — mobile et desktop.</p>
+    </div>
+    <div class="integrations-grid">
+      <div class="int-card"><div class="int-icon">📱</div><h3>Mobile</h3><p>Scanne depuis ton téléphone, résultat en 30 secondes.</p></div>
+      <div class="int-card"><div class="int-icon">💻</div><h3>Desktop</h3><p>Compare tes analyses sur grand écran.</p></div>
+      <div class="int-card"><div class="int-icon">🔒</div><h3>Privé</h3><p>Photos analysées dans ton navigateur, jamais envoyées à un serveur.</p></div>
+      <div class="int-card"><div class="int-icon">🇫🇷</div><h3>Français</h3><p>Interface et plan 100% en français.</p></div>
+    </div>
+  </section>
+
+  <!-- Pricing -->
+  <section class="pricing" id="tarifs">
+    <h2>Commence gratuitement</h2>
+    <p class="pricing-sub">Ta première analyse complète est offerte. Sans carte bancaire.</p>
+    <div class="pricing-grid">
+      <article class="price-card">
+        <h3>Gratuit</h3>
+        <div class="price-amt mono">0€</div>
+        <ul><li>1 analyse complète</li><li>Score PSL + 4 piliers</li><li>Aperçu du plan</li></ul>
+        <a href="/register/" class="btn-outline">Commencer</a>
+      </article>
+      <article class="price-card price-card--hi">
+        <div class="price-top"><h3>Pro</h3><span class="badge">Populaire</span></div>
+        <div class="price-amt mono">Bientôt</div>
+        <ul><li>Analyses illimitées</li><li>Plan complet</li><li>Historique & progression</li></ul>
+        <a href="mailto:contact@morphindex.com?subject=Liste%20d'attente%20Pro" class="btn-white">Être prévenu du lancement</a>
+      </article>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq" id="faq">
+    <div class="faq-header">
+      <h2>Encore des questions ?<span class="faq-title-2">On a les réponses.</span></h2>
+    </div>
+    <div class="faq-list">
+      <div class="faq-item"><button class="faq-q" type="button"><span class="faq-q-text">C'est quoi Morphindex ?</span><svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button><div class="faq-a"><p>Un outil d'analyse faciale qui calcule ton score PSL sur 21 indicateurs mesurés, te donne un plan d'action et suit ta progression — dans ton navigateur.</p></div></div>
+      <div class="faq-item"><button class="faq-q" type="button"><span class="faq-q-text">Faut-il télécharger une app ?</span><svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button><div class="faq-a"><p>Non. Morphindex tourne entièrement dans le navigateur, sur mobile comme sur ordinateur.</p></div></div>
+      <div class="faq-item"><button class="faq-q" type="button"><span class="faq-q-text">Mes photos sont-elles privées ?</span><svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button><div class="faq-a"><p>Oui. Tes photos sont analysées directement dans ton navigateur et ne sont jamais envoyées à un serveur. Tu peux tout supprimer en un clic.</p></div></div>
+      <div class="faq-item"><button class="faq-q" type="button"><span class="faq-q-text">C'est gratuit ?</span><svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button><div class="faq-a"><p>Ta première analyse complète est gratuite. L'offre Pro (analyses illimitées et suivi avancé) arrive bientôt — inscris-toi à la liste d'attente.</p></div></div>
+    </div>
+  </section>
+
+  <!-- Final -->
+  <section class="final">
+    <h2>Toujours pas sûr que Morphindex soit fait pour toi ?</h2>
+    <p>Ta transformation commence par une seule photo.</p>
+    <a href="/register/" class="hero-btn">Commencer — gratuit</a>
+  </section>
+
+  <footer class="footer">
+    <span class="logo">Morph<span>index</span></span>
+    <nav><a href="/confidentialite/">Confidentialité</a><a href="/conditions/">Conditions</a><a href="/mentions-legales/">Mentions légales</a><a href="/login/">Connexion</a></nav>
+    <p>© 2026 Morphindex</p>
+  </footer>
+
+  <script src="/assets/landing.js?v=5"></script>
+</body>
+</html>

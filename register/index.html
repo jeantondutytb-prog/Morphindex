@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#080808">
+  <meta name="description" id="meta-description" content="Créez votre compte Morphindex gratuitement.">
+  <title id="meta-title">Inscription — Morphindex</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="canonical" href="https://morphindex.com/register/">
+  <script>document.documentElement.setAttribute('data-theme', 'dark');</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/auth.css?v=1">
+</head>
+<body>
+  <div class="auth-page">
+    <header class="auth-header">
+      <a href="/" class="auth-logo">Morph<span>index</span></a>
+      <div class="auth-header-nav">
+        <a href="/login/" class="auth-link-login" data-i18n="nav.login">Connexion</a>
+        <a href="/" class="auth-header-cta">Accueil</a>
+      </div>
+    </header>
+
+    <main class="auth-main">
+      <div class="auth-card">
+        <h1 data-i18n="register.title">Créer un compte</h1>
+        <p class="auth-subtitle" data-i18n="register.subtitle">Commencez votre première analyse PSL en moins d'une minute.</p>
+
+        <div class="auth-alert auth-alert-error" id="auth-alert" role="alert"></div>
+
+        <form class="auth-form" id="register-form" novalidate>
+          <div class="form-group">
+            <label for="name" data-i18n="register.name">Prénom</label>
+            <input class="form-input" type="text" id="name" name="name" autocomplete="given-name" required data-i18n-placeholder="register.namePlaceholder" placeholder="Jean">
+            <span class="form-error" aria-live="polite"></span>
+          </div>
+
+          <div class="form-group">
+            <label for="email" data-i18n="register.email">Adresse e-mail</label>
+            <input class="form-input" type="email" id="email" name="email" autocomplete="email" required data-i18n-placeholder="register.emailPlaceholder" placeholder="vous@exemple.com">
+            <span class="form-error" aria-live="polite"></span>
+          </div>
+
+          <div class="form-group">
+            <label for="password" data-i18n="register.password">Mot de passe</label>
+            <input class="form-input" type="password" id="password" name="password" autocomplete="new-password" required minlength="8" data-i18n-placeholder="register.passwordPlaceholder" placeholder="8 caractères minimum">
+            <span class="form-error" aria-live="polite"></span>
+          </div>
+
+          <label class="checkbox-label">
+            <input type="checkbox" name="terms" required>
+            <span>
+              <span data-i18n="register.terms">J'accepte les</span>
+              <a href="/conditions/" data-i18n="register.termsLink">conditions d'utilisation</a>
+              <span data-i18n="register.and">et la</span>
+              <a href="/confidentialite/" data-i18n="register.privacyLink">politique de confidentialité</a>
+            </span>
+          </label>
+
+          <button type="submit" class="btn btn-primary btn-block" data-i18n="register.submit">Créer mon compte</button>
+        </form>
+
+        <p class="auth-mvp-notice">Version MVP — ton compte et tes analyses sont stockés dans ce navigateur uniquement. Ils seront perdus si tu vides tes données de navigation ou changes d'appareil.</p>
+
+        <p class="auth-footer">
+          <span data-i18n="register.hasAccount">Déjà un compte ?</span>
+          <a href="/login/" data-i18n="register.signIn">Se connecter</a>
+        </p>
+      </div>
+    </main>
+  </div>
+
+  <script src="/assets/auth.js?v=4"></script>
+  <script>MorphAuth.initAuthPage('register');</script>
+</body>
+</html>
