@@ -33,7 +33,9 @@ function clamp(n, min, max) {
   return Math.min(max, Math.max(min, n));
 }
 
-const { round1 } = window.MorphUtils;
+const MU = window.MorphUtils || {};
+const round1 = MU.round1 || ((n) => Math.round(n * 10) / 10);
+const ANALYSIS_STEPS = MU.ANALYSIS_STEPS || [];
 
 function dist(a, b) {
   return Math.hypot(a.x - b.x, a.y - b.y);
@@ -310,5 +312,5 @@ export function deriveSubmetrics(ratios, skinDetail, pillars) {
 }
 
 export function getAnalysisSteps() {
-  return window.MorphUtils.ANALYSIS_STEPS;
+  return ANALYSIS_STEPS;
 }

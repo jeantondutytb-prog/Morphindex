@@ -53,7 +53,9 @@
     return String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
   }
 
-  const { round1, ANALYSIS_STEPS } = window.MorphUtils;
+  const MU = window.MorphUtils || {};
+  const round1 = MU.round1 || ((n) => Math.round(n * 10) / 10);
+  const ANALYSIS_STEPS = MU.ANALYSIS_STEPS || [];
 
   function ratioStatus(label, val) {
     const v = parseFloat(val);
