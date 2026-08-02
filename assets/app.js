@@ -19,6 +19,9 @@
   let resultPillar = 'harmonie';
   let faceView = 'devant';
   let drawerOpen = false;
+  let drawerFocusReturn = null;
+
+  const DRAWER_FOCUSABLE = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
 
   const MAXING_LABELS = {
     soft: 'Softmaxing',
@@ -103,8 +106,45 @@
     return (name || '?').trim().charAt(0).toUpperCase();
   }
 
-  function round1(n) {
-    return Math.round(n * 10) / 10;
+  function getDrawerFocusables() {
+    const drawer = document.getElementById('fiq-drawer');
+    if (!drawer) return [];
+    return Array.from(drawer.querySelectorAll(DRAWER_FOCUSABLE))
+      .filter((el) => !el.disabled && el.getAttribute('aria-hidden') !== 'true');
+  }
+
+  function activateDrawerFocusTrap() {
+    drawerFocusReturn = document.activeElement;
+    const focusables = getDrawerFocusables();
+    (focusables[0] || document.getElementById('fiq-drawer'))?.focus?.();
+  }
+
+  function deactivateDrawerFocusTrap() {
+    if (drawerFocusReturn && typeof drawerFocusReturn.focus === 'function') {
+      drawerFocusReturn.focus();
+    }
+    drawerFocusReturn = null;
+  }
+
+  function handleDrawerKeydown(e) {
+    if (!drawerOpen) return;
+    if (e.key === 'Escape') {
+      drawerOpen = false;
+      render();
+      return;
+    }
+    if (e.key !== 'Tab') return;
+    const focusables = getDrawerFocusables();
+    if (!focusables.length) return;
+    const first = focusables[0];
+    const last = focusables[focusables.length - 1];
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
   }
 
   async function getFaceAnalysisModule() {
@@ -216,6 +256,8 @@
     const list = getAnalyses();
     const analysis = list.find((a) => a.id === analysisId);
     if (!analysis) return;
+    const prevStyle = analysis.maxingStyle;
+    const prevPlan = analysis.plan;
     analysis.maxingStyle = maxingStyle;
     analysis.plan = buildPlanFromDB(
       analysis.weakPillar,
@@ -225,7 +267,11 @@
       analysis.potential,
       maxingStyle
     );
-    saveAnalyses(list);
+    if (!saveAnalyses(list)) {
+      analysis.maxingStyle = prevStyle;
+      analysis.plan = prevPlan;
+      return;
+    }
     showToast(`Plan mis à jour · ${MAXING_LABELS[maxingStyle]}`);
   }
 
@@ -424,6 +470,11 @@
     const root = document.getElementById('app-content');
     root.innerHTML = renderFaceIQ();
     bindContentEvents();
+    if (drawerOpen) {
+      requestAnimationFrame(() => activateDrawerFocusTrap());
+    } else if (drawerFocusReturn) {
+      deactivateDrawerFocusTrap();
+    }
     if (flowState === 'upload') {
       bindUploadEvents();
       if (pendingPhoto?.dataUrl) {
@@ -856,12 +907,7 @@
       if (suppressHashSync) return;
       applyRouteFromHash();
     });
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && drawerOpen) {
-        drawerOpen = false;
-        render();
-      }
-    });
+    document.addEventListener('keydown', handleDrawerKeydown);
 
     if (sessionStorage.getItem('morphindex-start-upload') === '1') {
       sessionStorage.removeItem('morphindex-start-upload');
