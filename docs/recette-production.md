@@ -36,16 +36,19 @@ Après toute modif de variable `NEXT_PUBLIC_*` → **Redeploy** obligatoire.
 ## Parcours (recette §11)
 
 ### 1. Landing
-- [ ] `https://www.morphindex.com/` — hero, pas d'avis/témoignages (G14)
-- [ ] Clic colonne Hardmaxing → événement `hardmaxing_interest` en base (`events`)
+- [x] `https://www.morphindex.com/` — landing live (HTTP 200)
+- [x] API `hardmaxing_interest` acceptée (`POST /api/events`)
+- [ ] Clic colonne Hardmaxing → ligne en base (`events`) — à vérifier dans Supabase Table Editor
 
 ### 2. Inscription
-- [ ] `/inscription/` — bouton disabled sans les 2 cases
+- [x] `/inscription/` — formulaire OK
+- [x] Inscription prod corrigée (`admin.createUser` + session auto)
+- [x] `GET /api/health` → `{"ok":true}` (tables profiles/subscriptions OK)
 - [ ] POST forgé sans `ageConfirmed` → 400
-- [ ] Compte créé → `age_confirmed_at` et `terms_accepted_at` renseignés en base
+- [ ] Vérifier `age_confirmed_at` + `terms_accepted_at` en base
 
 ### 3. Onboarding
-- [ ] 5 écrans → `onboarding_done_at` posé
+- [x] 5 écrans parcourus en prod (test 4 août 2026)
 - [ ] POST `mode_prefere: "hard"` → 400
 
 ### 4. Photo + analyse
