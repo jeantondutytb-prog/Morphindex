@@ -60,7 +60,7 @@ export function DashboardBento({
             Photo, 7 axes, indice et routine personnalisée — livraison en quelques minutes.
           </p>
           <Link
-            href="/onboarding/photo"
+            href="/app/photo"
             className="inline-block rounded-xl bg-accent px-8 py-3.5 font-bold text-accent-ink hover:brightness-110 transition"
           >
             Commencer →
@@ -110,7 +110,7 @@ export function DashboardBento({
               </Link>
             )}
             <Link
-              href="/onboarding/photo"
+              href="/app/photo"
               className="flex items-center justify-between rounded-xl border border-line px-4 py-3.5 text-sm hover:border-accent/30 transition group"
             >
               <span className="text-text font-medium">Nouvelle analyse</span>

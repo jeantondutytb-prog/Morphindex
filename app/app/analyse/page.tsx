@@ -26,7 +26,7 @@ export default function AnalysePage() {
   useEffect(() => {
     const path = sessionStorage.getItem("analysisPath");
     if (!path) {
-      router.replace("/onboarding/photo");
+      router.replace("/app/photo");
       return;
     }
 

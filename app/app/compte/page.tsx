@@ -105,7 +105,7 @@ export default async function ComptePage() {
           ← Mes analyses
         </Link>
         <Link
-          href="/onboarding/photo"
+          href="/app/photo"
           className="rounded-lg bg-accent px-5 py-2.5 text-sm font-bold text-accent-ink hover:brightness-110 transition"
         >
           Nouvelle analyse

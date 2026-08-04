@@ -34,7 +34,7 @@ export default async function RoutinePage() {
             Débloque un rapport ou lance une analyse pour obtenir ta routine personnalisée.
           </p>
           <Link
-            href="/onboarding/photo"
+            href="/app/photo"
             className="inline-block rounded-lg bg-accent px-6 py-3 font-bold text-accent-ink"
           >
             Lancer une analyse

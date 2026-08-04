@@ -9,7 +9,7 @@ import { NavIcon } from "@/components/app/icons";
 const MOBILE_NAV = [
   { href: "/app", label: "Accueil", short: "Accueil", match: (p: string) => p === "/app" || rapportMatch(p) },
   { href: "/app/routine", label: "Routine", short: "Routine", match: (p: string) => p.startsWith("/app/routine") },
-  { href: "/onboarding/photo", label: "Analyser", short: "+", match: (p: string) => p.startsWith("/onboarding/photo") || p.startsWith("/app/analyse") },
+  { href: "/app/photo", label: "Analyser", short: "+", match: (p: string) => p.startsWith("/app/photo") || p.startsWith("/app/analyse") },
   { href: "/app/compte", label: "Compte", short: "Compte", match: (p: string) => p.startsWith("/app/compte") },
 ] as const;
 
@@ -118,7 +118,7 @@ export function AppShell({
             <p className="font-display text-sm font-bold mb-1">Nouvelle analyse</p>
             <p className="text-xs text-dim mb-3">7 axes · indice · routine</p>
             <Link
-              href="/onboarding/photo"
+              href="/app/photo"
               className="block text-center rounded-lg bg-accent py-2 text-xs font-bold text-accent-ink hover:brightness-110 transition"
             >
               Lancer →
@@ -149,7 +149,7 @@ export function AppShell({
           <Link href="/app" className="font-display text-lg font-extrabold">
             Morph<span className="text-accent">Index</span>
           </Link>
-          <Link href="/onboarding/photo" className="text-sm font-bold text-accent">
+          <Link href="/app/photo" className="text-sm font-bold text-accent">
             + Analyser
           </Link>
         </header>

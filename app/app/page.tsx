@@ -54,7 +54,7 @@ export default async function AppPage() {
 
       {analyses.length === 0 && (
         <p className="text-center text-sm text-dim mt-8">
-          <Link href="/onboarding/photo" className="text-accent underline">
+          <Link href="/app/photo" className="text-accent underline">
             Ajouter une photo
           </Link>{" "}
           pour lancer ton analyse.

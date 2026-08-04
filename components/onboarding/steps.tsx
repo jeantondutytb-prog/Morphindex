@@ -64,7 +64,7 @@ export function OnboardingSteps() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
-    if (res.ok) router.push("/onboarding/photo");
+    if (res.ok) router.push("/app/photo");
     setLoading(false);
   }
 
