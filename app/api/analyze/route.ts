@@ -39,7 +39,10 @@ export async function POST(req: Request) {
     const { base64 } = await prepareForModel(buf);
 
     const result = await runAnalysis(base64, p.data);
-    if (!result.ok) throw new Error(result.reason);
+    // On conserve le détail remonté par le SDK : à la première analyse réelle
+    // qui échoue, « api_error » seul ne dit pas si c'est la clé, la rétention
+    // zéro non activée, ou l'image refusée.
+    if (!result.ok) throw new Error(`${result.reason}: ${result.detail}`);
 
     const blurred = await blurForPaywall(buf);
     const blurredPath = `${user.id}/${analysis!.id}-blur.jpg`;
