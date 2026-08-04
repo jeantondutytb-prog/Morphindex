@@ -1,4 +1,8 @@
+"use client";
+
+import { useState } from "react";
 import { Section } from "@/components/ui/section";
+import { ScrollReveal } from "./scroll-reveal";
 
 const FAQ = [
   {
@@ -28,18 +32,51 @@ const FAQ = [
 ];
 
 export function Faq() {
+  const [open, setOpen] = useState<number | null>(0);
+
   return (
-    <Section id="faq" kicker="05 · FAQ" title="Questions fréquentes">
-      <div className="space-y-2">
-        {FAQ.map(({ q, a }) => (
-          <details key={q} className="group rounded-lg border border-line bg-surface">
-            <summary className="cursor-pointer px-5 py-4 font-medium text-text list-none flex items-center justify-between">
-              {q}
-              <span className="text-dim group-open:rotate-45 transition-transform text-lg">+</span>
-            </summary>
-            <p className="px-5 pb-4 text-sm text-muted leading-relaxed">{a}</p>
-          </details>
-        ))}
+    <Section id="faq" kicker="FAQ" title="Questions fréquentes">
+      <p className="text-muted text-sm md:text-[15px] max-w-xl mb-8 -mt-1">
+        Une dernière question avant de commencer ? Trouve ta réponse ici.
+      </p>
+
+      <div className="space-y-2 max-w-3xl">
+        {FAQ.map(({ q, a }, i) => {
+          const isOpen = open === i;
+          return (
+            <ScrollReveal key={q} delay={i * 50}>
+              <div
+                className={`rounded-xl border transition-colors duration-300 ${
+                  isOpen ? "border-accent/25 bg-accent/[0.03]" : "border-line bg-surface"
+                }`}
+              >
+                <button
+                  type="button"
+                  onClick={() => setOpen(isOpen ? null : i)}
+                  className="w-full cursor-pointer px-5 py-4 font-medium text-text text-left flex items-center justify-between gap-4"
+                  aria-expanded={isOpen}
+                >
+                  <span className="text-[15px]">{q}</span>
+                  <span
+                    className={`flex size-7 shrink-0 items-center justify-center rounded-full border transition-all duration-300 ${
+                      isOpen ? "border-accent/40 bg-accent/10 rotate-45 text-accent" : "border-line text-dim"
+                    }`}
+                  >
+                    +
+                  </span>
+                </button>
+                <div
+                  className="grid transition-[grid-template-rows] duration-300 ease-out"
+                  style={{ gridTemplateRows: isOpen ? "1fr" : "0fr" }}
+                >
+                  <div className="overflow-hidden">
+                    <p className="px-5 pb-4 text-sm text-muted leading-relaxed">{a}</p>
+                  </div>
+                </div>
+              </div>
+            </ScrollReveal>
+          );
+        })}
       </div>
     </Section>
   );
