@@ -3,7 +3,13 @@
 import { useEffect, useState } from "react";
 import { FORMULES, type Formule } from "@/lib/stripe/products";
 
-export function Paywall({ analysisId }: { analysisId: string }) {
+export function Paywall({
+  analysisId,
+  compact = false,
+}: {
+  analysisId: string;
+  compact?: boolean;
+}) {
   const [loading, setLoading] = useState<Formule | null>(null);
 
   useEffect(() => {
@@ -32,27 +38,32 @@ export function Paywall({ analysisId }: { analysisId: string }) {
   }
 
   return (
-    <div className="mt-8">
-      <h2 className="font-display text-lg font-bold mb-4">Débloquer ton rapport</h2>
-      <div className="grid gap-3">
+    <div className={compact ? "" : "mt-8"}>
+      {!compact && (
+        <h2 className="font-display text-lg font-bold mb-4">Débloquer ton rapport</h2>
+      )}
+      {compact && (
+        <p className="font-display text-sm font-bold text-text mb-3">Débloquer ton rapport</p>
+      )}
+      <div className="grid gap-2.5">
         {FORMULES.map(({ id, label, price, period, recommended }) => (
           <button
             key={id}
             type="button"
             disabled={loading !== null}
             onClick={() => checkout(id)}
-            className={`relative rounded-xl border p-4 text-left transition hover:border-accent/50 ${
-              recommended ? "border-accent/30 bg-accent/4" : "border-line bg-surface"
+            className={`relative rounded-xl border px-4 py-3.5 text-left transition hover:border-accent/50 ${
+              recommended ? "border-accent/30 bg-surface" : "border-line bg-bg"
             }`}
           >
             {recommended && (
-              <span className="absolute -top-2 right-4 font-mono text-[9px] uppercase tracking-wider bg-accent text-accent-ink px-2 py-0.5 rounded">
+              <span className="absolute -top-2 right-3 font-mono text-[9px] uppercase tracking-wider bg-accent text-accent-ink px-2 py-0.5 rounded">
                 recommandé
               </span>
             )}
-            <span className="font-bold text-text">{label}</span>
-            <span className="ml-2 tnum text-accent">{price}</span>
-            {period && <span className="text-sm text-dim">{period}</span>}
+            <span className="font-bold text-text text-sm">{label}</span>
+            <span className="ml-2 tnum text-accent text-sm">{price}</span>
+            {period && <span className="text-xs text-dim">{period}</span>}
           </button>
         ))}
       </div>

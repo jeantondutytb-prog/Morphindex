@@ -1,6 +1,6 @@
 import { createServerClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
-import { Paywall } from "@/components/paywall";
+import { LockedReportPreview } from "@/components/report/locked-preview";
 import { ScoresPanel } from "@/components/report/scores";
 import { RoutinePanel } from "@/components/report/routine";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -93,37 +93,14 @@ export default async function RapportPage({ params }: { params: Promise<{ id: st
   }
 
   return (
-    <main className="min-h-screen px-5 py-12 max-w-lg mx-auto">
-      <h1 className="font-display text-2xl font-extrabold mb-6">Ton rapport est prêt</h1>
-
-      {preview.blurred_url && (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={preview.blurred_url}
-          alt="Aperçu flouté"
-          className="w-full max-w-xs mx-auto rounded-xl mb-6 aspect-[4/5] object-cover"
-        />
-      )}
-
-      <p className="font-display text-xl font-bold mb-1">
-        {preview.points_count} points identifiés
-      </p>
-      <p className="text-muted mb-6">
-        Dont : <span className="text-text">{preview.premier_point_libelle}</span>
-      </p>
-
-      <div className="space-y-3 mb-6">
-        {[1, 2, 3, 4, 5].map((i) => (
-          <div key={i} className="h-8 rounded bg-line" />
-        ))}
-      </div>
-      <div className="space-y-3 mb-6">
-        {[1, 2, 3].map((i) => (
-          <div key={i} className="h-6 rounded bg-line w-3/4" />
-        ))}
-      </div>
-
-      <Paywall analysisId={id} />
+    <main className="min-h-screen px-5 py-8 md:py-10 max-w-xl mx-auto">
+      <h1 className="font-display text-2xl font-extrabold mb-5">Ton rapport est prêt</h1>
+      <LockedReportPreview
+        analysisId={id}
+        pointsCount={preview.points_count!}
+        premierPointLibelle={preview.premier_point_libelle!}
+        blurredUrl={preview.blurred_url}
+      />
     </main>
   );
 }
