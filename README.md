@@ -24,8 +24,21 @@ Exécuter dans l'ordre dans le SQL Editor :
 1. `supabase/migrations/0001_init.sql`
 2. `supabase/migrations/0002_storage.sql`
 3. `supabase/migrations/0003_rate_limit.sql`
+4. `supabase/migrations/0004_consume_credit.sql`
 
-Créer le bucket `photos` en privé si la migration storage ne le fait pas automatiquement.
+L'ordre compte : `0004` crée les fonctions de consommation de crédit utilisées par
+`lib/credits/quota.ts`. Sans elle, `/api/analyze` refuse toutes les analyses.
+
+Vérifier ensuite dans Storage que le bucket `photos` existe et qu'il est **privé**.
+
+## URL de redirection Supabase
+
+Authentication → URL Configuration. Déclarer les trois, sinon la confirmation
+d'email renvoie vers le mauvais domaine :
+
+- `http://localhost:3000/**`
+- l'URL de prévisualisation Vercel
+- `https://www.morphindex.com/**`
 
 ## Tests
 
