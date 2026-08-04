@@ -56,6 +56,11 @@ export default function ConnexionPage() {
               className="w-full rounded-lg border border-line bg-surface px-4 py-3 text-text outline-none focus:border-accent/50"
             />
           </div>
+          <p className="text-right">
+            <Link href="/mot-de-passe-oublie" className="text-sm text-accent underline">
+              Mot de passe oublié ?
+            </Link>
+          </p>
           {error && <p className="text-sm text-muted">{error}</p>}
           <button
             type="submit"
