@@ -2,6 +2,7 @@ import { createServerClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { MONTHLY_QUOTA } from "@/lib/credits/quota";
+import { PageHeader } from "@/components/app/page-header";
 
 const FORMULE_LABELS: Record<string, string> = {
   hebdo: "Hebdomadaire · 4,90 €/sem",
@@ -32,8 +33,8 @@ export default async function ComptePage() {
   const isAdmin = profile?.is_admin === true;
 
   return (
-    <main className="px-5 py-10 max-w-2xl mx-auto">
-      <h1 className="font-display text-2xl font-extrabold mb-8">Mon compte</h1>
+    <div className="px-5 py-10 max-w-2xl mx-auto">
+      <PageHeader title="Mon compte" subtitle="Abonnement et quota d'analyses" />
 
       <section className="rounded-xl border border-line bg-surface p-5 mb-4">
         <p className="font-mono text-[10px] uppercase tracking-wider text-dim mb-3">Identité</p>
@@ -107,6 +108,6 @@ export default async function ComptePage() {
           Nouvelle analyse
         </Link>
       </div>
-    </main>
+    </div>
   );
 }

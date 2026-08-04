@@ -5,8 +5,9 @@ import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
 const NAV = [
-  { href: "/app", label: "Mes analyses", match: (p: string) => p === "/app" },
-  { href: "/app/compte", label: "Mon compte", match: (p: string) => p.startsWith("/app/compte") },
+  { href: "/app", label: "Accueil", match: (p: string) => p === "/app" },
+  { href: "/app/routine", label: "Routine", match: (p: string) => p.startsWith("/app/routine") },
+  { href: "/app/compte", label: "Compte", match: (p: string) => p.startsWith("/app/compte") },
 ] as const;
 
 export function AppShell({
@@ -41,7 +42,7 @@ export function AppShell({
                 key={href}
                 href={href}
                 className={`px-3 py-1.5 rounded-lg transition ${
-                  match(pathname)
+                  match(pathname) || (href === "/app" && pathname.startsWith("/app/rapport"))
                     ? "text-text bg-line/60"
                     : "text-muted hover:text-text"
                 }`}

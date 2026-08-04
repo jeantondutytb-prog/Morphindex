@@ -3,7 +3,9 @@ import { redirect } from "next/navigation";
 import { LockedReportPreview } from "@/components/report/locked-preview";
 import { ScoresPanel } from "@/components/report/scores";
 import { RoutinePanel } from "@/components/report/routine";
+import { PageHeader } from "@/components/app/page-header";
 import { createAdminClient } from "@/lib/supabase/admin";
+import Link from "next/link";
 import type { AXES } from "@/lib/ai/analysis-schema";
 
 type Point = { axe: string; libelle: string; impact: "faible" | "moyen" | "fort" };
@@ -57,15 +59,39 @@ export default async function RapportPage({ params }: { params: Promise<{ id: st
     const scores = analysis.scores as Scores;
     const points = analysis.points as Point[];
     const routine = analysis.routine as Parameters<typeof RoutinePanel>[0]["routine"];
+    const date = new Date(analysis.created_at).toLocaleDateString("fr-FR", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
 
     return (
       <div className="px-5 py-10 max-w-2xl mx-auto">
-        <h1 className="font-display text-2xl font-extrabold mb-6">
-          Ton rapport
-          {profile?.is_admin && !analysis.unlocked && (
-            <span className="ml-2 font-mono text-[10px] text-accent align-middle">admin</span>
-          )}
-        </h1>
+        <PageHeader
+          title="Ton rapport"
+          subtitle={date}
+          backHref="/app"
+          backLabel="Mes analyses"
+        />
+
+        {profile?.is_admin && !analysis.unlocked && (
+          <p className="font-mono text-[10px] uppercase text-accent mb-4 -mt-4">Vue admin</p>
+        )}
+
+        <div className="flex flex-wrap gap-2 mb-8">
+          <a href="#scores" className="text-xs text-dim hover:text-muted border border-line rounded-lg px-3 py-1.5 transition">
+            Scores
+          </a>
+          <a href="#points" className="text-xs text-dim hover:text-muted border border-line rounded-lg px-3 py-1.5 transition">
+            Points
+          </a>
+          <a href="#routine" className="text-xs text-dim hover:text-muted border border-line rounded-lg px-3 py-1.5 transition">
+            Routine
+          </a>
+          <Link href="/app/routine" className="text-xs text-accent border border-accent/30 rounded-lg px-3 py-1.5 hover:bg-accent/5 transition">
+            Routine seule →
+          </Link>
+        </div>
 
         <div className="flex items-baseline gap-4 tnum mb-2">
           <span className="font-display text-5xl font-extrabold text-num-idle">
@@ -80,12 +106,12 @@ export default async function RapportPage({ params }: { params: Promise<{ id: st
           Ton indice atteignable est un potentiel <strong className="text-muted">si tu suis la routine</strong>, pas une prédiction. Aucun résultat physique n&apos;est garanti.
         </p>
 
-        <section className="mb-8">
+        <section id="scores" className="mb-8 scroll-mt-20">
           <h2 className="font-display font-bold mb-4">Sous-scores</h2>
           <ScoresPanel scores={scores} />
         </section>
 
-        <section className="mb-8">
+        <section id="points" className="mb-8 scroll-mt-20">
           <h2 className="font-display font-bold mb-4">Points d&apos;amélioration</h2>
           <ul className="space-y-2">
             {points.map((p, i) => (
@@ -97,7 +123,7 @@ export default async function RapportPage({ params }: { params: Promise<{ id: st
           </ul>
         </section>
 
-        <section>
+        <section id="routine" className="scroll-mt-20">
           <h2 className="font-display font-bold mb-4">Ta routine</h2>
           <RoutinePanel routine={routine} />
         </section>
@@ -116,7 +142,11 @@ export default async function RapportPage({ params }: { params: Promise<{ id: st
 
   return (
     <div className="px-5 py-8 md:py-10 max-w-xl mx-auto">
-      <h1 className="font-display text-2xl font-extrabold mb-5">Ton rapport est prêt</h1>
+      <PageHeader
+        title="Ton rapport est prêt"
+        backHref="/app"
+        backLabel="Mes analyses"
+      />
       <LockedReportPreview
         analysisId={id}
         pointsCount={preview.points_count!}

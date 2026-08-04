@@ -1,6 +1,7 @@
 import { createServerClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { PageHeader } from "@/components/app/page-header";
 
 export default async function AdminPage() {
   const supabase = await createServerClient();
@@ -38,9 +39,8 @@ export default async function AdminPage() {
   ]);
 
   return (
-    <main className="px-5 py-10 max-w-2xl mx-auto">
-      <p className="font-mono text-[10px] uppercase tracking-wider text-accent mb-2">Admin</p>
-      <h1 className="font-display text-2xl font-extrabold mb-8">Vue d&apos;ensemble</h1>
+    <div className="px-5 py-10 max-w-2xl mx-auto">
+      <PageHeader title="Vue d'ensemble" subtitle="Admin MorphIndex" backHref="/app" />
 
       <div className="grid grid-cols-2 gap-3 mb-8">
         {[
@@ -91,6 +91,6 @@ export default async function AdminPage() {
           ))}
         </ul>
       </section>
-    </main>
+    </div>
   );
 }
