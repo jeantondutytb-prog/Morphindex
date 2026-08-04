@@ -26,25 +26,25 @@ Coûts = Frais Stripe + (nb_analyses × coût_API)
 
 Pour **95 % de marge** : `Prix ≥ Coûts / 0,05`
 
-## Prix recommandés (marge ≥ 95 %, tarif API standard)
+## Prix MorphIndex (config actuelle)
 
-| Formule | Prix affiché | Coût max estimé | Marge |
-|---------|--------------|-----------------|-------|
-| **Hebdomadaire** | **9,99 € / semaine** | ~1,15 € / mois | ~95 % |
-| **Annuel** *(recommandé)* | **49,90 € / an** | ~2,45 € / an | ~95 % |
-| **À vie** | **99,90 €** (paiement unique) | ~6,50 € sur ~4 ans d'usage intensif | ~95 % |
+| Formule | Prix affiché | Marge estimée | Note |
+|---------|--------------|---------------|------|
+| **Hebdomadaire** | **4,90 € / semaine** | ~93 % | Prix bas pour faciliter la conversion ; frais Stripe fixes plus lourds |
+| **Annuel** *(recommandé)* | **49,90 € / an** | ~95 % | Meilleure marge — 1 seul prélèvement Stripe |
+| **À vie** | **99,90 €** (paiement unique) | ~95 % | Rentable si usage ≤ ~2 analyses/mois pendant ~4 ans |
 
-### Pourquoi pas 4,90 € / semaine ?
+### Hebdo à 4,90 € — compromis conversion / marge
 
-À 4,90 €/sem, Stripe prélève **~1,28 €/mois** rien qu'en frais fixes (0,25 € × 4 prélèvements). Sur ~21 € de CA mensuel, ça représente **> 6 %** — impossible d'atteindre 95 % de marge avec l'hebdo à ce prix.
+À 4,90 €/sem, Stripe prélève **~1,28 €/mois** en frais fixes (0,25 € × ~4 prélèvements). Sur ~21 € de CA mensuel, la marge reste **~93 %** (API incluse) — légèrement sous l'objectif 95 %, mais le ticket d'entrée bas peut améliorer le taux de conversion.
 
-L'**annuel** est la formule la plus rentable : **1 seul prélèvement**, frais Stripe minimaux.
+L'**annuel** compense : **49,90 €/an** ≈ **4,16 €/mois** vs **~21 €/mois** en hebdo → bon levier pour pousser l'offre recommandée.
 
 ### Équivalents utiles pour le marketing
 
-- Hebdo 9,99 €/sem ≈ **43 €/mois** si l'utilisateur reste en hebdo
-- Annuel 49,90 € ≈ **4,16 €/mois** → argument fort vs hebdo
-- À vie 99,90 € = rentable si usage moyen ≤ ~2 analyses/mois pendant ~4 ans
+- Hebdo 4,90 €/sem ≈ **21 €/mois** · **~255 €/an** si l'utilisateur reste en hebdo
+- Annuel 49,90 € ≈ **4,16 €/mois** → économie ~**80 %** vs hebdo
+- À vie 99,90 € = 2 ans d'hebdo, puis gratuit
 
 ## Configuration Stripe (Dashboard)
 
@@ -54,7 +54,7 @@ Créer **3 produits** en mode test puis live, avec les montants **exactement** c
 
 - Type : **Abonnement récurrent**
 - Intervalle : **hebdomadaire**
-- Montant : **9,99 EUR**
+- Montant : **4,90 EUR**
 - Copier le **Price ID** → `STRIPE_PRICE_HEBDO`
 
 ### 2. MorphIndex Annuel

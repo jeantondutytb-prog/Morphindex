@@ -6,9 +6,9 @@ export const PRICE_IDS = {
 
 export type Formule = keyof typeof PRICE_IDS;
 
-/** Montants calibrés pour ~95 % de marge brute (API + Stripe, quota max). Voir docs/pricing-stripe.md */
+/** Voir docs/pricing-stripe.md pour le détail marge / Stripe */
 export const FORMULES: { id: Formule; label: string; price: string; period?: string; hint?: string; recommended?: boolean }[] = [
-  { id: "hebdo", label: "Hebdomadaire", price: "9,99 €", period: "/ semaine" },
+  { id: "hebdo", label: "Hebdomadaire", price: "4,90 €", period: "/ semaine" },
   {
     id: "annuel",
     label: "Annuel",
