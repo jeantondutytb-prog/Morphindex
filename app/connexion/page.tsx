@@ -23,6 +23,7 @@ export default function ConnexionPage() {
       setLoading(false);
       return;
     }
+    router.refresh();
     router.push("/app");
   }
 

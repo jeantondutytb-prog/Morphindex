@@ -22,7 +22,9 @@ export async function middleware(request: NextRequest) {
     },
   );
 
-  const { data: { user } } = await supabase.auth.getUser();
+  // getSession = lecture locale du JWT (rapide). getUser() reste dans les Server Components.
+  const { data: { session } } = await supabase.auth.getSession();
+  const user = session?.user ?? null;
 
   const needsAuth = PROTECTED.some((p) => request.nextUrl.pathname.startsWith(p));
   if (needsAuth && !user) {

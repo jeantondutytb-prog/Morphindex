@@ -1,4 +1,3 @@
-import { createServerClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { LockedReportPreview } from "@/components/report/locked-preview";
 import { ScoresPanel } from "@/components/report/scores";
@@ -6,6 +5,8 @@ import { RoutinePanel } from "@/components/report/routine";
 import { PageHeader } from "@/components/app/page-header";
 import { AppContainer } from "@/components/app/app-container";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { createServerClient } from "@/lib/supabase/server";
+import { requireAppSession } from "@/lib/auth/session";
 import Link from "next/link";
 import type { AXES } from "@/lib/ai/analysis-schema";
 
@@ -33,28 +34,21 @@ async function getPreview(id: string, userId: string) {
 
 export default async function RapportPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const supabase = await createServerClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/connexion");
-
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("is_admin")
-    .eq("id", user.id)
-    .single();
+  const { user, isAdmin } = await requireAppSession();
 
   const adminDb = createAdminClient();
 
   let analysis;
-  if (profile?.is_admin) {
+  if (isAdmin) {
     const { data } = await adminDb.from("analyses").select("*").eq("id", id).eq("user_id", user.id).single();
     analysis = data;
   } else {
+    const supabase = await createServerClient();
     const { data } = await supabase.from("analyses").select("*").eq("id", id).single();
     analysis = data;
   }
 
-  const showFull = analysis?.unlocked || profile?.is_admin;
+  const showFull = analysis?.unlocked || isAdmin;
 
   if (analysis && showFull && analysis.status === "done") {
     const scores = analysis.scores as Scores;
@@ -75,7 +69,7 @@ export default async function RapportPage({ params }: { params: Promise<{ id: st
           backLabel="Mes analyses"
         />
 
-        {profile?.is_admin && !analysis.unlocked && (
+        {isAdmin && !analysis.unlocked && (
           <p className="font-mono text-[10px] uppercase text-accent mb-4 -mt-4">Vue admin</p>
         )}
 
