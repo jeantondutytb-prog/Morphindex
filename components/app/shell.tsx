@@ -11,6 +11,8 @@ const NAV = [
   { href: "/app/compte", label: "Compte", short: "Compte", match: (p: string) => p.startsWith("/app/compte") },
 ] as const;
 
+const SHELL_INNER = "max-w-6xl mx-auto w-full px-5 lg:px-8";
+
 export function AppShell({
   children,
   email,
@@ -37,34 +39,26 @@ export function AppShell({
   return (
     <div className="min-h-screen flex flex-col pb-20 md:pb-0">
       <header className="border-b border-line bg-surface sticky top-0 z-40">
-        <div className="max-w-2xl mx-auto px-5 h-14 flex items-center justify-between gap-3">
-          <Link href="/app" className="font-display text-lg font-extrabold shrink-0">
+        <div className={`${SHELL_INNER} h-14 lg:h-16 flex items-center justify-between gap-6`}>
+          <Link href="/app" className="font-display text-lg lg:text-xl font-extrabold shrink-0">
             Morph<span className="text-accent">Index</span>
           </Link>
-          <nav className="hidden md:flex items-center gap-1 text-sm">
-            {NAV.slice(0, 3).map(({ href, label, match }) => (
+          <nav className="hidden md:flex items-center gap-1 lg:gap-2 text-sm lg:text-[15px] flex-1 justify-center">
+            {NAV.map(({ href, label, match }) => (
               <Link
                 key={href}
                 href={href}
-                className={`px-3 py-1.5 rounded-lg transition ${
+                className={`px-3 lg:px-4 py-2 rounded-lg transition ${
                   isActive(match) ? "text-text bg-line/60" : "text-muted hover:text-text"
                 }`}
               >
                 {label}
               </Link>
             ))}
-            <Link
-              href="/app/compte"
-              className={`px-3 py-1.5 rounded-lg transition ${
-                pathname.startsWith("/app/compte") ? "text-text bg-line/60" : "text-muted hover:text-text"
-              }`}
-            >
-              Compte
-            </Link>
             {isAdmin && (
               <Link
                 href="/app/admin"
-                className={`px-3 py-1.5 rounded-lg transition ${
+                className={`px-3 lg:px-4 py-2 rounded-lg transition ${
                   pathname.startsWith("/app/admin") ? "text-accent bg-accent/10" : "text-muted hover:text-accent"
                 }`}
               >
@@ -72,21 +66,23 @@ export function AppShell({
               </Link>
             )}
           </nav>
-          <button
-            type="button"
-            onClick={signOut}
-            className="hidden md:block text-xs text-dim hover:text-muted transition shrink-0"
-          >
-            Déconnexion
-          </button>
+          <div className="hidden md:flex items-center gap-4 shrink-0">
+            <span className="text-xs text-dim max-w-[180px] truncate hidden lg:block">{email}</span>
+            <button
+              type="button"
+              onClick={signOut}
+              className="text-sm text-muted hover:text-text transition"
+            >
+              Déconnexion
+            </button>
+          </div>
         </div>
       </header>
 
-      <div className="flex-1">{children}</div>
+      <div className="flex-1 w-full">{children}</div>
 
-      {/* Barre fixe mobile — toujours visible */}
       <nav className="md:hidden fixed bottom-0 inset-x-0 z-50 border-t border-line bg-surface/95 backdrop-blur-sm">
-        <div className="max-w-2xl mx-auto grid grid-cols-4 h-16">
+        <div className={`${SHELL_INNER} grid grid-cols-4 h-16`}>
           {NAV.map(({ href, short, match }) => (
             <Link
               key={href}
@@ -104,16 +100,10 @@ export function AppShell({
         </div>
       </nav>
 
-      <footer className="hidden md:block border-t border-line px-5 py-4">
-        <div className="max-w-2xl mx-auto flex flex-wrap items-center justify-between gap-2 text-xs text-dim">
-          <span className="truncate max-w-[200px]">{email}</span>
-          <button
-            type="button"
-            onClick={signOut}
-            className="text-muted hover:text-text transition"
-          >
-            Déconnexion
-          </button>
+      <footer className="hidden md:block border-t border-line">
+        <div className={`${SHELL_INNER} py-4 flex items-center justify-between gap-2 text-xs text-dim`}>
+          <span className="truncate">{email}</span>
+          <p>MorphIndex · Analyse faciale</p>
         </div>
       </footer>
     </div>

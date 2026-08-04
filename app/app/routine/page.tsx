@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { RoutinePanel } from "@/components/report/routine";
 import { PageHeader } from "@/components/app/page-header";
+import { AppContainer } from "@/components/app/app-container";
 import { getLatestAccessibleAnalysis } from "@/lib/app/analyses";
 
 export default async function RoutinePage() {
@@ -21,14 +22,14 @@ export default async function RoutinePage() {
 
   if (!analysis?.routine) {
     return (
-      <div className="px-5 py-10 max-w-2xl mx-auto">
+      <AppContainer narrow>
         <PageHeader
           title="Ma routine"
           subtitle="Aucune routine disponible pour l'instant."
           backHref="/app"
           backLabel="Mes analyses"
         />
-        <div className="rounded-xl border border-line bg-surface p-6 text-center">
+        <div className="rounded-xl border border-line bg-surface p-8 text-center">
           <p className="text-muted mb-4">
             Débloque un rapport ou lance une analyse pour obtenir ta routine personnalisée.
           </p>
@@ -39,7 +40,7 @@ export default async function RoutinePage() {
             Lancer une analyse
           </Link>
         </div>
-      </div>
+      </AppContainer>
     );
   }
 
@@ -51,7 +52,7 @@ export default async function RoutinePage() {
   });
 
   return (
-    <div className="px-5 py-10 max-w-2xl mx-auto">
+    <AppContainer>
       <PageHeader
         title="Ma routine"
         subtitle={`Plan d'action à partir du ${date} — semaines 1 à 4`}
@@ -59,19 +60,14 @@ export default async function RoutinePage() {
         backLabel="Rapport complet"
       />
 
-      <section className="rounded-xl border border-line bg-surface p-5 mb-6">
-        <p className="text-sm text-dim mb-6">
+      <section className="rounded-xl border border-line bg-surface p-6 lg:p-8">
+        <p className="text-sm text-dim mb-8 max-w-2xl">
           Suis ces étapes dans l&apos;ordre. Les actifs forts s&apos;introduisent progressivement.
         </p>
-        <RoutinePanel routine={routine} />
+        <div className="lg:columns-2 lg:gap-10 [&>*]:break-inside-avoid">
+          <RoutinePanel routine={routine} />
+        </div>
       </section>
-
-      <Link
-        href="/app"
-        className="text-sm text-accent underline"
-      >
-        ← Mes analyses
-      </Link>
-    </div>
+    </AppContainer>
   );
 }

@@ -5,6 +5,7 @@ import { getAnalysesList } from "@/lib/app/analyses";
 import { DashboardHero } from "@/components/app/dashboard-hero";
 import { AnalysisCard } from "@/components/app/analysis-card";
 import { PageHeader } from "@/components/app/page-header";
+import { AppContainer } from "@/components/app/app-container";
 
 export default async function AppPage() {
   const supabase = await createServerClient();
@@ -27,17 +28,19 @@ export default async function AppPage() {
   const history = analyses.filter((a) => a.id !== latest?.id);
 
   return (
-    <div className="px-5 py-10 max-w-2xl mx-auto">
+    <AppContainer>
       <PageHeader title="Mes analyses" subtitle="Historique et accès à tes rapports" />
 
-      <DashboardHero latest={latest} isAdmin={isAdmin} />
+      <div className="mb-10">
+        <DashboardHero latest={latest} isAdmin={isAdmin} />
+      </div>
 
       {history.length > 0 && (
         <section>
-          <h2 className="font-mono text-[10px] uppercase tracking-wider text-dim mb-3">
+          <h2 className="font-mono text-[10px] uppercase tracking-wider text-dim mb-4">
             Historique
           </h2>
-          <ul className="space-y-3">
+          <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
             {history.map((a) => (
               <li key={a.id}>
                 <AnalysisCard analysis={a} isAdmin={isAdmin} />
@@ -55,6 +58,6 @@ export default async function AppPage() {
           pour lancer ton analyse.
         </p>
       )}
-    </div>
+    </AppContainer>
   );
 }

@@ -4,6 +4,7 @@ import { LockedReportPreview } from "@/components/report/locked-preview";
 import { ScoresPanel } from "@/components/report/scores";
 import { RoutinePanel } from "@/components/report/routine";
 import { PageHeader } from "@/components/app/page-header";
+import { AppContainer } from "@/components/app/app-container";
 import { createAdminClient } from "@/lib/supabase/admin";
 import Link from "next/link";
 import type { AXES } from "@/lib/ai/analysis-schema";
@@ -66,7 +67,7 @@ export default async function RapportPage({ params }: { params: Promise<{ id: st
     });
 
     return (
-      <div className="px-5 py-10 max-w-2xl mx-auto">
+      <AppContainer>
         <PageHeader
           title="Ton rapport"
           subtitle={date}
@@ -93,41 +94,48 @@ export default async function RapportPage({ params }: { params: Promise<{ id: st
           </Link>
         </div>
 
-        <div className="flex items-baseline gap-4 tnum mb-2">
-          <span className="font-display text-5xl font-extrabold text-num-idle">
-            {Number(analysis.indice_actuel).toFixed(1).replace(".", ",")}
-          </span>
-          <span className="text-2xl text-num-idle">→</span>
-          <span className="font-display text-5xl font-extrabold text-accent">
-            {Number(analysis.indice_atteignable).toFixed(1).replace(".", ",")}
-          </span>
+        <div className="lg:grid lg:grid-cols-[320px_1fr] lg:gap-10 lg:items-start">
+          <aside className="lg:sticky lg:top-20 space-y-6 mb-8 lg:mb-0">
+            <div className="rounded-xl border border-line bg-surface p-6">
+              <div className="flex items-baseline gap-3 tnum mb-3">
+                <span className="font-display text-4xl lg:text-5xl font-extrabold text-num-idle">
+                  {Number(analysis.indice_actuel).toFixed(1).replace(".", ",")}
+                </span>
+                <span className="text-xl text-dim">→</span>
+                <span className="font-display text-4xl lg:text-5xl font-extrabold text-accent">
+                  {Number(analysis.indice_atteignable).toFixed(1).replace(".", ",")}
+                </span>
+              </div>
+              <p className="text-sm text-dim">
+                Potentiel <strong className="text-muted">si tu suis la routine</strong> — aucun résultat garanti.
+              </p>
+            </div>
+            <section id="scores" className="scroll-mt-20">
+              <h2 className="font-display font-bold mb-4">Sous-scores</h2>
+              <ScoresPanel scores={scores} />
+            </section>
+          </aside>
+
+          <div className="space-y-8">
+            <section id="points" className="scroll-mt-20 rounded-xl border border-line bg-surface p-6">
+              <h2 className="font-display font-bold mb-4">Points d&apos;amélioration</h2>
+              <ul className="space-y-3">
+                {points.map((p, i) => (
+                  <li key={i} className="flex items-start gap-3 text-sm lg:text-base">
+                    <ImpactBadge impact={p.impact} />
+                    <span className="text-muted">{p.libelle}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+
+            <section id="routine" className="scroll-mt-20 rounded-xl border border-line bg-surface p-6">
+              <h2 className="font-display font-bold mb-4">Ta routine</h2>
+              <RoutinePanel routine={routine} />
+            </section>
+          </div>
         </div>
-        <p className="text-sm text-dim mb-8">
-          Ton indice atteignable est un potentiel <strong className="text-muted">si tu suis la routine</strong>, pas une prédiction. Aucun résultat physique n&apos;est garanti.
-        </p>
-
-        <section id="scores" className="mb-8 scroll-mt-20">
-          <h2 className="font-display font-bold mb-4">Sous-scores</h2>
-          <ScoresPanel scores={scores} />
-        </section>
-
-        <section id="points" className="mb-8 scroll-mt-20">
-          <h2 className="font-display font-bold mb-4">Points d&apos;amélioration</h2>
-          <ul className="space-y-2">
-            {points.map((p, i) => (
-              <li key={i} className="flex items-center gap-3 text-sm">
-                <ImpactBadge impact={p.impact} />
-                <span className="text-muted">{p.libelle}</span>
-              </li>
-            ))}
-          </ul>
-        </section>
-
-        <section id="routine" className="scroll-mt-20">
-          <h2 className="font-display font-bold mb-4">Ta routine</h2>
-          <RoutinePanel routine={routine} />
-        </section>
-      </div>
+      </AppContainer>
     );
   }
 
@@ -141,7 +149,7 @@ export default async function RapportPage({ params }: { params: Promise<{ id: st
   }
 
   return (
-    <div className="px-5 py-8 md:py-10 max-w-xl mx-auto">
+    <AppContainer narrow>
       <PageHeader
         title="Ton rapport est prêt"
         backHref="/app"
@@ -153,7 +161,7 @@ export default async function RapportPage({ params }: { params: Promise<{ id: st
         premierPointLibelle={preview.premier_point_libelle!}
         blurredUrl={preview.blurred_url}
       />
-    </div>
+    </AppContainer>
   );
 }
 

@@ -2,6 +2,7 @@ import { createServerClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { PageHeader } from "@/components/app/page-header";
+import { AppContainer } from "@/components/app/app-container";
 
 export default async function AdminPage() {
   const supabase = await createServerClient();
@@ -39,10 +40,10 @@ export default async function AdminPage() {
   ]);
 
   return (
-    <div className="px-5 py-10 max-w-2xl mx-auto">
+    <AppContainer>
       <PageHeader title="Vue d'ensemble" subtitle="Admin MorphIndex" backHref="/app" />
 
-      <div className="grid grid-cols-2 gap-3 mb-8">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {[
           { label: "Utilisateurs", value: usersCount ?? 0 },
           { label: "Analyses", value: analysesCount ?? 0 },
@@ -56,7 +57,8 @@ export default async function AdminPage() {
         ))}
       </div>
 
-      <section className="mb-8">
+      <div className="lg:grid lg:grid-cols-2 lg:gap-6">
+      <section className="mb-8 lg:mb-0">
         <h2 className="font-display font-bold mb-3">Dernières analyses</h2>
         <ul className="rounded-xl border border-line bg-surface divide-y divide-line">
           {(recentAnalyses ?? []).length === 0 && (
@@ -91,6 +93,7 @@ export default async function AdminPage() {
           ))}
         </ul>
       </section>
-    </div>
+      </div>
+    </AppContainer>
   );
 }
