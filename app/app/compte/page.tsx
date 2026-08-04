@@ -35,10 +35,10 @@ export default async function ComptePage() {
 
   return (
     <AppContainer>
-      <PageHeader title="Mon compte" subtitle="Abonnement et quota d'analyses" />
+      <PageHeader kicker="Compte" title="Mon compte" subtitle="Abonnement et quota d'analyses" />
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      <section className="rounded-2xl border border-line bg-surface p-5 lg:p-6">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 stagger-in">
+      <section className="rounded-2xl border border-line bg-surface p-5 lg:p-6 hover:border-line-strong transition-colors">
         <p className="font-mono text-[10px] uppercase tracking-wider text-dim mb-3">Identité</p>
         <p className="text-text font-medium">{profile?.email ?? user.email}</p>
         <p className="text-sm text-dim mt-1">
@@ -47,7 +47,7 @@ export default async function ComptePage() {
         </p>
       </section>
 
-      <section className="rounded-2xl border border-line bg-surface p-5 lg:p-6">
+      <section className="rounded-2xl border border-line bg-surface p-5 lg:p-6 hover:border-line-strong transition-colors">
         <p className="font-mono text-[10px] uppercase tracking-wider text-dim mb-3">Abonnement</p>
         {hasActiveSub ? (
           <>
@@ -74,7 +74,7 @@ export default async function ComptePage() {
         )}
       </section>
 
-      <section className="rounded-xl border border-line bg-surface p-5 lg:p-6 sm:col-span-2 lg:col-span-1">
+      <section className="rounded-2xl border border-line bg-surface p-5 lg:p-6 sm:col-span-2 lg:col-span-1 hover:border-line-strong transition-colors">
         <p className="font-mono text-[10px] uppercase tracking-wider text-dim mb-3">Quota analyses</p>
         {isAdmin ? (
           <>
@@ -100,13 +100,13 @@ export default async function ComptePage() {
       <div className="flex flex-wrap gap-3 mt-8">
         <Link
           href="/app"
-          className="rounded-lg border border-line px-5 py-2.5 text-sm text-muted hover:border-accent/30 transition"
+          className="rounded-xl border border-line px-5 py-2.5 text-sm text-muted hover:border-accent/30 transition"
         >
           ← Mes analyses
         </Link>
         <Link
           href="/app/photo"
-          className="rounded-lg bg-accent px-5 py-2.5 text-sm font-bold text-accent-ink hover:brightness-110 transition"
+          className="rounded-xl bg-accent px-5 py-2.5 text-sm font-bold text-accent-ink hover:brightness-110 transition cta-shine overflow-hidden relative"
         >
           Nouvelle analyse
         </Link>

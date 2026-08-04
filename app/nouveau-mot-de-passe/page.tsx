@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { newPasswordSchema } from "@/lib/auth/new-password-input";
+import { AuthLayout } from "@/components/auth/auth-layout";
+import { AuthInput, AuthButton, AuthError, AuthFooterLink } from "@/components/ui/auth-field";
 
 export default function NouveauMotDePassePage() {
   const router = useRouter();
@@ -48,73 +50,49 @@ export default function NouveauMotDePassePage() {
 
   if (!ready) {
     return (
-      <main className="min-h-screen flex items-center justify-center px-5">
-        <p className="text-sm text-muted">Chargement…</p>
-      </main>
+      <AuthLayout title="Chargement…">
+        <p className="text-sm text-muted -mt-2">Vérification du lien…</p>
+      </AuthLayout>
     );
   }
 
   if (!hasSession) {
     return (
-      <main className="min-h-screen flex flex-col items-center justify-center px-5 py-12">
-        <div className="w-full max-w-md">
-          <Link href="/" className="font-display text-xl font-extrabold mb-8 inline-block">
-            Morph<span className="text-accent">Index</span>
-          </Link>
-          <h1 className="font-display text-2xl font-extrabold mb-4">Lien invalide ou expiré</h1>
-          <p className="text-sm text-muted mb-6">
-            Ouvre le lien reçu par email, ou demande-en un nouveau.
-          </p>
-          <Link
-            href="/mot-de-passe-oublie"
-            className="text-sm text-accent underline"
-          >
-            Mot de passe oublié
-          </Link>
-        </div>
-      </main>
+      <AuthLayout title="Lien invalide ou expiré">
+        <p className="text-sm text-muted leading-relaxed mb-6 -mt-2">
+          Ouvre le lien reçu par email, ou demande-en un nouveau.
+        </p>
+        <Link
+          href="/mot-de-passe-oublie"
+          className="inline-flex w-full items-center justify-center rounded-xl bg-accent px-6 py-3.5 font-bold text-accent-ink hover:brightness-110 transition"
+        >
+          Mot de passe oublié →
+        </Link>
+      </AuthLayout>
     );
   }
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center px-5 py-12">
-      <div className="w-full max-w-md">
-        <Link href="/" className="font-display text-xl font-extrabold mb-8 inline-block">
-          Morph<span className="text-accent">Index</span>
-        </Link>
-        <h1 className="font-display text-2xl font-extrabold mb-2">Nouveau mot de passe</h1>
-        <p className="text-sm text-muted mb-6">Choisis un mot de passe d&apos;au moins 10 caractères.</p>
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label htmlFor="password" className="block text-sm text-muted mb-1">
-              Nouveau mot de passe (10 caractères min.)
-            </label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              minLength={10}
-              autoComplete="new-password"
-              className="w-full rounded-lg border border-line bg-surface px-4 py-3 text-text outline-none focus:border-accent/50"
-            />
-          </div>
-          {error && <p className="text-sm text-muted">{error}</p>}
-          <button
-            type="submit"
-            disabled={loading || password.length < 10}
-            className="w-full rounded-lg bg-accent px-6 py-3.5 font-bold text-accent-ink hover:brightness-110 transition disabled:opacity-40"
-          >
-            {loading ? "Enregistrement…" : "Enregistrer"}
-          </button>
-        </form>
-
-        <p className="mt-6 text-sm text-dim">
-          <Link href="/connexion" className="text-accent underline">Retour à la connexion</Link>
-        </p>
-      </div>
-    </main>
+    <AuthLayout title="Nouveau mot de passe" subtitle="Choisis un mot de passe d'au moins 10 caractères.">
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <AuthInput
+          label="Nouveau mot de passe (10 caractères min.)"
+          type="password"
+          name="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          minLength={10}
+          autoComplete="new-password"
+        />
+        <AuthError message={error} />
+        <AuthButton loading={loading} disabled={password.length < 10}>
+          {loading ? "Enregistrement…" : "Enregistrer"}
+        </AuthButton>
+      </form>
+      <AuthFooterLink>
+        <Link href="/connexion" className="text-accent hover:brightness-110 transition">Retour à la connexion</Link>
+      </AuthFooterLink>
+    </AuthLayout>
   );
 }

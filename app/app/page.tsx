@@ -37,10 +37,15 @@ export default async function AppPage() {
       />
 
       {history.length > 0 && (
-        <section className="mt-10 lg:mt-12">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="font-display font-bold">Historique</h2>
-            <span className="font-mono text-[10px] text-dim uppercase">{history.length} analyse(s)</span>
+        <section className="mt-10 lg:mt-14">
+          <div className="flex items-center justify-between mb-5">
+            <div>
+              <p className="font-mono text-[10px] uppercase tracking-[.14em] text-dim mb-1">Historique</p>
+              <h2 className="font-display text-xl font-extrabold">Analyses précédentes</h2>
+            </div>
+            <span className="font-mono text-[10px] text-dim uppercase border border-line rounded-full px-2.5 py-1">
+              {history.length} analyse(s)
+            </span>
           </div>
           <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
             {history.map((a) => (

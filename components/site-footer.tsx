@@ -3,6 +3,7 @@ import Link from "next/link";
 export function SiteFooter() {
   return (
     <footer className="border-t border-line px-5 py-10 md:px-11">
+      <div className="max-w-6xl mx-auto">
       <p className="text-sm text-dim mb-4">
         MorphIndex n&apos;est pas un dispositif médical, ne fournit pas de diagnostic et ne garantit aucun résultat physique.
       </p>
@@ -13,6 +14,7 @@ export function SiteFooter() {
         <a href="mailto:contact@morphindex.com" className="hover:text-text transition">Contact</a>
       </nav>
       <p className="text-xs text-dim">© {new Date().getFullYear()} MorphIndex</p>
+      </div>
     </footer>
   );
 }

@@ -310,6 +310,10 @@ body { font-family: var(--font-sans); }
   25% { transform: translateX(120%); }
 }
 
+.safe-area-pb {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
 .animate-tab-in {
   animation: tab-in 0.35s cubic-bezier(0.22, 0.61, 0.36, 1) both;
 }

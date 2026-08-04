@@ -12,7 +12,7 @@ export function AnalysisCard({ analysis, isAdmin }: { analysis: AnalysisListItem
   return (
     <Link
       href={`/app/rapport/${analysis.id}`}
-      className="block rounded-2xl border border-line bg-surface p-5 lg:p-6 hover:border-accent/30 hover:shadow-[0_0_0_1px_rgba(0,229,160,.08)] transition group"
+      className="block rounded-2xl border border-line bg-surface p-5 lg:p-6 hover:border-accent/30 hover:-translate-y-0.5 hover:shadow-[0_12px_40px_rgba(0,0,0,.2)] transition-all duration-300 group"
     >
       <div className="flex items-start justify-between gap-3 mb-3">
         <div>
@@ -25,10 +25,10 @@ export function AnalysisCard({ analysis, isAdmin }: { analysis: AnalysisListItem
       </div>
 
       {accessible && analysis.indice_actuel != null && analysis.status === "done" && (
-        <p className="tnum font-display text-xl font-bold mb-2">
+        <p className="tnum font-display text-2xl font-extrabold mb-2 tracking-[-.02em]">
           {Number(analysis.indice_actuel).toFixed(1).replace(".", ",")}
-          <span className="text-dim font-normal mx-1">→</span>
-          <span className="text-accent">
+          <span className="text-dim font-normal mx-1.5 text-lg">→</span>
+          <span className="text-accent score-glow">
             {Number(analysis.indice_atteignable).toFixed(1).replace(".", ",")}
           </span>
         </p>
@@ -44,8 +44,9 @@ export function AnalysisCard({ analysis, isAdmin }: { analysis: AnalysisListItem
       )}
 
       {analysis.status === "done" && (
-        <p className="mt-3 text-xs text-accent opacity-0 group-hover:opacity-100 transition">
-          {accessible ? "Voir le rapport →" : "Débloquer →"}
+        <p className="mt-4 inline-flex items-center gap-1 text-xs text-accent opacity-70 group-hover:opacity-100 transition">
+          {accessible ? "Voir le rapport" : "Débloquer"}
+          <span className="transition-transform group-hover:translate-x-0.5">→</span>
         </p>
       )}
     </Link>
@@ -55,15 +56,16 @@ export function AnalysisCard({ analysis, isAdmin }: { analysis: AnalysisListItem
 function StatusBadge({ unlocked, pending }: { unlocked: boolean; pending: boolean }) {
   if (pending) {
     return (
-      <span className="font-mono text-[9px] uppercase tracking-wider border border-line text-dim px-2 py-0.5 rounded shrink-0">
+      <span className="font-mono text-[9px] uppercase tracking-wider border border-line text-dim px-2 py-0.5 rounded-full shrink-0 flex items-center gap-1">
+        <span className="size-1.5 rounded-full bg-dim animate-pulse" />
         en cours
       </span>
     );
   }
   return (
     <span
-      className={`font-mono text-[9px] uppercase tracking-wider border px-2 py-0.5 rounded shrink-0 ${
-        unlocked ? "border-accent/30 text-accent" : "border-line-strong text-dim"
+      className={`font-mono text-[9px] uppercase tracking-wider border px-2 py-0.5 rounded-full shrink-0 ${
+        unlocked ? "border-accent/30 text-accent bg-accent/8" : "border-line-strong text-dim"
       }`}
     >
       {unlocked ? "débloqué" : "verrouillé"}

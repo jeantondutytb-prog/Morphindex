@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { AuthLayout } from "@/components/auth/auth-layout";
+import { AuthInput, AuthButton, AuthCheckbox, AuthError, AuthFooterLink } from "@/components/ui/auth-field";
 
 export default function InscriptionPage() {
   const router = useRouter();
@@ -47,92 +49,69 @@ export default function InscriptionPage() {
 
   if (emailSent) {
     return (
-      <main className="min-h-screen flex flex-col items-center justify-center px-5 py-12">
-        <div className="w-full max-w-md">
-          <Link href="/" className="font-display text-xl font-extrabold mb-8 inline-block">
-            Morph<span className="text-accent">Index</span>
-          </Link>
-          <h1 className="font-display text-2xl font-extrabold mb-4">Vérifie ton email</h1>
-          <p className="text-sm text-muted leading-relaxed mb-6">
-            Un lien de confirmation vient d&apos;être envoyé à <span className="text-text">{email}</span>.
-            Clique dessus pour activer ton compte, puis connecte-toi pour continuer l&apos;onboarding.
-          </p>
-          <Link href="/connexion" className="text-sm text-accent underline">Aller à la connexion</Link>
-        </div>
-      </main>
+      <AuthLayout title="Vérifie ton email">
+        <p className="text-sm text-muted leading-relaxed mb-6 -mt-2">
+          Un lien de confirmation vient d&apos;être envoyé à{" "}
+          <span className="text-text font-medium">{email}</span>.
+          Clique dessus pour activer ton compte, puis connecte-toi pour continuer l&apos;onboarding.
+        </p>
+        <Link
+          href="/connexion"
+          className="inline-flex w-full items-center justify-center rounded-xl bg-accent px-6 py-3.5 font-bold text-accent-ink hover:brightness-110 transition"
+        >
+          Aller à la connexion →
+        </Link>
+      </AuthLayout>
     );
   }
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center px-5 py-12">
-      <div className="w-full max-w-md">
-        <Link href="/" className="font-display text-xl font-extrabold mb-8 inline-block">
-          Morph<span className="text-accent">Index</span>
-        </Link>
-        <h1 className="font-display text-2xl font-extrabold mb-6">Créer un compte</h1>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label htmlFor="email" className="block text-sm text-muted mb-1">Email</label>
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="w-full rounded-lg border border-line bg-surface px-4 py-3 text-text outline-none focus:border-accent/50"
-            />
-          </div>
-          <div>
-            <label htmlFor="password" className="block text-sm text-muted mb-1">Mot de passe (10 caractères min.)</label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              minLength={10}
-              className="w-full rounded-lg border border-line bg-surface px-4 py-3 text-text outline-none focus:border-accent/50"
-            />
-          </div>
-          <label className="flex items-start gap-3 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={ageConfirmed}
-              onChange={(e) => setAgeConfirmed(e.target.checked)}
-              className="mt-1 accent-accent"
-            />
-            <span className="text-sm text-muted">
-              J&apos;ai 18 ans ou plus et je suis la personne sur les photos.
-            </span>
-          </label>
-          <label className="flex items-start gap-3 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={termsAccepted}
-              onChange={(e) => setTermsAccepted(e.target.checked)}
-              className="mt-1 accent-accent"
-            />
-            <span className="text-sm text-muted">
-              J&apos;accepte les{" "}
-              <Link href="/conditions" className="text-accent underline">CGU</Link>
-              {" "}et la{" "}
-              <Link href="/confidentialite" className="text-accent underline">politique de confidentialité</Link>.
-            </span>
-          </label>
-          {error && <p className="text-sm text-muted">{error}</p>}
-          <button
-            type="submit"
-            disabled={!canSubmit || loading}
-            className="w-full rounded-lg bg-accent px-6 py-3.5 font-bold text-accent-ink hover:brightness-110 transition disabled:opacity-40"
-          >
-            {loading ? "Création…" : "Créer mon compte"}
-          </button>
-        </form>
-        <p className="mt-6 text-sm text-dim">
-          Déjà inscrit ?{" "}
-          <Link href="/connexion" className="text-accent underline">Se connecter</Link>
-        </p>
-      </div>
-    </main>
+    <AuthLayout
+      title="Créer un compte"
+      subtitle="3 minutes pour ton premier indice. Photo supprimée après analyse."
+    >
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <AuthInput
+          label="Email"
+          type="email"
+          name="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+          autoComplete="email"
+        />
+        <AuthInput
+          label="Mot de passe (10 caractères min.)"
+          type="password"
+          name="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          minLength={10}
+          autoComplete="new-password"
+        />
+
+        <div className="space-y-3 pt-1">
+          <AuthCheckbox checked={ageConfirmed} onChange={setAgeConfirmed}>
+            J&apos;ai 18 ans ou plus et je suis la personne sur les photos.
+          </AuthCheckbox>
+          <AuthCheckbox checked={termsAccepted} onChange={setTermsAccepted}>
+            J&apos;accepte les{" "}
+            <Link href="/conditions" className="text-accent hover:brightness-110 transition">CGU</Link>
+            {" "}et la{" "}
+            <Link href="/confidentialite" className="text-accent hover:brightness-110 transition">politique de confidentialité</Link>.
+          </AuthCheckbox>
+        </div>
+
+        <AuthError message={error} />
+        <AuthButton loading={loading} disabled={!canSubmit}>
+          {loading ? "Création…" : "Créer mon compte"}
+        </AuthButton>
+      </form>
+      <AuthFooterLink>
+        Déjà inscrit ?{" "}
+        <Link href="/connexion" className="text-accent hover:brightness-110 transition">Se connecter</Link>
+      </AuthFooterLink>
+    </AuthLayout>
   );
 }

@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
+import { AuthLayout } from "@/components/auth/auth-layout";
+import { AuthInput, AuthButton, AuthError, AuthFooterLink } from "@/components/ui/auth-field";
 
 export default function ConnexionPage() {
   const router = useRouter();
@@ -27,54 +29,40 @@ export default function ConnexionPage() {
   }
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center px-5 py-12">
-      <div className="w-full max-w-md">
-        <Link href="/" className="font-display text-xl font-extrabold mb-8 inline-block">
-          Morph<span className="text-accent">Index</span>
-        </Link>
-        <h1 className="font-display text-2xl font-extrabold mb-6">Connexion</h1>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label htmlFor="email" className="block text-sm text-muted mb-1">Email</label>
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="w-full rounded-lg border border-line bg-surface px-4 py-3 text-text outline-none focus:border-accent/50"
-            />
-          </div>
-          <div>
-            <label htmlFor="password" className="block text-sm text-muted mb-1">Mot de passe</label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="w-full rounded-lg border border-line bg-surface px-4 py-3 text-text outline-none focus:border-accent/50"
-            />
-          </div>
-          <p className="text-right">
-            <Link href="/mot-de-passe-oublie" className="text-sm text-accent underline">
+    <AuthLayout title="Connexion" subtitle="Accède à ton dashboard et tes rapports.">
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <AuthInput
+          label="Email"
+          type="email"
+          name="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+          autoComplete="email"
+        />
+        <div>
+          <AuthInput
+            label="Mot de passe"
+            type="password"
+            name="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            autoComplete="current-password"
+          />
+          <p className="text-right mt-2">
+            <Link href="/mot-de-passe-oublie" className="text-sm text-accent hover:brightness-110 transition">
               Mot de passe oublié ?
             </Link>
           </p>
-          {error && <p className="text-sm text-muted">{error}</p>}
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full rounded-lg bg-accent px-6 py-3.5 font-bold text-accent-ink hover:brightness-110 transition disabled:opacity-40"
-          >
-            {loading ? "Connexion…" : "Se connecter"}
-          </button>
-        </form>
-        <p className="mt-6 text-sm text-dim">
-          Pas encore de compte ?{" "}
-          <Link href="/inscription" className="text-accent underline">S&apos;inscrire</Link>
-        </p>
-      </div>
-    </main>
+        </div>
+        <AuthError message={error} />
+        <AuthButton loading={loading}>{loading ? "Connexion…" : "Se connecter"}</AuthButton>
+      </form>
+      <AuthFooterLink>
+        Pas encore de compte ?{" "}
+        <Link href="/inscription" className="text-accent hover:brightness-110 transition">S&apos;inscrire</Link>
+      </AuthFooterLink>
+    </AuthLayout>
   );
 }

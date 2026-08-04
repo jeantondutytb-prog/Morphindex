@@ -77,8 +77,16 @@ export function OnboardingSteps() {
   }
 
   return (
-    <div className="w-full max-w-lg mx-auto">
-      <div className="font-mono text-[10px] text-dim mb-6">{step}/5</div>
+    <div className="w-full">
+      <div className="flex items-center gap-3 mb-8">
+        <div className="flex-1 h-1 bg-line rounded-full overflow-hidden">
+          <div
+            className="h-full bg-accent rounded-full transition-all duration-500 ease-out"
+            style={{ width: `${(step / 5) * 100}%` }}
+          />
+        </div>
+        <span className="font-mono text-[10px] text-dim shrink-0">{step}/5</span>
+      </div>
 
       {step === 1 && (
         <Step title="Quel est ton objectif principal ?">
@@ -88,7 +96,7 @@ export function OnboardingSteps() {
                 key={id}
                 type="button"
                 onClick={() => { setData({ ...data, objectif: id }); next(); }}
-                className="w-full text-left rounded-lg border border-line bg-surface px-4 py-3 hover:border-accent/50 transition"
+                className="w-full text-left rounded-xl border border-line bg-bg/40 px-4 py-3.5 hover:border-accent/40 hover:bg-accent/[0.03] transition-all"
               >
                 {label}
               </button>
@@ -117,7 +125,7 @@ export function OnboardingSteps() {
             type="button"
             disabled={!data.tranche_age || !data.sexe}
             onClick={next}
-            className="mt-4 w-full rounded-lg bg-accent py-3 font-bold text-accent-ink disabled:opacity-40"
+            className="mt-4 w-full rounded-xl bg-accent py-3.5 font-bold text-accent-ink disabled:opacity-40 hover:brightness-110 transition cta-shine overflow-hidden relative"
           >
             Continuer
           </button>
@@ -150,7 +158,7 @@ export function OnboardingSteps() {
             type="button"
             disabled={!data.phototype || !data.type_cheveux}
             onClick={next}
-            className="mt-4 w-full rounded-lg bg-accent py-3 font-bold text-accent-ink disabled:opacity-40"
+            className="mt-4 w-full rounded-xl bg-accent py-3.5 font-bold text-accent-ink disabled:opacity-40 hover:brightness-110 transition cta-shine overflow-hidden relative"
           >
             Continuer
           </button>
@@ -192,7 +200,7 @@ export function OnboardingSteps() {
             type="button"
             disabled={!data.sensibilite}
             onClick={next}
-            className="mt-4 w-full rounded-lg bg-accent py-3 font-bold text-accent-ink disabled:opacity-40"
+            className="mt-4 w-full rounded-xl bg-accent py-3.5 font-bold text-accent-ink disabled:opacity-40 hover:brightness-110 transition cta-shine overflow-hidden relative"
           >
             Continuer
           </button>
@@ -229,7 +237,7 @@ export function OnboardingSteps() {
             type="button"
             disabled={loading}
             onClick={submit}
-            className="mt-6 w-full rounded-lg bg-accent py-3 font-bold text-accent-ink disabled:opacity-40"
+            className="mt-6 w-full rounded-xl bg-accent py-3.5 font-bold text-accent-ink disabled:opacity-40 hover:brightness-110 transition cta-shine overflow-hidden relative"
           >
             {loading ? "Enregistrement…" : "Terminer"}
           </button>
@@ -262,8 +270,8 @@ function Chip({ active, onClick, children }: { active: boolean; onClick: () => v
     <button
       type="button"
       onClick={onClick}
-      className={`rounded-lg border px-3 py-1.5 text-sm transition ${
-        active ? "border-accent bg-accent/10 text-text" : "border-line text-muted hover:border-muted"
+      className={`rounded-xl border px-3 py-2 text-sm transition-all ${
+        active ? "border-accent bg-accent/10 text-text shadow-[inset_0_0_0_1px_rgba(0,229,160,.12)]" : "border-line text-muted hover:border-muted hover:bg-bg/30"
       }`}
     >
       {children}
