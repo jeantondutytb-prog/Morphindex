@@ -33,7 +33,7 @@ export function DashboardBento({
         <p className="text-sm text-muted mt-1">Voici où tu en es sur ton parcours softmaxing.</p>
       </header>
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 stagger-in">
         <StatCard label="Analyses" value={String(analysesCount)} hint="Total réalisées" />
         <StatCard
           label="Indice actuel"
@@ -67,7 +67,7 @@ export function DashboardBento({
           </Link>
         </section>
       ) : (
-        <div className="grid lg:grid-cols-3 gap-4 lg:gap-6">
+        <div className="grid lg:grid-cols-3 gap-4 lg:gap-6 stagger-in">
           {/* Carte principale — indice */}
           <section className="lg:col-span-2 rounded-2xl border border-accent/20 bg-gradient-to-br from-surface via-surface to-accent/5 p-6 lg:p-8">
             <p className="font-mono text-[10px] uppercase tracking-wider text-dim mb-4">Dernière analyse</p>

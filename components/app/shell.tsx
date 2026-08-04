@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { APP_NAV, APP_NAV_SECONDARY, rapportMatch } from "@/components/app/nav-items";
 import { NavIcon } from "@/components/app/icons";
+import { AppPageTransition } from "@/components/ui/page-transition";
 
 const MOBILE_NAV = [
   { href: "/app", label: "Accueil", short: "Accueil", match: (p: string) => p === "/app" || rapportMatch(p) },
@@ -27,7 +28,7 @@ function NavLink({
   return (
     <Link
       href={href}
-      className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition ${
+      className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-colors duration-200 ${
         active
           ? "bg-accent/10 text-accent font-medium"
           : "text-muted hover:text-text hover:bg-line/40"
@@ -66,7 +67,10 @@ export function AppShell({
   return (
     <div className="min-h-screen flex">
       {/* Sidebar desktop — style Donezo / NL Corp */}
-      <aside className="hidden lg:flex flex-col w-[260px] shrink-0 fixed inset-y-0 left-0 border-r border-line bg-surface z-30">
+      <aside
+        className="hidden lg:flex flex-col w-[260px] shrink-0 fixed inset-y-0 left-0 border-r border-line bg-surface z-30 app-shell-sidebar"
+        style={{ viewTransitionName: "app-sidebar" }}
+      >
         <div className="p-6 pb-4">
           <Link href="/app" className="font-display text-xl font-extrabold">
             Morph<span className="text-accent">Index</span>
@@ -145,7 +149,10 @@ export function AppShell({
 
       {/* Contenu principal */}
       <div className="flex-1 flex flex-col min-w-0 lg:ml-[260px] pb-20 lg:pb-0">
-        <header className="lg:hidden sticky top-0 z-40 border-b border-line bg-surface/95 backdrop-blur-sm px-5 h-14 flex items-center justify-between">
+        <header
+          className="lg:hidden sticky top-0 z-40 border-b border-line bg-surface/95 backdrop-blur-sm px-5 h-14 flex items-center justify-between app-shell-header"
+          style={{ viewTransitionName: "app-header" }}
+        >
           <Link href="/app" className="font-display text-lg font-extrabold">
             Morph<span className="text-accent">Index</span>
           </Link>
@@ -154,15 +161,20 @@ export function AppShell({
           </Link>
         </header>
 
-        <main className="flex-1 w-full bg-bg">{children}</main>
+        <main className="flex-1 w-full bg-bg">
+          <AppPageTransition>{children}</AppPageTransition>
+        </main>
 
-        <nav className="lg:hidden fixed bottom-0 inset-x-0 z-50 border-t border-line bg-surface/95 backdrop-blur-sm">
+        <nav
+          className="lg:hidden fixed bottom-0 inset-x-0 z-50 border-t border-line bg-surface/95 backdrop-blur-sm app-shell-tabbar"
+          style={{ viewTransitionName: "app-tabbar" }}
+        >
           <div className="grid grid-cols-4 h-16 max-w-lg mx-auto">
             {MOBILE_NAV.map(({ href, short, match }) => (
               <Link
                 key={href}
                 href={href}
-                className={`flex flex-col items-center justify-center gap-0.5 text-[11px] font-medium transition ${
+                className={`flex flex-col items-center justify-center gap-0.5 text-[11px] font-medium transition-colors duration-200 ${
                   isActive(match, href) ? "text-accent" : "text-dim"
                 }`}
               >

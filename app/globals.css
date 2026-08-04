@@ -24,3 +24,144 @@ body { font-family: var(--font-sans); }
 .tnum { font-variant-numeric: tabular-nums; }
 
 .not-italic-fix { font-style: italic; }
+
+/* ── Transitions de page ── */
+:root {
+  --page-duration: 280ms;
+  --page-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.page-transition {
+  animation: page-enter var(--page-duration) var(--page-ease) both;
+}
+
+.page-transition--app {
+  animation-name: page-enter-app;
+}
+
+@supports (view-transition-name: root) {
+  .page-transition {
+    animation: none;
+  }
+}
+
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes page-enter-app {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Entrée échelonnée des cartes dashboard */
+.stagger-in > * {
+  animation: stagger-fade 0.4s var(--page-ease) both;
+}
+.stagger-in > *:nth-child(1) { animation-delay: 0ms; }
+.stagger-in > *:nth-child(2) { animation-delay: 50ms; }
+.stagger-in > *:nth-child(3) { animation-delay: 100ms; }
+.stagger-in > *:nth-child(4) { animation-delay: 150ms; }
+.stagger-in > *:nth-child(5) { animation-delay: 200ms; }
+.stagger-in > *:nth-child(6) { animation-delay: 250ms; }
+
+@keyframes stagger-fade {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* View Transitions API (navigations Next.js) */
+::view-transition {
+  pointer-events: none;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: var(--page-duration);
+  animation-timing-function: var(--page-ease);
+}
+
+::view-transition-old(root) {
+  animation-name: vt-fade-out;
+}
+
+::view-transition-new(root) {
+  animation-name: vt-fade-in;
+}
+
+@keyframes vt-fade-out {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.985);
+  }
+}
+
+@keyframes vt-fade-in {
+  from {
+    opacity: 0;
+    transform: scale(1.008);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Shell app ancré pendant les transitions */
+::view-transition-group(app-sidebar),
+::view-transition-group(app-header),
+::view-transition-group(app-tabbar) {
+  animation: none;
+  z-index: 100;
+}
+
+::view-transition-old(app-sidebar),
+::view-transition-old(app-header),
+::view-transition-old(app-tabbar) {
+  display: none;
+}
+
+::view-transition-new(app-sidebar),
+::view-transition-new(app-header),
+::view-transition-new(app-tabbar) {
+  animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-transition,
+  .stagger-in > * {
+    animation: none !important;
+  }
+
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-group(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+  }
+}
