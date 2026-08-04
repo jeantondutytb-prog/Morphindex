@@ -42,11 +42,8 @@ export function Paywall({
       {!compact && (
         <h2 className="font-display text-lg font-bold mb-4">Débloquer ton rapport</h2>
       )}
-      {compact && (
-        <p className="font-display text-sm font-bold text-text mb-3">Débloquer ton rapport</p>
-      )}
       <div className="grid gap-2.5">
-        {FORMULES.map(({ id, label, price, period, recommended }) => (
+        {FORMULES.map(({ id, label, price, period, hint, recommended }) => (
           <button
             key={id}
             type="button"
@@ -64,6 +61,7 @@ export function Paywall({
             <span className="font-bold text-text text-sm">{label}</span>
             <span className="ml-2 tnum text-accent text-sm">{price}</span>
             {period && <span className="text-xs text-dim">{period}</span>}
+            {hint && <span className="block mt-1 text-xs text-dim">{hint}</span>}
           </button>
         ))}
       </div>

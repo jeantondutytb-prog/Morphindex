@@ -26,7 +26,7 @@ Après toute modif de variable `NEXT_PUBLIC_*` → **Redeploy** obligatoire.
 
 ## Prérequis Stripe (mode test)
 
-1. Produits : hebdo 4,90 € · annuel 29,90 € · vie 59,90 €
+1. Produits : hebdo **4,90 €** · annuel **49,90 €** · vie **99,90 €** (voir `docs/pricing-stripe.md`)
 2. Price IDs dans Vercel : `STRIPE_PRICE_HEBDO`, `STRIPE_PRICE_ANNUEL`, `STRIPE_PRICE_VIE`
 3. Webhook : `https://www.morphindex.com/api/stripe/webhook`
    - Événements : `checkout.session.completed`, `customer.subscription.updated`, `customer.subscription.deleted`
