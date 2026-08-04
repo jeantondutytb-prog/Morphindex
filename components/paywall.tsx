@@ -42,28 +42,29 @@ export function Paywall({
       {!compact && (
         <h2 className="font-display text-lg font-bold mb-4">Débloquer ton rapport</h2>
       )}
-      {compact && (
-        <p className="font-display text-sm font-bold text-text mb-3">Débloquer ton rapport</p>
-      )}
-      <div className="grid gap-2.5">
+      <div className={compact ? "grid gap-3.5" : "grid gap-2.5 mt-8"}>
         {FORMULES.map(({ id, label, price, period, recommended }) => (
           <button
             key={id}
             type="button"
             disabled={loading !== null}
             onClick={() => checkout(id)}
-            className={`relative rounded-xl border px-4 py-3.5 text-left transition hover:border-accent/50 ${
+            className={`relative rounded-xl border text-left transition hover:border-accent/50 ${
+              compact ? "px-5 py-5" : "px-4 py-3.5"
+            } ${
               recommended ? "border-accent/30 bg-surface" : "border-line bg-bg"
             }`}
           >
             {recommended && (
-              <span className="absolute -top-2 right-3 font-mono text-[9px] uppercase tracking-wider bg-accent text-accent-ink px-2 py-0.5 rounded">
+              <span className={`absolute -top-2.5 right-4 font-mono uppercase tracking-wider bg-accent text-accent-ink px-2.5 py-0.5 rounded ${
+                compact ? "text-[10px]" : "text-[9px]"
+              }`}>
                 recommandé
               </span>
             )}
-            <span className="font-bold text-text text-sm">{label}</span>
-            <span className="ml-2 tnum text-accent text-sm">{price}</span>
-            {period && <span className="text-xs text-dim">{period}</span>}
+            <span className={`font-bold text-text ${compact ? "text-base" : "text-sm"}`}>{label}</span>
+            <span className={`ml-2 tnum text-accent ${compact ? "text-lg" : "text-sm"}`}>{price}</span>
+            {period && <span className={`text-dim ${compact ? "text-sm" : "text-xs"}`}>{period}</span>}
           </button>
         ))}
       </div>

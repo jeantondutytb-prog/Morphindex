@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { AXES } from "@/lib/ai/analysis-schema";
 import { Paywall } from "@/components/paywall";
 
@@ -21,6 +22,11 @@ export function LockedReportPreview({
   blurredUrl,
 }: LockedReportPreviewProps) {
   const [showPaywall, setShowPaywall] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     if (!showPaywall) return;
@@ -125,9 +131,9 @@ export function LockedReportPreview({
         </div>
       </div>
 
-      {showPaywall && (
+      {showPaywall && mounted && createPortal(
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-5"
+          className="fixed inset-0 z-[100] flex items-center justify-center p-5"
           role="dialog"
           aria-modal="true"
           aria-labelledby="paywall-title"
@@ -138,24 +144,25 @@ export function LockedReportPreview({
             className="absolute inset-0 bg-bg/85 backdrop-blur-sm"
             onClick={() => setShowPaywall(false)}
           />
-          <div className="relative w-full max-w-md rounded-2xl border border-line-strong bg-surface p-6 shadow-[0_24px_80px_rgba(0,0,0,.55)]">
+          <div className="relative z-10 w-full max-w-2xl max-h-[min(92vh,840px)] overflow-y-auto rounded-2xl border border-line-strong bg-surface p-8 md:p-10 shadow-[0_24px_80px_rgba(0,0,0,.55)]">
             <button
               type="button"
               onClick={() => setShowPaywall(false)}
-              className="absolute top-4 right-4 font-mono text-sm text-dim hover:text-muted transition leading-none"
+              className="absolute top-5 right-5 font-mono text-base text-dim hover:text-muted transition leading-none"
               aria-label="Fermer"
             >
               ✕
             </button>
-            <p id="paywall-title" className="font-display text-xl font-extrabold text-text mb-1 pr-8">
+            <p id="paywall-title" className="font-display text-2xl md:text-3xl font-extrabold text-text mb-2 pr-10">
               Débloquer ton rapport
             </p>
-            <p className="text-sm text-muted mb-5">
+            <p className="text-base text-muted mb-7">
               Indice, 7 scores et routine personnalisée — livraison immédiate.
             </p>
             <Paywall analysisId={analysisId} compact />
           </div>
-        </div>
+        </div>,
+        document.body,
       )}
     </>
   );
