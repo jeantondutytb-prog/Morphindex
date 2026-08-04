@@ -21,13 +21,15 @@ export default async function ComptePage() {
   if (!user) redirect("/connexion");
 
   const [{ data: profile }, { data: sub }] = await Promise.all([
-    supabase.from("profiles").select("email, onboarding_done_at, created_at").eq("id", user.id).single(),
+    supabase.from("profiles").select("email, onboarding_done_at, created_at, is_admin").eq("id", user.id).single(),
     supabase.from("subscriptions").select("*").eq("user_id", user.id).single(),
   ]);
 
   const quotaUsed =
     sub && new Date(sub.quota_reset_at) > new Date() ? sub.quota_used : 0;
+  // Admin : analyses illimitées, pas de quota affiché
   const hasActiveSub = sub?.status === "active";
+  const isAdmin = profile?.is_admin === true;
 
   return (
     <main className="px-5 py-10 max-w-2xl mx-auto">
@@ -71,15 +73,24 @@ export default async function ComptePage() {
 
       <section className="rounded-xl border border-line bg-surface p-5 mb-8">
         <p className="font-mono text-[10px] uppercase tracking-wider text-dim mb-3">Quota analyses</p>
-        <p className="text-text">
-          <span className="font-display text-2xl font-extrabold tnum">{quotaUsed}</span>
-          <span className="text-muted"> / {hasActiveSub ? MONTHLY_QUOTA : 1} ce mois</span>
-        </p>
-        <p className="text-sm text-dim mt-2">
-          {hasActiveSub
-            ? `${MONTHLY_QUOTA} analyses complètes par mois avec abonnement actif.`
-            : "1 analyse gratuite avant déblocage du rapport."}
-        </p>
+        {isAdmin ? (
+          <>
+            <p className="font-display text-2xl font-extrabold text-accent">Illimité</p>
+            <p className="text-sm text-dim mt-2">Compte admin — analyses et rapports débloqués.</p>
+          </>
+        ) : (
+          <>
+            <p className="text-text">
+              <span className="font-display text-2xl font-extrabold tnum">{quotaUsed}</span>
+              <span className="text-muted"> / {hasActiveSub ? MONTHLY_QUOTA : 1} ce mois</span>
+            </p>
+            <p className="text-sm text-dim mt-2">
+              {hasActiveSub
+                ? `${MONTHLY_QUOTA} analyses complètes par mois avec abonnement actif.`
+                : "1 analyse gratuite avant déblocage du rapport."}
+            </p>
+          </>
+        )}
       </section>
 
       <div className="flex flex-wrap gap-3">

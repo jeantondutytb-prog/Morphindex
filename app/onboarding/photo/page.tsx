@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 
 export default function PhotoUploadPage() {
@@ -8,8 +8,22 @@ export default function PhotoUploadPage() {
   const inputRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
+  const [savedPath, setSavedPath] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [loadingSaved, setLoadingSaved] = useState(true);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    fetch("/api/photo/saved")
+      .then((r) => r.json())
+      .then((data: { saved?: boolean; path?: string; url?: string }) => {
+        if (data.saved && data.path && data.url) {
+          setSavedPath(data.path);
+          setPreview(data.url);
+        }
+      })
+      .finally(() => setLoadingSaved(false));
+  }, []);
 
   function handleFile(f: File) {
     setFile(f);
@@ -17,29 +31,44 @@ export default function PhotoUploadPage() {
   }
 
   async function handleAnalyze() {
-    if (!file) return;
     setLoading(true);
     setError("");
 
-    const formData = new FormData();
-    formData.append("file", file);
-    const uploadRes = await fetch("/api/upload", { method: "POST", body: formData });
-    const uploadData = await uploadRes.json();
-    if (!uploadRes.ok) {
-      setError(uploadData.error ?? "Upload échoué");
+    let path = savedPath;
+
+    if (file) {
+      const formData = new FormData();
+      formData.append("file", file);
+      const uploadRes = await fetch("/api/upload", { method: "POST", body: formData });
+      const uploadData = await uploadRes.json();
+      if (!uploadRes.ok) {
+        setError(uploadData.error ?? "Upload échoué");
+        setLoading(false);
+        return;
+      }
+      path = uploadData.path as string;
+      setSavedPath(path);
+    }
+
+    if (!path) {
+      setError("Ajoute une photo pour lancer l'analyse.");
       setLoading(false);
       return;
     }
 
-    sessionStorage.setItem("analysisPath", uploadData.path);
+    sessionStorage.setItem("analysisPath", path);
     router.push("/app/analyse");
   }
+
+  const canAnalyze = !loading && !loadingSaved && (file !== null || savedPath !== null);
 
   return (
     <main className="min-h-screen px-5 py-12 max-w-lg mx-auto">
       <h1 className="font-display text-2xl font-extrabold mb-2">Ta photo</h1>
       <p className="font-mono text-[10.5px] text-dim mb-6">
-        18 ans et plus · tu dois être la personne sur la photo · elle est supprimée après analyse
+        {savedPath && !file
+          ? "Ta photo enregistrée — relance l'analyse sans la re-téléverser"
+          : "18 ans et plus · tu dois être la personne sur la photo"}
       </p>
 
       <div
@@ -55,7 +84,9 @@ export default function PhotoUploadPage() {
         }}
         className="rounded-xl border-2 border-dashed border-line bg-surface aspect-[4/5] flex items-center justify-center cursor-pointer hover:border-accent/30 transition overflow-hidden"
       >
-        {preview ? (
+        {loadingSaved ? (
+          <p className="text-muted text-sm">Chargement…</p>
+        ) : preview ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={preview} alt="Aperçu" className="w-full h-full object-cover" />
         ) : (
@@ -74,15 +105,21 @@ export default function PhotoUploadPage() {
         }}
       />
 
+      {savedPath && !file && (
+        <p className="mt-3 text-xs text-dim text-center">
+          Clique sur la zone pour remplacer la photo
+        </p>
+      )}
+
       {error && <p className="mt-4 text-sm text-muted">{error}</p>}
 
       <button
         type="button"
-        disabled={!file || loading}
+        disabled={!canAnalyze}
         onClick={handleAnalyze}
         className="mt-6 w-full rounded-lg bg-accent py-3.5 font-bold text-accent-ink disabled:opacity-40"
       >
-        {loading ? "Envoi…" : "Lancer mon analyse"}
+        {loading ? "Envoi…" : savedPath && !file ? "Relancer mon analyse" : "Lancer mon analyse"}
       </button>
     </main>
   );

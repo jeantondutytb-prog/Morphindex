@@ -1,10 +1,12 @@
 import { NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { isAdminUser } from "@/lib/auth/is-admin";
 
 const ALLOWED_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
 const MAX_SIZE = 10 * 1024 * 1024;
 const UPLOADS_PER_HOUR = 5;
+const SAVED_PATH = (userId: string) => `${userId}/saved.jpg`;
 
 export async function POST(req: Request) {
   const supabase = await createServerClient();
@@ -12,20 +14,23 @@ export async function POST(req: Request) {
   if (!user) return NextResponse.json({ error: "non authentifié" }, { status: 401 });
 
   const admin = createAdminClient();
+  const adminUser = await isAdminUser(admin, user.id);
 
-  const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
-  const { count } = await admin
-    .from("events")
-    .select("id", { count: "exact", head: true })
-    .eq("user_id", user.id)
-    .eq("type", "photo_uploaded")
-    .gte("created_at", oneHourAgo);
+  if (!adminUser) {
+    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+    const { count } = await admin
+      .from("events")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", user.id)
+      .eq("type", "photo_uploaded")
+      .gte("created_at", oneHourAgo);
 
-  if ((count ?? 0) >= UPLOADS_PER_HOUR) {
-    return NextResponse.json(
-      { error: "Trop de tentatives. Réessaie dans une heure." },
-      { status: 429 },
-    );
+    if ((count ?? 0) >= UPLOADS_PER_HOUR) {
+      return NextResponse.json(
+        { error: "Trop de tentatives. Réessaie dans une heure." },
+        { status: 429 },
+      );
+    }
   }
 
   const formData = await req.formData();
@@ -40,17 +45,18 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Fichier trop volumineux (10 Mo max)." }, { status: 400 });
   }
 
-  const path = `${user.id}/${crypto.randomUUID()}`;
+  const path = SAVED_PATH(user.id);
   const buffer = Buffer.from(await file.arrayBuffer());
 
   const { error } = await admin.storage.from("photos").upload(path, buffer, {
-    contentType: file.type,
-    upsert: false,
+    contentType: file.type === "image/png" ? "image/png" : "image/jpeg",
+    upsert: true,
   });
   if (error) {
     return NextResponse.json({ error: "Upload échoué." }, { status: 500 });
   }
 
+  await admin.from("profiles").update({ saved_photo_path: path }).eq("id", user.id);
   await admin.from("events").insert({ user_id: user.id, type: "photo_uploaded" });
 
   return NextResponse.json({ path });

@@ -21,12 +21,25 @@ export async function POST(req: Request) {
 
   const admin = createAdminClient();
 
-  const gate = await consumeCreditOrReject(admin, user.id);
-  if (!gate.ok) return NextResponse.json({ error: gate.error }, { status: 402 });
+  const { data: profile } = await admin
+    .from("profiles")
+    .select("*")
+    .eq("id", user.id)
+    .single();
 
-  const { data: profile } = await admin.from("profiles").select("*").eq("id", user.id).single();
+  const adminBypass = profile?.is_admin === true;
+
+  if (!adminBypass) {
+    const gate = await consumeCreditOrReject(admin, user.id);
+    if (!gate.ok) return NextResponse.json({ error: gate.error }, { status: 402 });
+  }
+
   const p = onboardingSchema.safeParse(profile);
   if (!p.success) return NextResponse.json({ error: "onboarding incomplet" }, { status: 400 });
+
+  if (profile?.saved_photo_path && path !== profile.saved_photo_path) {
+    return NextResponse.json({ error: "photo non enregistrée" }, { status: 400 });
+  }
 
   const { data: analysis } = await admin.from("analyses")
     .insert({ user_id: user.id, mode: "soft", status: "pending", model_used: "claude-sonnet-5" })
@@ -39,9 +52,6 @@ export async function POST(req: Request) {
     const { base64 } = await prepareForModel(buf);
 
     const result = await runAnalysis(base64, p.data);
-    // On conserve le détail remonté par le SDK : à la première analyse réelle
-    // qui échoue, « api_error » seul ne dit pas si c'est la clé, la rétention
-    // zéro non activée, ou l'image refusée.
     if (!result.ok) throw new Error(`${result.reason}: ${result.detail}`);
 
     const blurred = await blurForPaywall(buf);
@@ -61,23 +71,22 @@ export async function POST(req: Request) {
       premier_point_libelle: points[0].libelle,
       routine: result.data.routine,
       blurred_image_path: blurredPath,
-      photo_deleted_at: new Date().toISOString(),
+      photo_deleted_at: null,
+      unlocked: adminBypass,
     }).eq("id", analysis!.id);
 
     await admin.from("events").insert({
       user_id: user.id, type: "analysis_done",
-      payload: { cache_read: result.cacheRead },
+      payload: { cache_read: result.cacheRead, admin_bypass: adminBypass },
     });
 
     return NextResponse.json({ analysisId: analysis!.id });
   } catch (e) {
-    await refundCredit(admin, user.id);
+    if (!adminBypass) await refundCredit(admin, user.id);
     await admin.from("analyses")
       .update({ status: "failed", error_reason: String(e) })
       .eq("id", analysis!.id);
     await admin.from("events").insert({ user_id: user.id, type: "analysis_failed" });
     return NextResponse.json({ error: "L'analyse n'a pas abouti. Réessaie." }, { status: 500 });
-  } finally {
-    await admin.storage.from("photos").remove([path]);
   }
 }

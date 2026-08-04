@@ -34,16 +34,38 @@ export default async function RapportPage({ params }: { params: Promise<{ id: st
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/connexion");
 
-  const { data: analysis } = await supabase.from("analyses").select("*").eq("id", id).single();
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("is_admin")
+    .eq("id", user.id)
+    .single();
 
-  if (analysis?.unlocked) {
+  const adminDb = createAdminClient();
+
+  let analysis;
+  if (profile?.is_admin) {
+    const { data } = await adminDb.from("analyses").select("*").eq("id", id).eq("user_id", user.id).single();
+    analysis = data;
+  } else {
+    const { data } = await supabase.from("analyses").select("*").eq("id", id).single();
+    analysis = data;
+  }
+
+  const showFull = analysis?.unlocked || profile?.is_admin;
+
+  if (analysis && showFull && analysis.status === "done") {
     const scores = analysis.scores as Scores;
     const points = analysis.points as Point[];
     const routine = analysis.routine as Parameters<typeof RoutinePanel>[0]["routine"];
 
     return (
       <div className="px-5 py-10 max-w-2xl mx-auto">
-        <h1 className="font-display text-2xl font-extrabold mb-6">Ton rapport</h1>
+        <h1 className="font-display text-2xl font-extrabold mb-6">
+          Ton rapport
+          {profile?.is_admin && !analysis.unlocked && (
+            <span className="ml-2 font-mono text-[10px] text-accent align-middle">admin</span>
+          )}
+        </h1>
 
         <div className="flex items-baseline gap-4 tnum mb-2">
           <span className="font-display text-5xl font-extrabold text-num-idle">

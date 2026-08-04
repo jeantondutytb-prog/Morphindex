@@ -7,6 +7,9 @@ Appliquer **`0005_admin.sql`** dans Supabase → SQL Editor :
 ```sql
 alter table public.profiles
   add column if not exists is_admin boolean not null default false;
+
+alter table public.profiles
+  add column if not exists saved_photo_path text;
 ```
 
 ## 2. Créer le compte admin
