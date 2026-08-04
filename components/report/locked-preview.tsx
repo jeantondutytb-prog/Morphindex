@@ -1,3 +1,6 @@
+"use client";
+
+import { useRef, useState } from "react";
 import { AXES } from "@/lib/ai/analysis-schema";
 import { Paywall } from "@/components/paywall";
 
@@ -17,10 +20,20 @@ export function LockedReportPreview({
   premierPointLibelle,
   blurredUrl,
 }: LockedReportPreviewProps) {
+  const [showPaywall, setShowPaywall] = useState(false);
+  const paywallRef = useRef<HTMLDivElement>(null);
+
+  function handleUnlockClick() {
+    setShowPaywall(true);
+    requestAnimationFrame(() => {
+      paywallRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  }
+
   return (
-    <div className="space-y-6">
-      {/* Accroche + paywall en premier — visible sans scroll sur mobile */}
-      <section className="rounded-xl border border-accent/20 bg-accent/4 p-5">
+    <div className="space-y-5">
+      {/* Accroche — seule donnée réelle visible avant paiement */}
+      <section className="rounded-xl border border-line bg-surface p-5">
         <p className="font-mono text-[10px] uppercase tracking-wider text-dim mb-2">
           Analyse terminée
         </p>
@@ -28,38 +41,37 @@ export function LockedReportPreview({
           {pointsCount} points identifiés
         </p>
         <p className="text-sm text-muted mb-1">Le plus impactant :</p>
-        <p className="text-text font-medium leading-snug mb-5">
+        <p className="text-text font-medium leading-snug">
           {premierPointLibelle}
         </p>
-        <Paywall analysisId={analysisId} compact />
       </section>
 
-      {/* Aperçu visuel du rapport verrouillé — structure sans données réelles */}
+      {/* Aperçu verrouillé — crée l&apos;aha moment */}
       <section className="rounded-xl border border-line bg-surface overflow-hidden">
         <div className="px-5 py-3 border-b border-line flex flex-wrap items-center justify-between gap-2">
-          <span className="font-mono text-[10px] text-dim">Ton rapport — aperçu verrouillé</span>
+          <span className="font-mono text-[10px] text-dim">Ton rapport</span>
           <span className="font-mono text-[10px] text-dim">softmaxing · 7 axes</span>
         </div>
 
-        <div className="grid md:grid-cols-[140px_1fr] gap-0">
+        <div className="grid md:grid-cols-[120px_1fr] gap-0">
           {blurredUrl && (
             <div className="p-4 border-b md:border-b-0 md:border-r border-line flex justify-center md:block">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={blurredUrl}
                 alt=""
-                className="w-28 md:w-full rounded-lg aspect-[4/5] object-cover opacity-80"
+                className="w-24 md:w-full rounded-lg aspect-[4/5] object-cover opacity-80"
               />
             </div>
           )}
 
           <div className="p-5 space-y-4">
             <div className="flex items-baseline gap-3 tnum select-none pointer-events-none" aria-hidden>
-              <span className="font-display text-3xl font-extrabold text-num-idle blur-[6px]">?,?</span>
-              <span className="text-lg text-dim">→</span>
-              <span className="font-display text-3xl font-extrabold text-accent blur-[6px]">?,?</span>
+              <span className="font-display text-4xl font-extrabold text-num-idle blur-[7px]">?,?</span>
+              <span className="text-xl text-dim">→</span>
+              <span className="font-display text-4xl font-extrabold text-accent blur-[7px]">?,?</span>
             </div>
-            <p className="text-[11px] text-dim -mt-2">Indice actuel → atteignable · débloquer pour voir</p>
+            <p className="text-[11px] text-dim -mt-2">Indice actuel → atteignable</p>
 
             <div className="space-y-2.5">
               {AXES.map((axe, i) => (
@@ -86,14 +98,34 @@ export function LockedReportPreview({
             <p className="text-sm text-muted">Nettoyant doux pH 5,5 — matin</p>
             <p className="text-sm text-muted">Crème solaire SPF 50 — matin</p>
             <p className="text-sm text-muted">Rétinaldéhyde 0,05 % — soir</p>
+            <p className="text-sm text-muted">Crème hydratante légère — soir</p>
           </div>
-          <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-surface to-transparent pointer-events-none" />
+          <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-surface via-surface/90 to-transparent pointer-events-none" />
         </div>
       </section>
 
-      <p className="text-xs text-dim text-center leading-relaxed">
-        Scores, indice et routine complets après paiement — une seule donnée visible ici : ton premier point d&apos;action.
-      </p>
+      {/* Hard paywall — après le clic aha */}
+      {!showPaywall ? (
+        <div className="pt-1">
+          <button
+            type="button"
+            onClick={handleUnlockClick}
+            className="w-full rounded-xl bg-accent px-6 py-4 font-bold text-accent-ink hover:brightness-110 transition text-[15px]"
+          >
+            Débloquer mon rapport
+          </button>
+          <p className="mt-3 text-center text-xs text-dim">
+            Indice complet, 7 scores et routine personnalisée
+          </p>
+        </div>
+      ) : (
+        <div ref={paywallRef} className="rounded-xl border border-accent/20 bg-accent/4 p-5">
+          <p className="font-mono text-[10px] uppercase tracking-wider text-dim mb-3">
+            Choisis ta formule
+          </p>
+          <Paywall analysisId={analysisId} compact />
+        </div>
+      )}
     </div>
   );
 }
