@@ -3,9 +3,9 @@ import { signupInputSchema } from "@/lib/auth/signup-input";
 import { createServerClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 
-function signupErrorMessage(error: { message: string; status?: number; code?: string }): string {
-  const msg = error.message.toLowerCase();
-  if (msg.includes("already registered") || msg.includes("already been registered")) {
+function authErrorMessage(message: string): string {
+  const msg = message.toLowerCase();
+  if (msg.includes("already") && (msg.includes("registered") || msg.includes("exists"))) {
     return "Un compte existe déjà avec cet email.";
   }
   if (msg.includes("database error") || msg.includes("saving new user")) {
@@ -17,9 +17,6 @@ function signupErrorMessage(error: { message: string; status?: number; code?: st
   if (msg.includes("password")) {
     return "Mot de passe refusé par le serveur d'authentification.";
   }
-  if (msg.includes("signups not allowed") || msg.includes("signup is disabled")) {
-    return "Les inscriptions sont désactivées sur ce projet Supabase.";
-  }
   return "Inscription impossible.";
 }
 
@@ -30,43 +27,46 @@ export async function POST(req: Request) {
   }
   const { email, password } = parsed.data;
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.morphindex.com";
-  const supabase = await createServerClient();
-  const { data, error } = await supabase.auth.signUp({
+  const admin = createAdminClient();
+
+  // Inscription server-side : évite les cas où auth.signUp renvoie user=null
+  // (confirmation email, redirect URL) tout en passant par le trigger Postgres.
+  const { data: created, error: createErr } = await admin.auth.admin.createUser({
     email,
     password,
-    options: {
-      emailRedirectTo: `${siteUrl}/auth/callback/`,
-    },
+    email_confirm: true,
   });
 
-  if (error) {
-    console.error("[signup] auth.signUp:", error.message, error.status, error.code);
-    return NextResponse.json({ error: signupErrorMessage(error) }, { status: 400 });
-  }
-
-  if (!data.user) {
-    console.error("[signup] auth.signUp: utilisateur absent dans la réponse");
-    return NextResponse.json({ error: "Inscription impossible." }, { status: 400 });
+  if (createErr || !created.user) {
+    console.error("[signup] admin.createUser:", createErr?.message);
+    return NextResponse.json(
+      { error: authErrorMessage(createErr?.message ?? "création impossible") },
+      { status: 400 },
+    );
   }
 
   const now = new Date().toISOString();
-  const admin = createAdminClient();
   const { error: profileErr } = await admin.from("profiles")
     .update({ age_confirmed_at: now, terms_accepted_at: now })
-    .eq("id", data.user.id);
+    .eq("id", created.user.id);
 
   if (profileErr) {
     console.error("[signup] profiles.update:", profileErr.message, profileErr.code);
     return NextResponse.json(
-      { error: "Compte créé mais profil introuvable — vérifie le trigger handle_new_user et les migrations." },
+      { error: "Compte créé mais profil introuvable — vérifie le trigger handle_new_user." },
       { status: 500 },
     );
   }
 
-  await admin.from("events").insert({ user_id: data.user.id, type: "signup" });
+  await admin.from("events").insert({ user_id: created.user.id, type: "signup" });
 
-  const needsEmailConfirmation = !data.session;
+  // Session cookie pour enchaîner vers /onboarding sans repasser par la connexion.
+  const supabase = await createServerClient();
+  const { error: signInErr } = await supabase.auth.signInWithPassword({ email, password });
+  if (signInErr) {
+    console.error("[signup] signInWithPassword:", signInErr.message);
+    return NextResponse.json({ ok: true, needsLogin: true });
+  }
 
-  return NextResponse.json({ ok: true, needsEmailConfirmation });
+  return NextResponse.json({ ok: true, needsEmailConfirmation: false });
 }

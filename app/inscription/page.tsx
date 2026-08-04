@@ -32,10 +32,14 @@ export default function InscriptionPage() {
       setLoading(false);
       return;
     }
-    if (data.needsEmailConfirmation) {
+    if (data.needsEmailConfirmation || data.needsLogin) {
       setError("");
       setLoading(false);
-      setEmailSent(true);
+      if (data.needsEmailConfirmation) {
+        setEmailSent(true);
+      } else {
+        router.push("/connexion");
+      }
       return;
     }
     router.push("/onboarding");
