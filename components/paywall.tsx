@@ -40,7 +40,7 @@ export function Paywall({
   return (
     <div className={compact ? "" : "mt-8"}>
       {!compact && (
-        <h2 className="font-display text-lg font-bold mb-4">Débloquer ton rapport</h2>
+        <h2 className="font-display text-lg font-extrabold mb-4">Débloquer ton rapport</h2>
       )}
       <div className="grid gap-2.5">
         {FORMULES.map(({ id, label, price, period, hint, recommended }) => (
@@ -49,12 +49,14 @@ export function Paywall({
             type="button"
             disabled={loading !== null}
             onClick={() => checkout(id)}
-            className={`relative rounded-xl border px-4 py-3.5 text-left transition hover:border-accent/50 ${
-              recommended ? "border-accent/30 bg-surface" : "border-line bg-bg"
+            className={`relative rounded-xl border px-4 py-3.5 text-left transition-all duration-200 hover:-translate-y-0.5 disabled:opacity-50 ${
+              recommended
+                ? "border-accent/30 bg-gradient-to-br from-accent/8 to-surface hover:border-accent/50 shadow-[0_8px_24px_rgba(0,229,160,.08)]"
+                : "border-line bg-bg/40 hover:border-line-strong"
             }`}
           >
             {recommended && (
-              <span className="absolute -top-2 right-3 font-mono text-[9px] uppercase tracking-wider bg-accent text-accent-ink px-2 py-0.5 rounded">
+              <span className="absolute -top-2 right-3 font-mono text-[9px] uppercase tracking-wider bg-accent text-accent-ink px-2 py-0.5 rounded-full">
                 recommandé
               </span>
             )}

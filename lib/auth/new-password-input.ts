@@ -1,8 +1,7 @@
 import { z } from "zod";
-import { signupInputSchema } from "./signup-input";
 
 export const newPasswordSchema = z.object({
-  password: signupInputSchema.shape.password,
+  password: z.string().min(1, "Mot de passe requis"),
 });
 
 export type NewPasswordInput = z.infer<typeof newPasswordSchema>;

@@ -4,19 +4,17 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { AuthLayout } from "@/components/auth/auth-layout";
-import { AuthInput, AuthButton, AuthCheckbox, AuthError, AuthFooterLink } from "@/components/ui/auth-field";
+import { AuthInput, AuthButton, AuthError, AuthFooterLink } from "@/components/ui/auth-field";
 
 export default function InscriptionPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [ageConfirmed, setAgeConfirmed] = useState(false);
-  const [termsAccepted, setTermsAccepted] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
 
-  const canSubmit = ageConfirmed && termsAccepted && email && password.length >= 10;
+  const canSubmit = Boolean(email && password);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -26,7 +24,7 @@ export default function InscriptionPage() {
     const res = await fetch("/api/auth/signup", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password, ageConfirmed, termsAccepted }),
+      body: JSON.stringify({ email, password }),
     });
     const data = await res.json();
     if (!res.ok) {
@@ -81,27 +79,14 @@ export default function InscriptionPage() {
           autoComplete="email"
         />
         <AuthInput
-          label="Mot de passe (10 caractères min.)"
+          label="Mot de passe"
           type="password"
           name="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
-          minLength={10}
           autoComplete="new-password"
         />
-
-        <div className="space-y-3 pt-1">
-          <AuthCheckbox checked={ageConfirmed} onChange={setAgeConfirmed}>
-            J&apos;ai 18 ans ou plus et je suis la personne sur les photos.
-          </AuthCheckbox>
-          <AuthCheckbox checked={termsAccepted} onChange={setTermsAccepted}>
-            J&apos;accepte les{" "}
-            <Link href="/conditions" className="text-accent hover:brightness-110 transition">CGU</Link>
-            {" "}et la{" "}
-            <Link href="/confidentialite" className="text-accent hover:brightness-110 transition">politique de confidentialité</Link>.
-          </AuthCheckbox>
-        </div>
 
         <AuthError message={error} />
         <AuthButton loading={loading} disabled={!canSubmit}>

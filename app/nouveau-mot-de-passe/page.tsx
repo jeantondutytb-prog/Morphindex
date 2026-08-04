@@ -30,7 +30,7 @@ export default function NouveauMotDePassePage() {
 
     const parsed = newPasswordSchema.safeParse({ password });
     if (!parsed.success) {
-      setError("10 caractères minimum.");
+      setError("Mot de passe requis.");
       return;
     }
 
@@ -73,20 +73,19 @@ export default function NouveauMotDePassePage() {
   }
 
   return (
-    <AuthLayout title="Nouveau mot de passe" subtitle="Choisis un mot de passe d'au moins 10 caractères.">
+    <AuthLayout title="Nouveau mot de passe" subtitle="Choisis un nouveau mot de passe pour ton compte.">
       <form onSubmit={handleSubmit} className="space-y-4">
         <AuthInput
-          label="Nouveau mot de passe (10 caractères min.)"
+          label="Nouveau mot de passe"
           type="password"
           name="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
-          minLength={10}
           autoComplete="new-password"
         />
         <AuthError message={error} />
-        <AuthButton loading={loading} disabled={password.length < 10}>
+        <AuthButton loading={loading} disabled={!password}>
           {loading ? "Enregistrement…" : "Enregistrer"}
         </AuthButton>
       </form>

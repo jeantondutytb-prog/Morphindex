@@ -3,6 +3,8 @@ import { redirect } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { PageHeader } from "@/components/app/page-header";
 import { AppContainer } from "@/components/app/app-container";
+import { AppCard, AppSectionLabel } from "@/components/app/ui";
+import { StatCard } from "@/components/app/stat-card";
 
 export default async function AdminPage() {
   const supabase = await createServerClient();
@@ -41,58 +43,57 @@ export default async function AdminPage() {
 
   return (
     <AppContainer>
-      <PageHeader title="Vue d'ensemble" subtitle="Admin MorphIndex" backHref="/app" />
+      <PageHeader kicker="Admin" title="Vue d'ensemble" subtitle="Admin MorphIndex" backHref="/app" backLabel="Dashboard" />
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        {[
-          { label: "Utilisateurs", value: usersCount ?? 0 },
-          { label: "Analyses", value: analysesCount ?? 0 },
-          { label: "Rapports débloqués", value: unlockedCount ?? 0 },
-          { label: "Abos actifs", value: activeSubsCount ?? 0 },
-        ].map(({ label, value }) => (
-          <div key={label} className="rounded-xl border border-line bg-surface p-4">
-            <p className="font-mono text-[10px] text-dim uppercase">{label}</p>
-            <p className="font-display text-3xl font-extrabold tnum mt-1">{value}</p>
-          </div>
-        ))}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4 mb-8 stagger-in">
+        <StatCard label="Utilisateurs" value={String(usersCount ?? 0)} />
+        <StatCard label="Analyses" value={String(analysesCount ?? 0)} />
+        <StatCard label="Rapports débloqués" value={String(unlockedCount ?? 0)} accent />
+        <StatCard label="Abos actifs" value={String(activeSubsCount ?? 0)} />
       </div>
 
-      <div className="lg:grid lg:grid-cols-2 lg:gap-6">
-      <section className="mb-8 lg:mb-0">
-        <h2 className="font-display font-bold mb-3">Dernières analyses</h2>
-        <ul className="rounded-xl border border-line bg-surface divide-y divide-line">
-          {(recentAnalyses ?? []).length === 0 && (
-            <li className="p-4 text-sm text-dim">Aucune analyse.</li>
-          )}
-          {(recentAnalyses ?? []).map((a) => (
-              <li key={a.id} className="p-4 flex items-center justify-between gap-3 text-sm">
-                <div className="min-w-0">
-                  <p className="text-muted font-mono text-xs truncate">{a.user_id.slice(0, 8)}…</p>
-                  <p className="text-dim text-xs">
-                    {new Date(a.created_at).toLocaleString("fr-FR")} · {a.status}
-                  </p>
-                </div>
-                <span className="font-mono text-[10px] uppercase text-dim shrink-0">
-                  {a.unlocked ? "débloqué" : "flouté"}
-                </span>
-              </li>
-          ))}
-        </ul>
-      </section>
+      <div className="lg:grid lg:grid-cols-2 lg:gap-6 stagger-in">
+        <section>
+          <AppSectionLabel>Dernières analyses</AppSectionLabel>
+          <AppCard padding="none" className="overflow-hidden">
+            <ul className="divide-y divide-line">
+              {(recentAnalyses ?? []).length === 0 && (
+                <li className="p-5 text-sm text-dim">Aucune analyse.</li>
+              )}
+              {(recentAnalyses ?? []).map((a) => (
+                <li key={a.id} className="p-4 flex items-center justify-between gap-3 text-sm hover:bg-bg/30 transition-colors">
+                  <div className="min-w-0">
+                    <p className="text-muted font-mono text-xs truncate">{a.user_id.slice(0, 8)}…</p>
+                    <p className="text-dim text-xs">
+                      {new Date(a.created_at).toLocaleString("fr-FR")} · {a.status}
+                    </p>
+                  </div>
+                  <span className={`font-mono text-[10px] uppercase px-2 py-0.5 rounded-full shrink-0 border ${
+                    a.unlocked ? "border-accent/30 text-accent bg-accent/8" : "border-line text-dim"
+                  }`}>
+                    {a.unlocked ? "débloqué" : "flouté"}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </AppCard>
+        </section>
 
-      <section>
-        <h2 className="font-display font-bold mb-3">Événements récents</h2>
-        <ul className="rounded-xl border border-line bg-surface divide-y divide-line">
-          {(recentEvents ?? []).map((e, i) => (
-            <li key={i} className="px-4 py-3 flex justify-between gap-3 text-sm">
-              <span className="font-mono text-xs text-accent">{e.type}</span>
-              <span className="text-dim text-xs shrink-0">
-                {new Date(e.created_at).toLocaleString("fr-FR")}
-              </span>
-            </li>
-          ))}
-        </ul>
-      </section>
+        <section>
+          <AppSectionLabel>Événements récents</AppSectionLabel>
+          <AppCard padding="none" className="overflow-hidden">
+            <ul className="divide-y divide-line">
+              {(recentEvents ?? []).map((e, i) => (
+                <li key={i} className="px-4 py-3 flex justify-between gap-3 text-sm hover:bg-bg/30 transition-colors">
+                  <span className="font-mono text-xs text-accent">{e.type}</span>
+                  <span className="text-dim text-xs shrink-0">
+                    {new Date(e.created_at).toLocaleString("fr-FR")}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </AppCard>
+        </section>
       </div>
     </AppContainer>
   );
