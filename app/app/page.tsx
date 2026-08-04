@@ -19,7 +19,7 @@ export default async function AppPage() {
     .order("created_at", { ascending: false });
 
   return (
-    <main className="min-h-screen px-5 py-12 max-w-2xl mx-auto">
+    <div className="px-5 py-10 max-w-2xl mx-auto">
       <h1 className="font-display text-2xl font-extrabold mb-6">Mes analyses</h1>
 
       {(!analyses || analyses.length === 0) && (
@@ -68,6 +68,6 @@ export default async function AppPage() {
           Nouvelle analyse
         </Link>
       </div>
-    </main>
+    </div>
   );
 }

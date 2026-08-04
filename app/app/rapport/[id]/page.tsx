@@ -42,7 +42,7 @@ export default async function RapportPage({ params }: { params: Promise<{ id: st
     const routine = analysis.routine as Parameters<typeof RoutinePanel>[0]["routine"];
 
     return (
-      <main className="min-h-screen px-5 py-12 max-w-2xl mx-auto">
+      <div className="px-5 py-10 max-w-2xl mx-auto">
         <h1 className="font-display text-2xl font-extrabold mb-6">Ton rapport</h1>
 
         <div className="flex items-baseline gap-4 tnum mb-2">
@@ -79,21 +79,21 @@ export default async function RapportPage({ params }: { params: Promise<{ id: st
           <h2 className="font-display font-bold mb-4">Ta routine</h2>
           <RoutinePanel routine={routine} />
         </section>
-      </main>
+      </div>
     );
   }
 
   const preview = await getPreview(id, user.id);
   if (!preview || preview.status !== "done") {
     return (
-      <main className="min-h-screen flex items-center justify-center px-5">
+      <div className="flex items-center justify-center px-5 py-20">
         <p className="text-muted">Rapport indisponible.</p>
-      </main>
+      </div>
     );
   }
 
   return (
-    <main className="min-h-screen px-5 py-8 md:py-10 max-w-xl mx-auto">
+    <div className="px-5 py-8 md:py-10 max-w-xl mx-auto">
       <h1 className="font-display text-2xl font-extrabold mb-5">Ton rapport est prêt</h1>
       <LockedReportPreview
         analysisId={id}
@@ -101,7 +101,7 @@ export default async function RapportPage({ params }: { params: Promise<{ id: st
         premierPointLibelle={preview.premier_point_libelle!}
         blurredUrl={preview.blurred_url}
       />
-    </main>
+    </div>
   );
 }
 

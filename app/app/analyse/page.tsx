@@ -48,7 +48,7 @@ export default function AnalysePage() {
   }, [router]);
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center px-5">
+    <div className="flex flex-col items-center justify-center px-5 py-20">
       <div className="w-full max-w-md text-center">
         <h1 className="font-display text-2xl font-extrabold mb-8">Analyse en cours</h1>
         <div className="space-y-3">
@@ -65,6 +65,6 @@ export default function AnalysePage() {
           <p className="mt-8 text-muted">{error}</p>
         )}
       </div>
-    </main>
+    </div>
   );
 }
