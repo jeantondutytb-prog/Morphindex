@@ -144,19 +144,19 @@ export function LockedReportPreview({
             className="absolute inset-0 bg-bg/85 backdrop-blur-sm"
             onClick={() => setShowPaywall(false)}
           />
-          <div className="relative z-10 w-full max-w-md max-h-[min(90vh,720px)] overflow-y-auto rounded-2xl border border-line-strong bg-surface p-6 shadow-[0_24px_80px_rgba(0,0,0,.55)]">
+          <div className="relative z-10 w-full max-w-2xl max-h-[min(92vh,840px)] overflow-y-auto rounded-2xl border border-line-strong bg-surface p-8 md:p-10 shadow-[0_24px_80px_rgba(0,0,0,.55)]">
             <button
               type="button"
               onClick={() => setShowPaywall(false)}
-              className="absolute top-4 right-4 font-mono text-sm text-dim hover:text-muted transition leading-none"
+              className="absolute top-5 right-5 font-mono text-base text-dim hover:text-muted transition leading-none"
               aria-label="Fermer"
             >
               ✕
             </button>
-            <p id="paywall-title" className="font-display text-xl font-extrabold text-text mb-1 pr-8">
+            <p id="paywall-title" className="font-display text-2xl md:text-3xl font-extrabold text-text mb-2 pr-10">
               Débloquer ton rapport
             </p>
-            <p className="text-sm text-muted mb-5">
+            <p className="text-base text-muted mb-7">
               Indice, 7 scores et routine personnalisée — livraison immédiate.
             </p>
             <Paywall analysisId={analysisId} compact />
