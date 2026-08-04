@@ -53,3 +53,7 @@ Landing → Inscription → Onboarding (5 écrans) → Photo → Analyse Claude 
 ## Webhook Stripe
 
 Configurer sur `https://www.morphindex.com/api/stripe/webhook` (sous-domaine `www.` obligatoire).
+
+## Mise en production
+
+Voir [docs/deploy-production.md](docs/deploy-production.md) — bascule DNS OVH (GitHub Pages → Vercel) et checklist post-déploiement.
