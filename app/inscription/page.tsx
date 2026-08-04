@@ -12,6 +12,7 @@ export default function InscriptionPage() {
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [emailSent, setEmailSent] = useState(false);
 
   const canSubmit = ageConfirmed && termsAccepted && email && password.length >= 10;
 
@@ -31,7 +32,31 @@ export default function InscriptionPage() {
       setLoading(false);
       return;
     }
+    if (data.needsEmailConfirmation) {
+      setError("");
+      setLoading(false);
+      setEmailSent(true);
+      return;
+    }
     router.push("/onboarding");
+  }
+
+  if (emailSent) {
+    return (
+      <main className="min-h-screen flex flex-col items-center justify-center px-5 py-12">
+        <div className="w-full max-w-md">
+          <Link href="/" className="font-display text-xl font-extrabold mb-8 inline-block">
+            Morph<span className="text-accent">Index</span>
+          </Link>
+          <h1 className="font-display text-2xl font-extrabold mb-4">Vérifie ton email</h1>
+          <p className="text-sm text-muted leading-relaxed mb-6">
+            Un lien de confirmation vient d&apos;être envoyé à <span className="text-text">{email}</span>.
+            Clique dessus pour activer ton compte, puis connecte-toi pour continuer l&apos;onboarding.
+          </p>
+          <Link href="/connexion" className="text-sm text-accent underline">Aller à la connexion</Link>
+        </div>
+      </main>
+    );
   }
 
   return (
