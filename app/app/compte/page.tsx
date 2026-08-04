@@ -1,9 +1,9 @@
-import { createServerClient } from "@/lib/supabase/server";
-import { redirect } from "next/navigation";
 import Link from "next/link";
 import { MONTHLY_QUOTA } from "@/lib/credits/quota";
 import { PageHeader } from "@/components/app/page-header";
 import { AppContainer } from "@/components/app/app-container";
+import { createServerClient } from "@/lib/supabase/server";
+import { requireAppSession } from "@/lib/auth/session";
 
 const FORMULE_LABELS: Record<string, string> = {
   hebdo: "Hebdomadaire · 4,90 €/sem",
@@ -18,20 +18,15 @@ const STATUS_LABELS: Record<string, string> = {
 };
 
 export default async function ComptePage() {
+  const { user, profile, isAdmin } = await requireAppSession();
   const supabase = await createServerClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/connexion");
 
-  const [{ data: profile }, { data: sub }] = await Promise.all([
-    supabase.from("profiles").select("email, onboarding_done_at, created_at, is_admin").eq("id", user.id).single(),
-    supabase.from("subscriptions").select("*").eq("user_id", user.id).single(),
-  ]);
+  const { data: sub } = await supabase.from("subscriptions").select("*").eq("user_id", user.id).single();
 
   const quotaUsed =
     sub && new Date(sub.quota_reset_at) > new Date() ? sub.quota_used : 0;
   // Admin : analyses illimitées, pas de quota affiché
   const hasActiveSub = sub?.status === "active";
-  const isAdmin = profile?.is_admin === true;
 
   return (
     <AppContainer>

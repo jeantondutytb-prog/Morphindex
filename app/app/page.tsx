@@ -1,28 +1,18 @@
-import { createServerClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getAnalysesList } from "@/lib/app/analyses";
 import { DashboardBento } from "@/components/app/dashboard-bento";
 import { AnalysisCard } from "@/components/app/analysis-card";
 import { AppContainer } from "@/components/app/app-container";
+import { requireAppSession } from "@/lib/auth/session";
 
 export default async function AppPage() {
-  const supabase = await createServerClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/connexion");
+  const { user, profile, email, isAdmin } = await requireAppSession();
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("onboarding_done_at, is_admin, email")
-    .eq("id", user.id)
-    .single();
-
-  if (!profile?.onboarding_done_at) {
+  if (!profile.onboarding_done_at) {
     redirect("/onboarding");
   }
 
-  const isAdmin = profile.is_admin === true;
-  const email = profile.email ?? user.email ?? "";
   const analyses = await getAnalysesList(user.id);
   const latest = analyses.find((a) => a.status === "done") ?? null;
   const history = analyses.filter((a) => a.id !== latest?.id);

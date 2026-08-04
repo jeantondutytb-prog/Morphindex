@@ -1,21 +1,12 @@
-import { createServerClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { PageHeader } from "@/components/app/page-header";
 import { AppContainer } from "@/components/app/app-container";
+import { requireAppSession } from "@/lib/auth/session";
 
 export default async function AdminPage() {
-  const supabase = await createServerClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/connexion");
-
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("is_admin")
-    .eq("id", user.id)
-    .single();
-
-  if (!profile?.is_admin) redirect("/app");
+  const { isAdmin } = await requireAppSession();
+  if (!isAdmin) redirect("/app");
 
   const admin = createAdminClient();
 
