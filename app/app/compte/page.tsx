@@ -38,7 +38,7 @@ export default async function ComptePage() {
       <PageHeader title="Mon compte" subtitle="Abonnement et quota d'analyses" />
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      <section className="rounded-xl border border-line bg-surface p-5 lg:p-6">
+      <section className="rounded-2xl border border-line bg-surface p-5 lg:p-6">
         <p className="font-mono text-[10px] uppercase tracking-wider text-dim mb-3">Identité</p>
         <p className="text-text font-medium">{profile?.email ?? user.email}</p>
         <p className="text-sm text-dim mt-1">
@@ -47,7 +47,7 @@ export default async function ComptePage() {
         </p>
       </section>
 
-      <section className="rounded-xl border border-line bg-surface p-5 lg:p-6">
+      <section className="rounded-2xl border border-line bg-surface p-5 lg:p-6">
         <p className="font-mono text-[10px] uppercase tracking-wider text-dim mb-3">Abonnement</p>
         {hasActiveSub ? (
           <>

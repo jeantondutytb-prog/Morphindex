@@ -12,7 +12,7 @@ export function AnalysisCard({ analysis, isAdmin }: { analysis: AnalysisListItem
   return (
     <Link
       href={`/app/rapport/${analysis.id}`}
-      className="block rounded-xl border border-line bg-surface p-5 hover:border-accent/30 transition group"
+      className="block rounded-2xl border border-line bg-surface p-5 lg:p-6 hover:border-accent/30 hover:shadow-[0_0_0_1px_rgba(0,229,160,.08)] transition group"
     >
       <div className="flex items-start justify-between gap-3 mb-3">
         <div>
