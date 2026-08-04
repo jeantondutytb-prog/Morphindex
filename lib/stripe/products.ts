@@ -6,8 +6,16 @@ export const PRICE_IDS = {
 
 export type Formule = keyof typeof PRICE_IDS;
 
-export const FORMULES: { id: Formule; label: string; price: string; period?: string; recommended?: boolean }[] = [
-  { id: "hebdo", label: "Hebdomadaire", price: "4,90 €", period: "/ semaine" },
-  { id: "annuel", label: "Annuel", price: "29,90 €", period: "/ an", recommended: true },
-  { id: "vie", label: "À vie", price: "59,90 €" },
+/** Montants calibrés pour ~95 % de marge brute (API + Stripe, quota max). Voir docs/pricing-stripe.md */
+export const FORMULES: { id: Formule; label: string; price: string; period?: string; hint?: string; recommended?: boolean }[] = [
+  { id: "hebdo", label: "Hebdomadaire", price: "9,99 €", period: "/ semaine" },
+  {
+    id: "annuel",
+    label: "Annuel",
+    price: "49,90 €",
+    period: "/ an",
+    hint: "≈ 4,16 €/mois",
+    recommended: true,
+  },
+  { id: "vie", label: "À vie", price: "99,90 €", hint: "Paiement unique" },
 ];

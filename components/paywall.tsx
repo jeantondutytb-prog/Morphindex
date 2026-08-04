@@ -42,11 +42,16 @@ export function Paywall({
       {!compact && (
         <h2 className="font-display text-lg font-bold mb-4">Débloquer ton rapport</h2>
       )}
+<<<<<<< Updated upstream
       {compact && (
         <p className="font-display text-sm font-bold text-text mb-3">Débloquer ton rapport</p>
       )}
       <div className="grid gap-2.5">
         {FORMULES.map(({ id, label, price, period, recommended }) => (
+=======
+      <div className={compact ? "grid gap-3.5" : "grid gap-2.5"}>
+        {FORMULES.map(({ id, label, price, period, hint, recommended }) => (
+>>>>>>> Stashed changes
           <button
             key={id}
             type="button"
@@ -61,9 +66,18 @@ export function Paywall({
                 recommandé
               </span>
             )}
+<<<<<<< Updated upstream
             <span className="font-bold text-text text-sm">{label}</span>
             <span className="ml-2 tnum text-accent text-sm">{price}</span>
             {period && <span className="text-xs text-dim">{period}</span>}
+=======
+            <span className={`font-bold text-text ${compact ? "text-base" : "text-sm"}`}>{label}</span>
+            <span className={`ml-2 tnum text-accent ${compact ? "text-lg" : "text-sm"}`}>{price}</span>
+            {period && <span className={`text-dim ${compact ? "text-sm" : "text-xs"}`}>{period}</span>}
+            {hint && (
+              <span className={`block mt-1 text-dim ${compact ? "text-sm" : "text-xs"}`}>{hint}</span>
+            )}
+>>>>>>> Stashed changes
           </button>
         ))}
       </div>
