@@ -26,8 +26,8 @@ export async function POST(req: Request) {
 
   const successUrl =
     intent === "new_analysis"
-      ? `${siteUrl}/app/photo?paid=1`
-      : `${siteUrl}/app/rapport/${analysisId}?ok=1`;
+      ? `${siteUrl}/app/photo?paid=1&session_id={CHECKOUT_SESSION_ID}`
+      : `${siteUrl}/app/rapport/${analysisId}?ok=1&session_id={CHECKOUT_SESSION_ID}`;
 
   const cancelUrl =
     intent === "new_analysis"

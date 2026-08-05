@@ -11,6 +11,7 @@ import type { DOMAINS } from "@/lib/ai/analysis-schema";
 import { dimensionLabel, type DimensionScore } from "@/lib/ai/dimensions";
 import { domainScoresFromStored, parseStoredDimensions } from "@/lib/ai/normalize-analysis";
 import { parseRoutinePayload, fallbackRoutineResume, resolveWeekPlans } from "@/lib/routine/data";
+import { PaymentSync } from "@/components/app/payment-sync";
 
 type Point = {
   dimension?: string;
@@ -39,8 +40,15 @@ async function getPreview(id: string, userId: string) {
   };
 }
 
-export default async function RapportPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function RapportPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ ok?: string; session_id?: string }>;
+}) {
   const { id } = await params;
+  const { ok, session_id: sessionId } = await searchParams;
   const supabase = await createServerClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/connexion");
@@ -189,6 +197,7 @@ export default async function RapportPage({ params }: { params: Promise<{ id: st
         backHref="/app"
         backLabel="Dashboard"
       />
+      {ok === "1" && sessionId?.startsWith("cs_") && <PaymentSync sessionId={sessionId} />}
       <LockedReportPreview
         analysisId={id}
         pointsCount={preview.points_count!}

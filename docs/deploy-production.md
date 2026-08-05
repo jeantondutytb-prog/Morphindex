@@ -86,6 +86,9 @@ https://www.morphindex.com/api/stripe/webhook
 ```
 
 ⚠️ Sur le sous-domaine **`www.`** — Stripe ne suit pas les redirections 308 depuis l'apex.
+L'app réécrit en interne `/api/stripe/webhook` → `/api/stripe/webhook/` (compatible `trailingSlash`).
+
+Après paiement, le client appelle aussi `/api/stripe/sync-session` en secours si le webhook est en retard.
 
 ## 7. Recette post-bascule
 
