@@ -43,7 +43,7 @@ export function Paywall({
         <>
           <h2 className="font-display text-lg font-extrabold mb-1">Débloquer ton rapport</h2>
           <p className="text-sm text-muted mb-4">
-            Ta première analyse est prête — choisis comment accéder au rapport complet.
+            Ta première analyse est prête — choisis un abonnement pour accéder au rapport complet, tes routines et le suivi.
           </p>
         </>
       )}
@@ -62,7 +62,7 @@ export function Paywall({
           >
             {recommended && (
               <span className="absolute -top-2 right-3 font-mono text-[9px] uppercase tracking-wider bg-accent text-accent-ink px-2 py-0.5 rounded-full">
-                le plus simple
+                recommandé
               </span>
             )}
             <span className="font-bold text-text text-sm">{label}</span>

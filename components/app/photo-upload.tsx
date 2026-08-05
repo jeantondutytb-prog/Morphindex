@@ -229,7 +229,7 @@ export function PhotoUpload({
                       href={`/app/rapport/${quota.latestLockedReportId}`}
                       className="block text-center text-sm text-muted hover:text-accent transition py-2"
                     >
-                      Débloquer mon dernier rapport (9,90 €) →
+                      Voir mon rapport et m&apos;abonner →
                     </Link>
                   )}
                 </div>

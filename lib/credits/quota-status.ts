@@ -73,7 +73,7 @@ export async function getQuotaStatus(
         : `Quota mensuel épuisé · ${NEW_ANALYSIS_OFFER.price} par analyse supplémentaire`;
   } else if (used >= FREE_ANALYSES) {
     label = "Paiement requis";
-    hint = `Nouvelle analyse : ${NEW_ANALYSIS_OFFER.price} · ou débloque ton rapport depuis 9,90 €`;
+    hint = `Nouvelle analyse : ${NEW_ANALYSIS_OFFER.price} · ou souscris un abonnement pour débloquer ton rapport`;
   } else {
     label = "1 gratuite (aperçu flouté)";
     hint = "Première analyse offerte · débloque le rapport complet ensuite";
