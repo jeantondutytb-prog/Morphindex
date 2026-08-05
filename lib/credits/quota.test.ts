@@ -25,6 +25,12 @@ describe("canConsume", () => {
     expect(canConsume({ ...base, status: null, quota_used: 1 }, now).ok).toBe(false);
   });
 
+  it("autorise avec un crédit prépayé même sans abonnement", () => {
+    expect(
+      canConsume({ ...base, status: "canceled", quota_used: 5, prepaid_credits: 1 }, now).ok,
+    ).toBe(true);
+  });
+
   it("remet le compteur à zéro quand la date de reset est passée", () => {
     const passe = { ...base, quota_used: MONTHLY_QUOTA, quota_reset_at: "2026-08-01T00:00:00Z" };
     expect(canConsume(passe, now).ok).toBe(true);

@@ -70,15 +70,38 @@ Créer **3 produits** en mode test puis live, avec les montants **exactement** c
 - Montant : **99,90 EUR**
 - Copier le **Price ID** → `STRIPE_PRICE_VIE`
 
+### 4. MorphIndex — Débloquer un rapport
+
+- Type : **Paiement unique**
+- Montant : **9,90 EUR**
+- Copier le **Price ID** → `STRIPE_PRICE_UNLOCK`
+
+### 5. MorphIndex — Nouvelle analyse
+
+- Type : **Paiement unique**
+- Montant : **14,90 EUR**
+- Copier le **Price ID** → `STRIPE_PRICE_ANALYSE`
+
 ## Variables Vercel
 
 ```env
 STRIPE_SECRET_KEY=sk_live_...
 STRIPE_WEBHOOK_SECRET=whsec_...
+STRIPE_PRICE_UNLOCK=price_...
+STRIPE_PRICE_ANALYSE=price_...
 STRIPE_PRICE_HEBDO=price_...
 STRIPE_PRICE_ANNUEL=price_...
 STRIPE_PRICE_VIE=price_...
 ```
+
+## Modèle économique
+
+| Étape | Prix | Ce que l'utilisateur obtient |
+|-------|------|------------------------------|
+| 1re analyse | Gratuit | Rapport flouté (aperçu) |
+| Débloquer ce rapport | **9,90 €** | Rapport complet + routine |
+| Nouvelle analyse | **14,90 €** | Nouvelle analyse + rapport débloillé |
+| Abonnement | 4,90 €/sem · 49,90 €/an · 99,90 € vie | 2 analyses / mois · rapports débloillés |
 
 Les montants affichés dans l'app (`lib/stripe/products.ts`) doivent **correspondre** aux Prices Stripe — c'est Stripe qui encaisse, le code n'affiche que le libellé.
 

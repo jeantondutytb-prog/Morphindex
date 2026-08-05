@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { FORMULES, type Formule } from "@/lib/stripe/products";
+import { UNLOCK_OFFERS, type Formule } from "@/lib/stripe/products";
 
 export function Paywall({
   analysisId,
@@ -40,10 +40,15 @@ export function Paywall({
   return (
     <div className={compact ? "" : "mt-8"}>
       {!compact && (
-        <h2 className="font-display text-lg font-extrabold mb-4">Débloquer ton rapport</h2>
+        <>
+          <h2 className="font-display text-lg font-extrabold mb-1">Débloquer ton rapport</h2>
+          <p className="text-sm text-muted mb-4">
+            Ta première analyse est prête — choisis comment accéder au rapport complet.
+          </p>
+        </>
       )}
       <div className="grid gap-2.5">
-        {FORMULES.map(({ id, label, price, period, hint, recommended }) => (
+        {UNLOCK_OFFERS.map(({ id, label, price, period, hint, recommended }) => (
           <button
             key={id}
             type="button"
@@ -57,7 +62,7 @@ export function Paywall({
           >
             {recommended && (
               <span className="absolute -top-2 right-3 font-mono text-[9px] uppercase tracking-wider bg-accent text-accent-ink px-2 py-0.5 rounded-full">
-                recommandé
+                le plus simple
               </span>
             )}
             <span className="font-bold text-text text-sm">{label}</span>
@@ -67,6 +72,9 @@ export function Paywall({
           </button>
         ))}
       </div>
+      <p className="mt-3 text-[11px] text-dim">
+        Les abonnements incluent 2 analyses / mois · rapport débloillé à chaque analyse.
+      </p>
     </div>
   );
 }

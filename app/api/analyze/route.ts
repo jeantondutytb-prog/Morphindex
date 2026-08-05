@@ -5,7 +5,7 @@ import { prepareForModel } from "@/lib/image/prepare";
 import { blurForPaywall } from "@/lib/image/blur";
 import { runAnalysis } from "@/lib/ai/analyze";
 import { onboardingSchema } from "@/lib/onboarding/schema";
-import { consumeCreditOrReject, refundCredit } from "@/lib/credits/quota";
+import { consumeCreditOrReject, refundCredit, shouldUnlockReport } from "@/lib/credits/quota";
 
 export const maxDuration = 120;
 
@@ -45,9 +45,12 @@ export async function POST(req: Request) {
 
   const adminBypass = profile?.is_admin === true;
 
+  let consumeSource: import("@/lib/credits/quota").ConsumeSource | null = null;
+
   if (!adminBypass) {
     const gate = await consumeCreditOrReject(admin, user.id);
     if (!gate.ok) return NextResponse.json({ error: gate.error }, { status: 402 });
+    consumeSource = gate.source;
   }
 
   const p = onboardingSchema.safeParse(profile);
@@ -101,7 +104,7 @@ export async function POST(req: Request) {
       },
       blurred_image_path: blurredPath,
       photo_deleted_at: null,
-      unlocked: adminBypass,
+      unlocked: adminBypass || (consumeSource != null && shouldUnlockReport(consumeSource)),
     };
 
     // Colonne dimensions optionnelle (migration 0007) — scores.dimensions suffit en fallback.
@@ -123,7 +126,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ analysisId: analysis.id });
   } catch (e) {
-    if (!adminBypass) await refundCredit(admin, user.id);
+    if (!adminBypass && consumeSource) await refundCredit(admin, user.id, consumeSource);
     const detail = e instanceof Error ? e.message : String(e);
     await admin.from("analyses")
       .update({ status: "failed", error_reason: detail.slice(0, 500) })

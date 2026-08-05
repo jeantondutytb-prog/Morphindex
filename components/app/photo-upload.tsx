@@ -6,6 +6,7 @@ import Link from "next/link";
 import { AppContainer } from "@/components/app/app-container";
 import { PageHeader } from "@/components/app/page-header";
 import { AnalysisProgressOverlay, ANALYSIS_STEPS } from "@/components/app/analysis-progress-overlay";
+import { BuyAnalysisButton } from "@/components/app/buy-analysis-button";
 import type { QuotaStatus } from "@/lib/credits/quota-status";
 
 const TIPS = [
@@ -19,9 +20,11 @@ type Phase = "idle" | "uploading" | "analyzing" | "done" | "error";
 export function PhotoUpload({
   savedPhoto,
   quota,
+  purchaseSuccess = false,
 }: {
   savedPhoto: { path: string; url: string } | null;
   quota: QuotaStatus;
+  purchaseSuccess?: boolean;
 }) {
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -144,7 +147,7 @@ export function PhotoUpload({
           backLabel="Dashboard"
         />
 
-        <QuotaBanner quota={quota} />
+        <QuotaBanner quota={quota} purchaseSuccess={purchaseSuccess} />
 
         <div className="grid lg:grid-cols-[minmax(0,280px)_1fr] gap-6 lg:gap-8 items-start">
           {/* Aperçu compact — visible sans scroll */}
@@ -218,12 +221,17 @@ export function PhotoUpload({
               ) : !quota.canAnalyze ? (
                 <div className="space-y-3">
                   <p className="text-sm text-muted">{quota.hint}</p>
-                  <Link
-                    href="/app/compte"
-                    className="inline-flex text-sm text-accent hover:underline"
-                  >
-                    Voir mon abonnement →
-                  </Link>
+                  {quota.needsPurchase && (
+                    <BuyAnalysisButton className="w-full rounded-xl bg-accent py-3.5 font-bold text-accent-ink hover:brightness-110 transition disabled:opacity-50" />
+                  )}
+                  {quota.latestLockedReportId && (
+                    <Link
+                      href={`/app/rapport/${quota.latestLockedReportId}`}
+                      className="block text-center text-sm text-muted hover:text-accent transition py-2"
+                    >
+                      Débloquer mon dernier rapport (9,90 €) →
+                    </Link>
+                  )}
                 </div>
               ) : (
                 <p className="text-sm text-muted">
@@ -265,47 +273,58 @@ export function PhotoUpload({
         </div>
 
         {/* CTA sticky mobile */}
-        <div className="lg:hidden fixed bottom-[68px] inset-x-0 z-20 border-t border-line bg-surface/95 backdrop-blur-xl px-5 py-3 safe-area-pb">
-          <button
-            type="button"
-            disabled={!canAnalyze}
-            onClick={runAnalysis}
-            className="w-full rounded-xl bg-accent py-3.5 font-bold text-accent-ink disabled:opacity-40 hover:brightness-110 transition"
-          >
-            {!hasPhoto
-              ? "Ajoute une photo"
-              : !quota.canAnalyze
-                ? "Quota épuisé"
-                : savedPath && !file
-                  ? "Relancer mon analyse"
-                  : "Lancer mon analyse"}
-          </button>
+        <div className="lg:hidden fixed bottom-[68px] inset-x-0 z-20 border-t border-line bg-surface/95 backdrop-blur-xl px-5 py-3 safe-area-pb space-y-2">
+          {!canAnalyze && quota.needsPurchase ? (
+            <BuyAnalysisButton className="w-full rounded-xl bg-accent py-3.5 font-bold text-accent-ink hover:brightness-110 transition disabled:opacity-50" />
+          ) : (
+            <button
+              type="button"
+              disabled={!canAnalyze}
+              onClick={runAnalysis}
+              className="w-full rounded-xl bg-accent py-3.5 font-bold text-accent-ink disabled:opacity-40 hover:brightness-110 transition"
+            >
+              {!hasPhoto
+                ? "Ajoute une photo"
+                : !quota.canAnalyze
+                  ? "Paiement requis"
+                  : savedPath && !file
+                    ? "Relancer mon analyse"
+                    : "Lancer mon analyse"}
+            </button>
+          )}
         </div>
       </AppContainer>
     </>
   );
 }
 
-function QuotaBanner({ quota }: { quota: QuotaStatus }) {
+function QuotaBanner({ quota, purchaseSuccess }: { quota: QuotaStatus; purchaseSuccess?: boolean }) {
   return (
-    <div
-      className={`mb-5 flex flex-wrap items-center justify-between gap-3 rounded-xl border px-4 py-3 ${
-        quota.unlimited
-          ? "border-accent/25 bg-accent/8"
-          : quota.canAnalyze
-            ? "border-line bg-surface/60"
-            : "border-line-strong bg-bg/40"
-      }`}
-    >
-      <div>
-        <p className="font-mono text-[10px] uppercase tracking-wider text-dim mb-0.5">
-          Quota analyses
-        </p>
-        <p className={`text-sm font-medium ${quota.unlimited ? "text-accent" : "text-text"}`}>
-          {quota.unlimited ? "Illimité (admin)" : quota.label}
-        </p>
+    <div className="mb-5 space-y-2">
+      {purchaseSuccess && (
+        <div className="rounded-xl border border-accent/30 bg-accent/10 px-4 py-3 text-sm text-accent">
+          Paiement reçu — tu peux lancer ton analyse, le rapport sera débloillé automatiquement.
+        </div>
+      )}
+      <div
+        className={`flex flex-wrap items-center justify-between gap-3 rounded-xl border px-4 py-3 ${
+          quota.unlimited
+            ? "border-accent/25 bg-accent/8"
+            : quota.canAnalyze
+              ? "border-line bg-surface/60"
+              : "border-line-strong bg-bg/40"
+        }`}
+      >
+        <div>
+          <p className="font-mono text-[10px] uppercase tracking-wider text-dim mb-0.5">
+            Quota analyses
+          </p>
+          <p className={`text-sm font-medium ${quota.unlimited ? "text-accent" : "text-text"}`}>
+            {quota.unlimited ? "Illimité (admin)" : quota.label}
+          </p>
+        </div>
+        <p className="text-xs text-muted max-w-[240px] text-right">{quota.hint}</p>
       </div>
-      <p className="text-xs text-muted max-w-[220px] text-right">{quota.hint}</p>
     </div>
   );
 }

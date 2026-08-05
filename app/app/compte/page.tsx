@@ -38,7 +38,7 @@ export default async function ComptePage() {
     <AppContainer>
       <PageHeader kicker="Compte" title="Mon compte" subtitle="Abonnement et quota d'analyses" />
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 stagger-in">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 stagger-in">
         <AppCard>
           <AppSectionLabel>Identité</AppSectionLabel>
           <p className="text-text font-medium text-lg">{profile?.email ?? user.email}</p>
@@ -76,7 +76,13 @@ export default async function ComptePage() {
         </AppCard>
 
         <StatCard
-          label="Quota analyses"
+          label="Crédits prépayés"
+          value={isAdmin ? "—" : String(sub?.prepaid_credits ?? 0)}
+          hint="Analyses achetées à 14,90 € · rapport débloillé"
+        />
+
+        <StatCard
+          label="Quota mensuel"
           value={isAdmin ? "∞" : String(quotaUsed)}
           hint={
             isAdmin
@@ -84,20 +90,28 @@ export default async function ComptePage() {
               : hasActiveSub
                 ? `${MONTHLY_QUOTA} analyses / mois · ${quotaUsed} utilisée(s)`
                 : quotaUsed >= 1
-                  ? "Quota gratuit épuisé — débloque ton rapport"
-                  : "1 analyse gratuite incluse"
+                  ? "1re gratuite utilisée — nouvelles analyses payantes"
+                  : "1 analyse gratuite (aperçu flouté)"
           }
-          accent={isAdmin}
+          accent={isAdmin || hasActiveSub}
         />
       </div>
 
-      {!isAdmin && (
-        <p className="mt-3 text-sm text-dim">
-          {hasActiveSub
-            ? `${quotaUsed} / ${MONTHLY_QUOTA} utilisée(s) ce mois`
-            : `${quotaUsed} / 1 analyse gratuite utilisée`}
+      {!isAdmin && (sub?.prepaid_credits ?? 0) > 0 && (
+        <p className="mt-3 text-sm text-accent/90">
+          {sub!.prepaid_credits} analyse{(sub!.prepaid_credits ?? 0) > 1 ? "s" : ""} prépayée{(sub!.prepaid_credits ?? 0) > 1 ? "s" : ""} — lance-la depuis Analyser.
         </p>
       )}
+
+      <AppCard className="mt-4">
+        <AppSectionLabel>Tarifs analyses</AppSectionLabel>
+        <ul className="text-sm text-muted space-y-2 mt-2">
+          <li>· <strong className="text-text">1re analyse</strong> — gratuite (rapport flouté)</li>
+          <li>· <strong className="text-text">Débloquer un rapport</strong> — 9,90 €</li>
+          <li>· <strong className="text-text">Nouvelle analyse</strong> — 14,90 € (rapport débloillé)</li>
+          <li>· <strong className="text-text">Abonnement</strong> — 2 analyses / mois incluses</li>
+        </ul>
+      </AppCard>
 
       {isAdmin && (
         <p className="mt-3 text-sm text-accent/80">
