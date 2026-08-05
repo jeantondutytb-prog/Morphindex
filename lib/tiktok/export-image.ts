@@ -1,4 +1,4 @@
-/** Convertit un fichier image en data URL (compatible export html-to-image). */
+/** Convertit un fichier image en data URL pour l'export serveur. */
 export function readFileAsDataUrl(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
