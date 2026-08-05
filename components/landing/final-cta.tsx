@@ -20,7 +20,7 @@ export function FinalCta() {
           <span className="text-accent">Autant le connaître.</span>
         </h2>
         <p className="text-muted mb-8 text-[15px]">
-          Trois minutes. 18 ans et plus. Un rapport clair, pas une note vague.
+          Trois minutes. Un rapport clair, pas une note vague.
         </p>
 
         <Cta className="cta-shine" label="Lancer mon analyse gratuitement" />

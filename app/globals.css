@@ -177,6 +177,12 @@ body { font-family: var(--font-sans); }
 
 /* ── Landing page ── */
 
+.auth-panel-glow {
+  background:
+    radial-gradient(ellipse 55% 45% at 30% 40%, rgba(0, 229, 160, 0.05), transparent 65%),
+    radial-gradient(ellipse 40% 35% at 80% 80%, rgba(0, 229, 160, 0.03), transparent 55%);
+}
+
 .hero-glow {
   background:
     radial-gradient(ellipse 70% 50% at 20% 20%, rgba(0, 229, 160, 0.07), transparent 60%),

@@ -67,7 +67,6 @@ export function Hero() {
               </span>
             ))}
           </div>
-          <p className="mt-4 font-mono text-[10.5px] text-dim">18 ans et plus</p>
         </div>
 
         <div className="flex-1 flex justify-center min-[900px]:justify-end hero-enter hero-enter-delay">

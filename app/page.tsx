@@ -13,7 +13,7 @@ import { SiteFooter } from "@/components/site-footer";
 
 export const metadata: Metadata = {
   title: "MorphIndex — analyse faciale en français",
-  description: "Mesure ce qui dépend de toi : peau, cernes, pilosité, coupe, posture, dents. Indice actuel, indice atteignable, et la routine pour y aller. 18 ans et plus.",
+  description: "Mesure ce qui dépend de toi : peau, cernes, pilosité, coupe, posture, dents. Indice actuel, indice atteignable, et la routine pour y aller.",
   robots: "index,follow",
 };
 

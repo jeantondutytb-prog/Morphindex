@@ -80,7 +80,7 @@ export function PhotoUpload() {
         subtitle={
           savedPath && !file
             ? "Ta photo enregistrée — relance l'analyse sans la re-téléverser"
-            : "18 ans et plus · tu dois être la personne sur la photo"
+            : "Tu dois être la personne sur la photo"
         }
         backHref="/app"
         backLabel="Dashboard"

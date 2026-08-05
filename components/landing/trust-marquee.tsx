@@ -5,7 +5,6 @@ const ITEMS = [
   "7 points actionnables",
   "Routine personnalisée",
   "Sans carte bancaire pour démarrer",
-  "18 ans et plus",
   "Softmaxing & hardmaxing",
 ];
 

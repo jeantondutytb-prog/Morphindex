@@ -13,7 +13,7 @@ export const AuthInput = forwardRef<
       <input
         ref={ref}
         id={inputId}
-        className={`w-full rounded-xl border border-line bg-bg/60 px-4 py-3 text-text outline-none transition-colors focus:border-accent/50 focus:ring-2 focus:ring-accent/10 ${className}`}
+        className={`w-full rounded-xl border border-line/80 bg-surface/50 px-4 py-3.5 text-[15px] text-text placeholder:text-dim outline-none transition-all focus:border-accent/40 focus:bg-surface/80 focus:ring-1 focus:ring-accent/15 ${className}`}
         {...props}
       />
     </div>
@@ -81,5 +81,5 @@ export function AuthError({ message }: { message: string }) {
 }
 
 export function AuthFooterLink({ children }: { children: React.ReactNode }) {
-  return <p className="mt-6 text-sm text-dim text-center">{children}</p>;
+  return <p className="mt-8 pt-6 border-t border-line/80 text-sm text-dim">{children}</p>;
 }

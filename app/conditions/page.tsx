@@ -39,8 +39,8 @@ export default function ConditionsPage() {
         </div>
 
         <div>
-          <h2 className="font-display text-lg font-bold text-text mb-2">2. Accès au service — 18 ans et plus</h2>
-          <p>Le service est réservé aux personnes âgées de 18 ans ou plus. En créant un compte, tu déclares avoir au moins 18 ans et être la personne figurant sur les photos que tu soumets à l&apos;analyse.</p>
+          <h2 className="font-display text-lg font-bold text-text mb-2">2. Accès au service</h2>
+          <p>En créant un compte, tu déclares être la personne figurant sur les photos que tu soumets à l&apos;analyse.</p>
         </div>
 
         <div>
