@@ -7,6 +7,7 @@ import { AppContainer } from "@/components/app/app-container";
 import { PageHeader } from "@/components/app/page-header";
 import { AnalysisProgressOverlay, ANALYSIS_STEPS } from "@/components/app/analysis-progress-overlay";
 import { BuyAnalysisButton } from "@/components/app/buy-analysis-button";
+import { PaymentSync } from "@/components/app/payment-sync";
 import type { QuotaStatus } from "@/lib/credits/quota-status";
 
 const TIPS = [
@@ -21,10 +22,12 @@ export function PhotoUpload({
   savedPhoto,
   quota,
   purchaseSuccess = false,
+  sessionId,
 }: {
   savedPhoto: { path: string; url: string } | null;
   quota: QuotaStatus;
   purchaseSuccess?: boolean;
+  sessionId?: string;
 }) {
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -147,7 +150,7 @@ export function PhotoUpload({
           backLabel="Dashboard"
         />
 
-        <QuotaBanner quota={quota} purchaseSuccess={purchaseSuccess} />
+        <QuotaBanner quota={quota} purchaseSuccess={purchaseSuccess} sessionId={sessionId} />
 
         <div className="grid lg:grid-cols-[minmax(0,280px)_1fr] gap-6 lg:gap-8 items-start">
           {/* Aperçu compact — visible sans scroll */}
@@ -298,10 +301,19 @@ export function PhotoUpload({
   );
 }
 
-function QuotaBanner({ quota, purchaseSuccess }: { quota: QuotaStatus; purchaseSuccess?: boolean }) {
+function QuotaBanner({
+  quota,
+  purchaseSuccess,
+  sessionId,
+}: {
+  quota: QuotaStatus;
+  purchaseSuccess?: boolean;
+  sessionId?: string;
+}) {
   return (
     <div className="mb-5 space-y-2">
-      {purchaseSuccess && (
+      {purchaseSuccess && sessionId?.startsWith("cs_") && <PaymentSync sessionId={sessionId} />}
+      {purchaseSuccess && !sessionId?.startsWith("cs_") && (
         <div className="rounded-xl border border-accent/30 bg-accent/10 px-4 py-3 text-sm text-accent">
           Paiement reçu — tu peux lancer ton analyse, le rapport sera débloillé automatiquement.
         </div>

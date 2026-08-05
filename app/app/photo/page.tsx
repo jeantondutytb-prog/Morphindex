@@ -7,9 +7,9 @@ import { PhotoUpload } from "@/components/app/photo-upload";
 export default async function PhotoPage({
   searchParams,
 }: {
-  searchParams: Promise<{ paid?: string }>;
+  searchParams: Promise<{ paid?: string; session_id?: string }>;
 }) {
-  const { paid } = await searchParams;
+  const { paid, session_id: sessionId } = await searchParams;
   const supabase = await createServerClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/connexion");
@@ -34,5 +34,5 @@ export default async function PhotoPage({
     }
   }
 
-  return <PhotoUpload savedPhoto={savedPhoto} quota={quota} purchaseSuccess={paid === "1"} />;
+  return <PhotoUpload savedPhoto={savedPhoto} quota={quota} purchaseSuccess={paid === "1"} sessionId={sessionId} />;
 }
