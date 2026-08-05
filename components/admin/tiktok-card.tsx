@@ -3,12 +3,20 @@
 import { forwardRef } from "react";
 import { formatScore, scoreProgress, scoreTier } from "@/lib/tiktok/score-tier";
 
+export type PhotoAspect = "1:1" | "2:3";
+
 export type TikTokCardProps = {
   photoUrl: string | null;
+  photoAspect: PhotoAspect;
   brandName: string;
   siteLabel: string;
   scoreActuel: number;
   scorePotentiel: number;
+};
+
+const PHOTO_SIZE: Record<PhotoAspect, { width: number; height: number; radius: number }> = {
+  "1:1": { width: 560, height: 560, radius: 28 },
+  "2:3": { width: 480, height: 720, radius: 28 },
 };
 
 function ScanIcon() {
@@ -29,6 +37,70 @@ function ScanIcon() {
         strokeLinecap="round"
       />
     </svg>
+  );
+}
+
+function FlashyProgressBar({ progress, accent = "#00E5A0" }: { progress: number; accent?: string }) {
+  return (
+    <div style={{ marginTop: "auto", paddingTop: 20 }}>
+      <div
+        style={{
+          position: "relative",
+          height: 18,
+          borderRadius: 999,
+          background: "rgba(255,255,255,0.06)",
+          border: `1px solid ${accent}44`,
+          boxShadow: `0 0 20px ${accent}33, inset 0 0 12px rgba(0,0,0,0.5)`,
+          overflow: "hidden",
+        }}
+      >
+        <div
+          style={{
+            position: "relative",
+            width: `${progress}%`,
+            height: "100%",
+            borderRadius: 999,
+            background: `linear-gradient(90deg, ${accent}88 0%, ${accent} 45%, #ffffff 85%, ${accent} 100%)`,
+            boxShadow: `0 0 24px ${accent}, 0 0 48px ${accent}66, inset 0 2px 4px rgba(255,255,255,0.45)`,
+          }}
+        >
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              background:
+                "linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.55) 48%, rgba(255,255,255,0.15) 52%, transparent 70%)",
+            }}
+          />
+        </div>
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            backgroundImage:
+              "repeating-linear-gradient(90deg, rgba(255,255,255,0.04) 0, rgba(255,255,255,0.04) 1px, transparent 1px, transparent 12px)",
+            pointerEvents: "none",
+          }}
+        />
+      </div>
+      <div
+        style={{
+          marginTop: 8,
+          display: "flex",
+          justifyContent: "space-between",
+          fontFamily: "ui-monospace, monospace",
+          fontSize: 13,
+          letterSpacing: "0.08em",
+          color: accent,
+          textTransform: "uppercase",
+          opacity: 0.85,
+        }}
+      >
+        <span>0</span>
+        <span>{Math.round(progress)}%</span>
+        <span>10</span>
+      </div>
+    </div>
   );
 }
 
@@ -55,7 +127,7 @@ function ScoreCard({
         boxShadow: `0 0 32px ${accent}33, inset 0 0 24px ${accent}0d`,
         display: "flex",
         flexDirection: "column",
-        minHeight: 220,
+        minHeight: 240,
       }}
     >
       <p
@@ -80,6 +152,7 @@ function ScoreCard({
           lineHeight: 1,
           color: "#F5F6F7",
           fontVariantNumeric: "tabular-nums",
+          textShadow: `0 0 40px ${accent}44`,
         }}
       >
         {formatScore(score)}
@@ -91,40 +164,23 @@ function ScoreCard({
             height: 10,
             borderRadius: "50%",
             background: accent,
-            boxShadow: `0 0 10px ${accent}`,
+            boxShadow: `0 0 12px ${accent}, 0 0 24px ${accent}88`,
             flexShrink: 0,
           }}
         />
         <span style={{ fontSize: 26, fontWeight: 700, color: "#F5F6F7" }}>{tier}</span>
       </div>
-      <div
-        style={{
-          marginTop: "auto",
-          paddingTop: 24,
-          height: 8,
-          borderRadius: 999,
-          background: "rgba(255,255,255,0.08)",
-          overflow: "hidden",
-        }}
-      >
-        <div
-          style={{
-            width: `${progress}%`,
-            height: "100%",
-            borderRadius: 999,
-            background: `linear-gradient(90deg, ${accent}aa, ${accent})`,
-            boxShadow: `0 0 16px ${accent}88`,
-          }}
-        />
-      </div>
+      <FlashyProgressBar progress={progress} accent={accent} />
     </div>
   );
 }
 
 export const TikTokCard = forwardRef<HTMLDivElement, TikTokCardProps>(function TikTokCard(
-  { photoUrl, brandName, siteLabel, scoreActuel, scorePotentiel },
+  { photoUrl, photoAspect, brandName, siteLabel, scoreActuel, scorePotentiel },
   ref,
 ) {
+  const photoFrame = PHOTO_SIZE[photoAspect];
+
   return (
     <div
       ref={ref}
@@ -141,7 +197,6 @@ export const TikTokCard = forwardRef<HTMLDivElement, TikTokCardProps>(function T
         flexShrink: 0,
       }}
     >
-      {/* Glow background */}
       <div
         style={{
           position: "absolute",
@@ -152,7 +207,6 @@ export const TikTokCard = forwardRef<HTMLDivElement, TikTokCardProps>(function T
         }}
       />
 
-      {/* Header */}
       <div
         style={{
           position: "relative",
@@ -203,7 +257,6 @@ export const TikTokCard = forwardRef<HTMLDivElement, TikTokCardProps>(function T
         </div>
       </div>
 
-      {/* Portrait */}
       <div
         style={{
           position: "relative",
@@ -212,17 +265,17 @@ export const TikTokCard = forwardRef<HTMLDivElement, TikTokCardProps>(function T
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          padding: "40px 48px",
+          padding: photoAspect === "2:3" ? "24px 48px" : "40px 48px",
         }}
       >
         <div
           style={{
-            width: 520,
-            height: 520,
-            borderRadius: "50%",
+            width: photoFrame.width,
+            height: photoFrame.height,
+            borderRadius: photoFrame.radius,
             overflow: "hidden",
-            border: "3px solid rgba(0,229,160,0.35)",
-            boxShadow: "0 0 60px rgba(0,229,160,0.2), 0 0 120px rgba(0,229,160,0.08)",
+            border: "3px solid rgba(0,229,160,0.45)",
+            boxShadow: "0 0 60px rgba(0,229,160,0.25), 0 0 120px rgba(0,229,160,0.1)",
             background: "#0C0E12",
             display: "flex",
             alignItems: "center",
@@ -240,13 +293,12 @@ export const TikTokCard = forwardRef<HTMLDivElement, TikTokCardProps>(function T
           ) : (
             <div style={{ textAlign: "center", color: "#5C6470", padding: 32 }}>
               <ScanIcon />
-              <p style={{ marginTop: 16, fontSize: 22 }}>Photo</p>
+              <p style={{ marginTop: 16, fontSize: 22 }}>{photoAspect}</p>
             </div>
           )}
         </div>
       </div>
 
-      {/* Score cards */}
       <div
         style={{
           position: "relative",

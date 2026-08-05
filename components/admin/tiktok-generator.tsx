@@ -2,7 +2,7 @@
 
 import { useCallback, useRef, useState } from "react";
 import { toPng } from "html-to-image";
-import { TikTokCard } from "@/components/admin/tiktok-card";
+import { TikTokCard, type PhotoAspect } from "@/components/admin/tiktok-card";
 import { AppCard, AppSectionLabel } from "@/components/app/ui";
 import { SITE_NAME, siteHostname } from "@/lib/site";
 
@@ -17,13 +17,14 @@ export function TikTokGenerator() {
   const fileRef = useRef<HTMLInputElement>(null);
 
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
+  const [photoAspect, setPhotoAspect] = useState<PhotoAspect>("1:1");
   const [brandName, setBrandName] = useState(SITE_NAME);
   const [siteLabel, setSiteLabel] = useState(siteHostname());
   const [scoreActuel, setScoreActuel] = useState(DEFAULT_SCORE_ACTUEL);
   const [scorePotentiel, setScorePotentiel] = useState(DEFAULT_SCORE_POTENTIEL);
   const [downloading, setDownloading] = useState(false);
 
-  const cardProps = { photoUrl, brandName, siteLabel, scoreActuel, scorePotentiel };
+  const cardProps = { photoUrl, photoAspect, brandName, siteLabel, scoreActuel, scorePotentiel };
 
   const onPhotoChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -83,6 +84,25 @@ export function TikTokGenerator() {
           >
             {photoUrl ? "Changer la photo" : "Uploader une photo (JPEG, PNG)"}
           </button>
+          <div className="mt-3 grid grid-cols-2 gap-2">
+            {(["1:1", "2:3"] as const).map((ratio) => (
+              <button
+                key={ratio}
+                type="button"
+                onClick={() => setPhotoAspect(ratio)}
+                className={`rounded-xl border py-2.5 text-sm font-medium transition ${
+                  photoAspect === ratio
+                    ? "border-accent/40 bg-accent/10 text-accent"
+                    : "border-line text-muted hover:border-line-strong hover:text-text"
+                }`}
+              >
+                {ratio === "1:1" ? "Carré 1:1" : "Portrait 2:3"}
+              </button>
+            ))}
+          </div>
+          <p className="mt-2 text-xs text-dim">
+            Choisis le format de recadrage de la photo dans la carte.
+          </p>
         </AppCard>
 
         <AppCard>
