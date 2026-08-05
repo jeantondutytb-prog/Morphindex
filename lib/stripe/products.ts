@@ -1,7 +1,5 @@
 export const PRICE_IDS = {
-  /** Débloquer un rapport déjà généré (aperçu flouté) */
-  unlock: process.env.STRIPE_PRICE_UNLOCK ?? "",
-  /** Une nouvelle analyse complète + rapport débloqué */
+  /** Analyse de suivi (complète la première analyse) */
   analyse: process.env.STRIPE_PRICE_ANALYSE ?? "",
   hebdo: process.env.STRIPE_PRICE_HEBDO ?? "",
   annuel: process.env.STRIPE_PRICE_ANNUEL ?? "",
@@ -10,20 +8,19 @@ export const PRICE_IDS = {
 
 export type Formule = keyof typeof PRICE_IDS;
 
-export type CheckoutIntent = "unlock_report" | "new_analysis" | "subscription";
+export type CheckoutIntent = "new_analysis" | "subscription";
 
 export function checkoutIntent(formule: Formule): CheckoutIntent {
-  if (formule === "unlock") return "unlock_report";
   if (formule === "analyse") return "new_analysis";
   return "subscription";
 }
 
 export function isOneTimePayment(formule: Formule): boolean {
-  return formule === "vie" || formule === "unlock" || formule === "analyse";
+  return formule === "vie" || formule === "analyse";
 }
 
-/** Offres affichées sur le paywall d'un rapport verrouillé */
-export const UNLOCK_OFFERS: {
+/** Abonnements affichés sur le paywall d'un rapport verrouillé */
+export const SUBSCRIPTION_OFFERS: {
   id: Formule;
   label: string;
   price: string;
@@ -32,29 +29,37 @@ export const UNLOCK_OFFERS: {
   recommended?: boolean;
 }[] = [
   {
-    id: "unlock",
-    label: "Débloquer ce rapport",
-    price: "9,90 €",
-    hint: "Paiement unique · rapport complet + routine",
+    id: "hebdo",
+    label: "Hebdomadaire",
+    price: "4,90 €",
+    period: "/ semaine",
+    hint: "Accès complet · renouvelable",
     recommended: true,
   },
-  { id: "hebdo", label: "Hebdomadaire", price: "4,90 €", period: "/ semaine", hint: "2 analyses / mois incluses" },
   {
     id: "annuel",
     label: "Annuel",
     price: "49,90 €",
     period: "/ an",
-    hint: "≈ 4,16 €/mois · 2 analyses / mois",
+    hint: "≈ 4,16 €/mois · meilleur rapport qualité-prix",
   },
-  { id: "vie", label: "À vie", price: "99,90 €", hint: "Paiement unique · 2 analyses / mois" },
+  {
+    id: "vie",
+    label: "À vie",
+    price: "99,90 €",
+    hint: "Paiement unique · accès permanent",
+  },
 ];
 
-/** Alias rétrocompatibilité */
-export const FORMULES = UNLOCK_OFFERS;
+/** Alias rétrocompatibilité paywall */
+export const UNLOCK_OFFERS = SUBSCRIPTION_OFFERS;
 
-export const NEW_ANALYSIS_OFFER = {
+export const FOLLOW_UP_OFFER = {
   id: "analyse" as const,
-  label: "Nouvelle analyse",
-  price: "14,90 €",
-  hint: "1 analyse complète · rapport débloillé immédiatement",
+  label: "Analyse de suivi",
+  price: "7,90 €",
+  hint: "Compare ta progression · routine ajustée · rapport débloillé",
 };
+
+/** Alias rétrocompatibilité */
+export const NEW_ANALYSIS_OFFER = FOLLOW_UP_OFFER;

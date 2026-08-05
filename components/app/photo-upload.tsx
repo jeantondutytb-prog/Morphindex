@@ -224,12 +224,12 @@ export function PhotoUpload({
                   {quota.needsPurchase && (
                     <BuyAnalysisButton className="w-full rounded-xl bg-accent py-3.5 font-bold text-accent-ink hover:brightness-110 transition disabled:opacity-50" />
                   )}
-                  {quota.latestLockedReportId && (
+                  {quota.latestLockedReportId && !quota.hasActiveSubscription && (
                     <Link
                       href={`/app/rapport/${quota.latestLockedReportId}`}
                       className="block text-center text-sm text-muted hover:text-accent transition py-2"
                     >
-                      Débloquer mon dernier rapport (9,90 €) →
+                      Débloquer mon rapport avec un abonnement →
                     </Link>
                   )}
                 </div>
@@ -303,7 +303,7 @@ function QuotaBanner({ quota, purchaseSuccess }: { quota: QuotaStatus; purchaseS
     <div className="mb-5 space-y-2">
       {purchaseSuccess && (
         <div className="rounded-xl border border-accent/30 bg-accent/10 px-4 py-3 text-sm text-accent">
-          Paiement reçu — tu peux lancer ton analyse, le rapport sera débloillé automatiquement.
+          Paiement reçu — tu peux lancer ton analyse de suivi, le rapport sera débloillé automatiquement.
         </div>
       )}
       <div

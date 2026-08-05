@@ -29,19 +29,8 @@ export async function POST(req: Request) {
         type: "analysis_purchased",
         payload: { formule },
       });
-    } else if (intent === "unlock_report" && analysisId) {
-      await admin.from("subscriptions").update({
-        stripe_customer_id: s.customer as string,
-      }).eq("user_id", userId);
-
-      await admin.from("analyses").update({ unlocked: true }).eq("id", analysisId);
-      await admin.from("events").insert({
-        user_id: userId,
-        type: "report_unlocked",
-        payload: { analysis_id: analysisId, formule },
-      });
     } else {
-      // Abonnement hebdo / annuel / à vie
+      // Abonnement hebdo / annuel / à vie — débloque le rapport lié au checkout
       await admin.from("subscriptions").update({
         stripe_customer_id: s.customer as string,
         stripe_subscription_id: (s.subscription as string) ?? null,
@@ -54,7 +43,11 @@ export async function POST(req: Request) {
         await admin.from("analyses").update({ unlocked: true }).eq("id", analysisId);
       }
 
-      await admin.from("events").insert({ user_id: userId, type: "payment_succeeded", payload: { formule } });
+      await admin.from("events").insert({
+        user_id: userId,
+        type: "payment_succeeded",
+        payload: { formule, analysis_id: analysisId },
+      });
     }
   }
 

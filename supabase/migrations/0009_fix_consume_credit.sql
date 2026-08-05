@@ -1,5 +1,5 @@
--- Crédits prépayés (analyse de suivi à l'unité) + lien parent_analysis_id
--- Si cette migration échoue (return type), exécuter 0009_fix_consume_credit.sql
+-- Fix : consume_credit passait de boolean à text — DROP obligatoire avant recréation.
+-- À exécuter si 0008_prepaid_credits.sql a échoué sur Supabase.
 
 alter table public.subscriptions
   add column if not exists prepaid_credits int not null default 0;
@@ -42,6 +42,7 @@ begin
 
   v_is_free_tier := v_effective_used < p_free_limit;
 
+  -- Analyse de suivi achetée à l'unité
   if v_prepaid > 0 then
     update public.subscriptions
        set prepaid_credits = prepaid_credits - 1

@@ -1,7 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-/** 2 analyses / mois incluses dans l'abonnement actif. */
-export const MONTHLY_QUOTA = 2;
+/** Abonnement = accès produit uniquement — pas d'analyses mensuelles incluses. */
+export const MONTHLY_QUOTA = 0;
 
 /** 1re analyse gratuite (rapport flouté) avant tout paiement. */
 export const FREE_ANALYSES = 1;
@@ -22,28 +22,28 @@ export function canConsume(sub: Sub, now: Date): { ok: true } | { ok: false; err
 
   const used = new Date(sub.quota_reset_at) <= now ? 0 : sub.quota_used;
 
+  if (used < FREE_ANALYSES) {
+    return { ok: true };
+  }
+
   if (sub.status === "canceled" || sub.status === "past_due") {
     return {
       ok: false,
-      error: "Achète une analyse (14,90 €) ou réactive ton abonnement pour continuer.",
+      error: "Achète une analyse de suivi (7,90 €) ou réactive ton abonnement.",
     };
   }
 
   if (sub.status === "active") {
-    return used < MONTHLY_QUOTA
-      ? { ok: true }
-      : {
-          ok: false,
-          error: `Tu as utilisé tes ${MONTHLY_QUOTA} analyses du mois. Achète une analyse à l'unité ou attends le mois prochain.`,
-        };
+    return {
+      ok: false,
+      error: "Analyse de suivi : 7,90 € — compare ta progression avec ta première analyse.",
+    };
   }
 
-  return used < FREE_ANALYSES
-    ? { ok: true }
-    : {
-        ok: false,
-        error: "Achète une nouvelle analyse (14,90 €) ou débloque ton rapport avec un abonnement.",
-      };
+  return {
+    ok: false,
+    error: "Achète une analyse de suivi (7,90 €) ou souscris pour débloquer ton rapport.",
+  };
 }
 
 export async function consumeCreditOrReject(
@@ -86,6 +86,7 @@ export async function refundCredit(
   await admin.rpc("refund_credit", { p_user: userId, p_source: source });
 }
 
+/** Seules les analyses de suivi achetées à l'unité sont débloillées automatiquement. */
 export function shouldUnlockReport(source: ConsumeSource): boolean {
-  return source === "prepaid" || source === "monthly";
+  return source === "prepaid";
 }

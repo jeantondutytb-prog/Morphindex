@@ -80,7 +80,7 @@ Pas médecin, pas de diagnostic. Pas de garantie de résultat.
 
 Réponds uniquement par l'objet JSON demandé, conforme au schéma, sans texte autour.`;
 
-export function buildUserContext(p: OnboardingData): string {
+export function buildUserContext(p: OnboardingData, followUpBlock?: string): string {
   return [
     `Objectif prioritaire : ${p.objectif}`,
     `Tranche d'âge : ${p.tranche_age}`,
@@ -90,6 +90,9 @@ export function buildUserContext(p: OnboardingData): string {
     `Sensibilité cutanée déclarée : ${p.sensibilite}`,
     `Routine actuelle : ${p.routine_actuelle.join(", ") || "aucune"}`,
     ``,
-    `Analyse cette photo : score les dimensions observables du catalogue (${DIMENSION_COUNT} max), les sept domaines, puis rends le JSON demandé.`,
-  ].join("\n");
+    followUpBlock ?? "",
+    followUpBlock ? "" : `Analyse cette photo : score les dimensions observables du catalogue (${DIMENSION_COUNT} max), les sept domaines, puis rends le JSON demandé.`,
+  ]
+    .filter((line) => line !== "")
+    .join("\n");
 }

@@ -1,7 +1,8 @@
 import { createServerClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { MONTHLY_QUOTA } from "@/lib/credits/quota";
+import { FREE_ANALYSES } from "@/lib/credits/quota";
+import { FOLLOW_UP_OFFER } from "@/lib/stripe/products";
 import { PageHeader } from "@/components/app/page-header";
 import { AppContainer } from "@/components/app/app-container";
 import { AppButton, AppCard, AppSectionLabel } from "@/components/app/ui";
@@ -33,10 +34,11 @@ export default async function ComptePage() {
     sub && new Date(sub.quota_reset_at) > new Date() ? sub.quota_used : 0;
   const hasActiveSub = sub?.status === "active";
   const isAdmin = profile?.is_admin === true;
+  const freeUsed = quotaUsed >= FREE_ANALYSES;
 
   return (
     <AppContainer>
-      <PageHeader kicker="Compte" title="Mon compte" subtitle="Abonnement et quota d'analyses" />
+      <PageHeader kicker="Compte" title="Mon compte" subtitle="Abonnement et analyses" />
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 stagger-in">
         <AppCard>
@@ -69,29 +71,29 @@ export default async function ComptePage() {
             <>
               <p className="text-muted text-lg">Aucun abonnement actif</p>
               <p className="text-sm text-dim mt-2">
-                Débloque ton dernier rapport ou souscris depuis le paywall.
+                Souscris depuis le paywall de ton rapport pour débloquer l&apos;accès.
               </p>
             </>
           )}
         </AppCard>
 
         <StatCard
-          label="Crédits prépayés"
+          label="Analyses de suivi"
           value={isAdmin ? "—" : String(sub?.prepaid_credits ?? 0)}
-          hint="Analyses achetées à 14,90 € · rapport débloillé"
+          hint={`Crédits prépayés · ${FOLLOW_UP_OFFER.price} l'unité`}
         />
 
         <StatCard
-          label="Quota mensuel"
-          value={isAdmin ? "∞" : String(quotaUsed)}
+          label="Première analyse"
+          value={isAdmin ? "∞" : freeUsed ? "Utilisée" : "Disponible"}
           hint={
             isAdmin
               ? "Compte admin — analyses illimitées"
-              : hasActiveSub
-                ? `${MONTHLY_QUOTA} analyses / mois · ${quotaUsed} utilisée(s)`
-                : quotaUsed >= 1
-                  ? "1re gratuite utilisée — nouvelles analyses payantes"
-                  : "1 analyse gratuite (aperçu flouté)"
+              : freeUsed
+                ? hasActiveSub
+                  ? "Analyses de suivi payantes à la demande"
+                  : "Abonnement requis pour débloquer le rapport"
+                : "Gratuite · aperçu flouté"
           }
           accent={isAdmin || hasActiveSub}
         />
@@ -99,17 +101,16 @@ export default async function ComptePage() {
 
       {!isAdmin && (sub?.prepaid_credits ?? 0) > 0 && (
         <p className="mt-3 text-sm text-accent/90">
-          {sub!.prepaid_credits} analyse{(sub!.prepaid_credits ?? 0) > 1 ? "s" : ""} prépayée{(sub!.prepaid_credits ?? 0) > 1 ? "s" : ""} — lance-la depuis Analyser.
+          {sub!.prepaid_credits} analyse{(sub!.prepaid_credits ?? 0) > 1 ? "s" : ""} de suivi — lance-la depuis Analyser.
         </p>
       )}
 
       <AppCard className="mt-4">
-        <AppSectionLabel>Tarifs analyses</AppSectionLabel>
+        <AppSectionLabel>Tarifs</AppSectionLabel>
         <ul className="text-sm text-muted space-y-2 mt-2">
           <li>· <strong className="text-text">1re analyse</strong> — gratuite (rapport flouté)</li>
-          <li>· <strong className="text-text">Débloquer un rapport</strong> — 9,90 €</li>
-          <li>· <strong className="text-text">Nouvelle analyse</strong> — 14,90 € (rapport débloillé)</li>
-          <li>· <strong className="text-text">Abonnement</strong> — 2 analyses / mois incluses</li>
+          <li>· <strong className="text-text">Abonnement</strong> — débloque le rapport + accès produit (hebdo, annuel, à vie)</li>
+          <li>· <strong className="text-text">Analyse de suivi</strong> — {FOLLOW_UP_OFFER.price} (compare avec ta première analyse)</li>
         </ul>
       </AppCard>
 

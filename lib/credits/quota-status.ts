@@ -1,6 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { canConsume, FREE_ANALYSES, MONTHLY_QUOTA } from "./quota";
-import { NEW_ANALYSIS_OFFER } from "@/lib/stripe/products";
+import { canConsume, FREE_ANALYSES } from "./quota";
+import { FOLLOW_UP_OFFER } from "@/lib/stripe/products";
 
 export type QuotaStatus = {
   unlimited: boolean;
@@ -13,6 +13,7 @@ export type QuotaStatus = {
   hint: string;
   needsPurchase: boolean;
   latestLockedReportId: string | null;
+  hasActiveSubscription: boolean;
 };
 
 export async function getQuotaStatus(
@@ -32,6 +33,7 @@ export async function getQuotaStatus(
       hint: "Compte admin — analyses sans limite",
       needsPurchase: false,
       latestLockedReportId: null,
+      hasActiveSubscription: true,
     };
   }
 
@@ -55,7 +57,7 @@ export async function getQuotaStatus(
   const now = new Date();
   const used = sub && new Date(sub.quota_reset_at) > now ? sub.quota_used : 0;
   const hasActive = sub?.status === "active";
-  const limit = hasActive ? MONTHLY_QUOTA : FREE_ANALYSES;
+  const limit = FREE_ANALYSES;
   const remaining = Math.max(0, limit - used);
   const verdict = sub ? canConsume({ ...sub, prepaid_credits: prepaidCredits }, now) : { ok: true as const };
 
@@ -63,20 +65,19 @@ export async function getQuotaStatus(
   let label: string;
 
   if (prepaidCredits > 0) {
-    label = `${prepaidCredits} crédit${prepaidCredits > 1 ? "s" : ""} prépayé${prepaidCredits > 1 ? "s" : ""}`;
-    hint = "Analyse achetée — rapport débloqué automatiquement";
-  } else if (hasActive) {
-    label = `${remaining} / ${limit} ce mois`;
-    hint =
-      remaining > 0
-        ? `${used} utilisée(s) · abonnement actif`
-        : `Quota mensuel épuisé · ${NEW_ANALYSIS_OFFER.price} par analyse supplémentaire`;
-  } else if (used >= FREE_ANALYSES) {
-    label = "Paiement requis";
-    hint = `Nouvelle analyse : ${NEW_ANALYSIS_OFFER.price} · ou débloque ton rapport depuis 9,90 €`;
-  } else {
+    label = `${prepaidCredits} analyse${prepaidCredits > 1 ? "s" : ""} de suivi`;
+    hint = "Crédit prépayé — rapport débloillé automatiquement";
+  } else if (used < FREE_ANALYSES) {
     label = "1 gratuite (aperçu flouté)";
-    hint = "Première analyse offerte · débloque le rapport complet ensuite";
+    hint = hasActive
+      ? "Première analyse offerte · abonnement actif pour le déblocage"
+      : "Première analyse offerte · abonnement requis pour débloquer le rapport";
+  } else if (hasActive) {
+    label = "Abonnement actif";
+    hint = `Analyse de suivi : ${FOLLOW_UP_OFFER.price} — compare ta progression`;
+  } else {
+    label = "Paiement requis";
+    hint = `Analyse de suivi : ${FOLLOW_UP_OFFER.price} · ou abonne-toi pour débloquer ton rapport`;
   }
 
   return {
@@ -90,5 +91,6 @@ export async function getQuotaStatus(
     hint,
     needsPurchase: !verdict.ok && prepaidCredits === 0,
     latestLockedReportId: latestLocked?.id ?? null,
+    hasActiveSubscription: hasActive,
   };
 }
