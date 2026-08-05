@@ -14,6 +14,13 @@ const MOBILE_NAV = [
   { href: "/app/compte", label: "Compte", icon: "user", match: (p: string) => p.startsWith("/app/compte") },
 ] as const;
 
+const MOBILE_ADMIN_NAV = {
+  href: "/app/admin",
+  label: "Admin",
+  icon: "shield",
+  match: (p: string) => p.startsWith("/app/admin"),
+} as const;
+
 function NavLink({
   href,
   label,
@@ -63,6 +70,10 @@ export function AppShell({
   function isActive(match: (p: string) => boolean, href: string) {
     return match(pathname) || (href === "/app" && rapportMatch(pathname));
   }
+
+  const mobileNavItems = isAdmin
+    ? [...MOBILE_NAV, MOBILE_ADMIN_NAV]
+    : [...MOBILE_NAV];
 
   return (
     <div className="min-h-screen flex bg-bg">
@@ -173,8 +184,8 @@ export function AppShell({
           className="lg:hidden fixed bottom-0 inset-x-0 z-50 border-t border-line bg-surface/95 backdrop-blur-xl app-shell-tabbar safe-area-pb"
           style={{ viewTransitionName: "app-tabbar" }}
         >
-          <div className="grid grid-cols-4 h-[68px] max-w-lg mx-auto px-2">
-            {MOBILE_NAV.map(({ href, label, icon, match }) => {
+          <div className={`grid h-[68px] max-w-lg mx-auto px-1 ${isAdmin ? "grid-cols-5" : "grid-cols-4"}`}>
+            {mobileNavItems.map(({ href, label, icon, match }) => {
               const active = isActive(match, href);
               const primary = href === "/app/photo";
               return (
