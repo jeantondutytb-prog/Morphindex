@@ -29,17 +29,6 @@ export async function POST(req: Request) {
         type: "analysis_purchased",
         payload: { formule },
       });
-    } else if (intent === "unlock_report" && analysisId) {
-      await admin.from("subscriptions").update({
-        stripe_customer_id: s.customer as string,
-      }).eq("user_id", userId);
-
-      await admin.from("analyses").update({ unlocked: true }).eq("id", analysisId);
-      await admin.from("events").insert({
-        user_id: userId,
-        type: "report_unlocked",
-        payload: { analysis_id: analysisId, formule },
-      });
     } else {
       // Abonnement hebdo / annuel / à vie
       await admin.from("subscriptions").update({

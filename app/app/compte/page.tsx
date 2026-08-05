@@ -78,7 +78,7 @@ export default async function ComptePage() {
         <StatCard
           label="Crédits prépayés"
           value={isAdmin ? "—" : String(sub?.prepaid_credits ?? 0)}
-          hint="Analyses achetées à 14,90 € · rapport débloillé"
+          hint="Analyses achetées à 6,90 € · rapport débloillé"
         />
 
         <StatCard
@@ -107,9 +107,9 @@ export default async function ComptePage() {
         <AppSectionLabel>Tarifs analyses</AppSectionLabel>
         <ul className="text-sm text-muted space-y-2 mt-2">
           <li>· <strong className="text-text">1re analyse</strong> — gratuite (rapport flouté)</li>
-          <li>· <strong className="text-text">Débloquer un rapport</strong> — 9,90 €</li>
-          <li>· <strong className="text-text">Nouvelle analyse</strong> — 14,90 € (rapport débloillé)</li>
-          <li>· <strong className="text-text">Abonnement</strong> — 2 analyses / mois incluses</li>
+          <li>· <strong className="text-text">Abonnement</strong> — débloque ton rapport, tes routines et le suivi</li>
+          <li>· <strong className="text-text">Nouvelle analyse</strong> — 6,90 € (rapport débloillé, suivi des progrès)</li>
+          <li>· <strong className="text-text">Abonnement actif</strong> — 2 analyses / mois incluses</li>
         </ul>
       </AppCard>
 

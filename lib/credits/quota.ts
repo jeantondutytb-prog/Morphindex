@@ -25,7 +25,7 @@ export function canConsume(sub: Sub, now: Date): { ok: true } | { ok: false; err
   if (sub.status === "canceled" || sub.status === "past_due") {
     return {
       ok: false,
-      error: "Achète une analyse (14,90 €) ou réactive ton abonnement pour continuer.",
+      error: "Achète une analyse (6,90 €) ou réactive ton abonnement pour continuer.",
     };
   }
 
@@ -42,7 +42,7 @@ export function canConsume(sub: Sub, now: Date): { ok: true } | { ok: false; err
     ? { ok: true }
     : {
         ok: false,
-        error: "Achète une nouvelle analyse (14,90 €) ou débloque ton rapport avec un abonnement.",
+        error: "Achète une nouvelle analyse (6,90 €) ou souscris un abonnement pour débloquer l'app.",
       };
 }
 

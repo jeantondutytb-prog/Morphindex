@@ -22,10 +22,6 @@ export async function POST(req: Request) {
 
   const intent = checkoutIntent(formule);
 
-  if (intent === "unlock_report" && !analysisId) {
-    return NextResponse.json({ error: "rapport introuvable" }, { status: 400 });
-  }
-
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.morphindex.com";
 
   const successUrl =
