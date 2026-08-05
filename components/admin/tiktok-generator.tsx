@@ -1,11 +1,10 @@
 "use client";
 
 import { useCallback, useMemo, useRef, useState } from "react";
-import { toBlob } from "html-to-image";
 import { TikTokCard, type ExportAspect } from "@/components/admin/tiktok-card";
 import { AppCard, AppSectionLabel } from "@/components/app/ui";
 import { EXPORT_SIZE } from "@/lib/tiktok/export-layout";
-import { downloadBlob, readFileAsDataUrl, waitForImages } from "@/lib/tiktok/export-image";
+import { downloadBlob, readFileAsDataUrl } from "@/lib/tiktok/export-image";
 import { SITE_NAME, siteHostname } from "@/lib/site";
 
 const DEFAULT_SCORE_ACTUEL = 6.4;
@@ -13,7 +12,6 @@ const DEFAULT_SCORE_POTENTIEL = 7.8;
 const PREVIEW_MAX_W = 360;
 
 export function TikTokGenerator() {
-  const exportRef = useRef<HTMLDivElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
@@ -46,31 +44,35 @@ export function TikTokGenerator() {
   }, []);
 
   async function downloadPng() {
-    if (!exportRef.current || !photoUrl) return;
+    if (!photoUrl) return;
     setDownloading(true);
     setError(null);
     try {
-      await waitForImages(exportRef.current);
-      await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
-
-      const blob = await toBlob(exportRef.current, {
-        cacheBust: true,
-        pixelRatio: 1,
-        width: cardW,
-        height: cardH,
-        skipFonts: true,
+      const res = await fetch("/api/admin/tiktok/export", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          photoDataUrl: photoUrl,
+          exportAspect,
+          brandName,
+          siteLabel,
+          scoreActuel,
+          scorePotentiel,
+        }),
       });
 
-      if (!blob) {
-        throw new Error("La génération de l'image a échoué");
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({})) as { error?: string };
+        throw new Error(data.error ?? "export failed");
       }
 
+      const blob = await res.blob();
       downloadBlob(
         blob,
         `morphindex-tiktok-${exportAspect.replace(":", "x")}-${Date.now()}.png`,
       );
     } catch {
-      setError("Le téléchargement a échoué. Réessaie ou change de navigateur (Chrome recommandé).");
+      setError("Le téléchargement a échoué. Réessaie dans un instant.");
     } finally {
       setDownloading(false);
     }
@@ -78,21 +80,6 @@ export function TikTokGenerator() {
 
   return (
     <div className="lg:grid lg:grid-cols-[minmax(0,380px)_1fr] lg:gap-8 gap-6">
-      <div
-        ref={exportRef}
-        aria-hidden
-        style={{
-          position: "fixed",
-          left: 0,
-          top: 0,
-          zIndex: -1,
-          visibility: "hidden",
-          pointerEvents: "none",
-        }}
-      >
-        <TikTokCard {...cardProps} />
-      </div>
-
       <div className="space-y-4">
         <AppCard>
           <AppSectionLabel>Photo</AppSectionLabel>
