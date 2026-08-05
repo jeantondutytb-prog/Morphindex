@@ -14,6 +14,7 @@ export const EXPORT_LAYOUT: Record<
     portraitPad: string;
     scorePad: string;
     brandFontSize: number;
+    siteFontSize: number;
     scoreFontSize: number;
     scoreCardMinHeight: number;
   }
@@ -23,7 +24,8 @@ export const EXPORT_LAYOUT: Record<
     headerPad: "40px 40px 0",
     portraitPad: "24px 40px",
     scorePad: "0 40px 40px",
-    brandFontSize: 44,
+    brandFontSize: 36,
+    siteFontSize: 42,
     scoreFontSize: 60,
     scoreCardMinHeight: 200,
   },
@@ -32,7 +34,8 @@ export const EXPORT_LAYOUT: Record<
     headerPad: "56px 48px 0",
     portraitPad: "40px 48px",
     scorePad: "0 48px 56px",
-    brandFontSize: 52,
+    brandFontSize: 44,
+    siteFontSize: 52,
     scoreFontSize: 72,
     scoreCardMinHeight: 240,
   },
