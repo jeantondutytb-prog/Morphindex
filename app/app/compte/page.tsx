@@ -82,8 +82,10 @@ export default async function ComptePage() {
             isAdmin
               ? "Compte admin — analyses illimitées"
               : hasActiveSub
-                ? `${MONTHLY_QUOTA} analyses / mois avec abonnement actif`
-                : "1 analyse gratuite avant déblocage"
+                ? `${MONTHLY_QUOTA} analyses / mois · ${quotaUsed} utilisée(s)`
+                : quotaUsed >= 1
+                  ? "Quota gratuit épuisé — débloque ton rapport"
+                  : "1 analyse gratuite incluse"
           }
           accent={isAdmin}
         />
@@ -91,7 +93,15 @@ export default async function ComptePage() {
 
       {!isAdmin && (
         <p className="mt-3 text-sm text-dim">
-          {quotaUsed} / {hasActiveSub ? MONTHLY_QUOTA : 1} utilisée(s) ce mois
+          {hasActiveSub
+            ? `${quotaUsed} / ${MONTHLY_QUOTA} utilisée(s) ce mois`
+            : `${quotaUsed} / 1 analyse gratuite utilisée`}
+        </p>
+      )}
+
+      {isAdmin && (
+        <p className="mt-3 text-sm text-accent/80">
+          Compte admin — tu peux lancer autant d&apos;analyses que tu veux.
         </p>
       )}
 

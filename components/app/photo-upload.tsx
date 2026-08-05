@@ -1,10 +1,12 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { AppContainer } from "@/components/app/app-container";
 import { PageHeader } from "@/components/app/page-header";
+import { AnalysisProgressOverlay, ANALYSIS_STEPS } from "@/components/app/analysis-progress-overlay";
+import type { QuotaStatus } from "@/lib/credits/quota-status";
 
 const TIPS = [
   "Selfie face, lumière naturelle",
@@ -12,48 +14,60 @@ const TIPS = [
   "Photo supprimée après analyse",
 ];
 
-export function PhotoUpload() {
+type Phase = "idle" | "uploading" | "analyzing" | "done" | "error";
+
+export function PhotoUpload({
+  savedPhoto,
+  quota,
+}: {
+  savedPhoto: { path: string; url: string } | null;
+  quota: QuotaStatus;
+}) {
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
-  const [preview, setPreview] = useState<string | null>(null);
+  const [preview, setPreview] = useState<string | null>(savedPhoto?.url ?? null);
   const [file, setFile] = useState<File | null>(null);
-  const [savedPath, setSavedPath] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [loadingSaved, setLoadingSaved] = useState(true);
+  const [savedPath, setSavedPath] = useState<string | null>(savedPhoto?.path ?? null);
+  const [phase, setPhase] = useState<Phase>("idle");
+  const [stepIndex, setStepIndex] = useState(0);
   const [error, setError] = useState("");
   const [dragOver, setDragOver] = useState(false);
 
+  const isBusy = phase === "uploading" || phase === "analyzing" || phase === "done";
+  const hasPhoto = file !== null || savedPath !== null;
+  const canAnalyze = !isBusy && hasPhoto && quota.canAnalyze;
+
   useEffect(() => {
-    fetch("/api/photo/saved")
-      .then((r) => r.json())
-      .then((data: { saved?: boolean; path?: string; url?: string }) => {
-        if (data.saved && data.path && data.url) {
-          setSavedPath(data.path);
-          setPreview(data.url);
-        }
-      })
-      .finally(() => setLoadingSaved(false));
-  }, []);
+    if (phase !== "analyzing" && phase !== "uploading") return;
+
+    const interval = setInterval(() => {
+      setStepIndex((i) => Math.min(i + 1, ANALYSIS_STEPS.length - 1));
+    }, phase === "uploading" ? 2000 : 12000);
+
+    return () => clearInterval(interval);
+  }, [phase]);
 
   function handleFile(f: File) {
     setFile(f);
     setPreview(URL.createObjectURL(f));
+    setError("");
   }
 
-  async function handleAnalyze() {
-    setLoading(true);
+  const runAnalysis = useCallback(async () => {
     setError("");
+    setStepIndex(0);
 
     let path = savedPath;
 
     if (file) {
+      setPhase("uploading");
       const formData = new FormData();
       formData.append("file", file);
       const uploadRes = await fetch("/api/upload", { method: "POST", body: formData });
       const uploadData = await uploadRes.json();
       if (!uploadRes.ok) {
         setError(uploadData.error ?? "Upload échoué");
-        setLoading(false);
+        setPhase("error");
         return;
       }
       path = uploadData.path as string;
@@ -62,124 +76,236 @@ export function PhotoUpload() {
 
     if (!path) {
       setError("Ajoute une photo pour lancer l'analyse.");
-      setLoading(false);
+      setPhase("idle");
       return;
     }
 
-    sessionStorage.setItem("analysisPath", path);
-    router.push("/app/analyse");
+    setPhase("analyzing");
+    setStepIndex(file ? 1 : 0);
+
+    try {
+      const res = await fetch("/api/analyze", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ path }),
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error ?? "L'analyse n'a pas abouti.");
+        setPhase("error");
+        return;
+      }
+
+      setStepIndex(ANALYSIS_STEPS.length - 1);
+      setPhase("done");
+      setTimeout(() => {
+        router.replace(`/app/rapport/${data.analysisId}`);
+      }, 900);
+    } catch {
+      setError("Connexion interrompue. Vérifie ta connexion et réessaie.");
+      setPhase("error");
+    }
+  }, [file, savedPath, router]);
+
+  function handleRetry() {
+    setPhase("idle");
+    setStepIndex(0);
+    setError("");
   }
 
-  const canAnalyze = !loading && !loadingSaved && (file !== null || savedPath !== null);
-
   return (
-    <AppContainer narrow>
-      <PageHeader
-        kicker="Analyse"
-        title="Ta photo"
-        subtitle={
-          savedPath && !file
-            ? "Ta photo enregistrée — relance l'analyse sans la re-téléverser"
-            : "Tu dois être la personne sur la photo"
-        }
-        backHref="/app"
-        backLabel="Dashboard"
-      />
+    <>
+      {isBusy && (
+        <AnalysisProgressOverlay
+          phase={phase === "uploading" ? "uploading" : phase === "done" ? "done" : "analyzing"}
+          stepIndex={stepIndex}
+        />
+      )}
+      {phase === "error" && (
+        <AnalysisProgressOverlay
+          phase="error"
+          stepIndex={stepIndex}
+          error={error}
+          onRetry={handleRetry}
+        />
+      )}
 
-      <div className="grid lg:grid-cols-[1fr,280px] gap-6 lg:gap-8 items-start">
-        <div>
-          <div
-            role="button"
-            tabIndex={0}
-            onClick={() => inputRef.current?.click()}
-            onKeyDown={(e) => e.key === "Enter" && inputRef.current?.click()}
-            onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
-            onDragLeave={() => setDragOver(false)}
-            onDrop={(e) => {
-              e.preventDefault();
-              setDragOver(false);
-              const f = e.dataTransfer.files[0];
-              if (f) handleFile(f);
-            }}
-            className={`rounded-2xl border-2 border-dashed aspect-[4/5] max-w-lg flex flex-col items-center justify-center cursor-pointer transition-all duration-300 overflow-hidden ${
-              dragOver
-                ? "border-accent bg-accent/5 scale-[1.01]"
-                : preview
-                  ? "border-line bg-surface"
-                  : "border-line bg-surface hover:border-accent/30"
-            }`}
-          >
-            {loadingSaved ? (
-              <p className="text-muted text-sm">Chargement…</p>
-            ) : preview ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={preview} alt="Aperçu" className="w-full h-full object-cover" />
-            ) : (
-              <div className="text-center px-6">
-                <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-2xl border border-line bg-bg/60">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
-                    <path d="M12 16V8M8 12l4-4 4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-dim" />
-                    <path d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" className="text-dim" />
-                  </svg>
+      <AppContainer narrow className="pb-28 lg:pb-10">
+        <PageHeader
+          kicker="Analyse"
+          title="Ta photo"
+          subtitle={
+            savedPath && !file
+              ? "Photo enregistrée — relance sans re-téléverser"
+              : "Selfie face, lumière naturelle"
+          }
+          backHref="/app"
+          backLabel="Dashboard"
+        />
+
+        <QuotaBanner quota={quota} />
+
+        <div className="grid lg:grid-cols-[minmax(0,280px)_1fr] gap-6 lg:gap-8 items-start">
+          {/* Aperçu compact — visible sans scroll */}
+          <div className="mx-auto w-full max-w-[280px] lg:max-w-none lg:mx-0">
+            <div
+              role="button"
+              tabIndex={0}
+              onClick={() => !isBusy && inputRef.current?.click()}
+              onKeyDown={(e) => e.key === "Enter" && !isBusy && inputRef.current?.click()}
+              onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+              onDragLeave={() => setDragOver(false)}
+              onDrop={(e) => {
+                e.preventDefault();
+                setDragOver(false);
+                if (isBusy) return;
+                const f = e.dataTransfer.files[0];
+                if (f) handleFile(f);
+              }}
+              className={`rounded-2xl border-2 border-dashed aspect-[3/4] max-h-[min(320px,42vh)] w-full flex flex-col items-center justify-center cursor-pointer transition-all overflow-hidden ${
+                isBusy ? "pointer-events-none opacity-60" : ""
+              } ${
+                dragOver
+                  ? "border-accent bg-accent/5"
+                  : preview
+                    ? "border-line bg-surface"
+                    : "border-line bg-surface hover:border-accent/30"
+              }`}
+            >
+              {preview ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={preview} alt="Aperçu" className="w-full h-full object-cover" />
+              ) : (
+                <div className="text-center px-4">
+                  <div className="mx-auto mb-3 flex size-12 items-center justify-center rounded-xl border border-line bg-bg/60">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden>
+                      <path d="M12 16V8M8 12l4-4 4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" className="text-dim" />
+                      <path d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" className="text-dim" />
+                    </svg>
+                  </div>
+                  <p className="text-muted text-sm">Glisse ou clique</p>
+                  <p className="font-mono text-[9px] text-dim mt-1">JPEG · PNG · WebP</p>
                 </div>
-                <p className="text-muted text-sm">Glisse une photo ou clique pour sélectionner</p>
-                <p className="font-mono text-[10px] text-dim mt-2">JPEG · PNG · WebP</p>
-              </div>
+              )}
+            </div>
+
+            <input
+              ref={inputRef}
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              className="hidden"
+              disabled={isBusy}
+              onChange={(e) => {
+                const f = e.target.files?.[0];
+                if (f) handleFile(f);
+              }}
+            />
+
+            {savedPath && !file && (
+              <p className="mt-2 text-[11px] text-dim text-center">Clique pour remplacer</p>
             )}
           </div>
 
-          <input
-            ref={inputRef}
-            type="file"
-            accept="image/jpeg,image/png,image/webp"
-            className="hidden"
-            onChange={(e) => {
-              const f = e.target.files?.[0];
-              if (f) handleFile(f);
-            }}
-          />
+          {/* Panneau action — visible sans scroll sur desktop */}
+          <div className="space-y-4">
+            <div className="rounded-2xl border border-line bg-surface p-5">
+              <p className="font-mono text-[10px] uppercase tracking-wider text-dim mb-3">
+                Prochaine étape
+              </p>
+              {!hasPhoto ? (
+                <p className="text-sm text-muted">Ajoute une photo pour lancer l&apos;analyse des 90 dimensions.</p>
+              ) : !quota.canAnalyze ? (
+                <div className="space-y-3">
+                  <p className="text-sm text-muted">{quota.hint}</p>
+                  <Link
+                    href="/app/compte"
+                    className="inline-flex text-sm text-accent hover:underline"
+                  >
+                    Voir mon abonnement →
+                  </Link>
+                </div>
+              ) : (
+                <p className="text-sm text-muted">
+                  {savedPath && !file
+                    ? "Ta photo est prête. L'analyse prend environ 1 à 2 minutes."
+                    : "Nouvelle photo sélectionnée. Lance l'analyse quand tu es prêt."}
+                </p>
+              )}
 
-          {savedPath && !file && (
-            <p className="mt-3 text-xs text-dim text-center max-w-lg">
-              Clique sur la zone pour remplacer la photo
-            </p>
-          )}
+              <button
+                type="button"
+                disabled={!canAnalyze}
+                onClick={runAnalysis}
+                className="mt-5 w-full hidden lg:flex items-center justify-center gap-2 rounded-xl bg-accent py-3.5 font-bold text-accent-ink disabled:opacity-40 hover:brightness-110 transition cta-shine overflow-hidden relative"
+              >
+                {savedPath && !file ? "Relancer mon analyse" : "Lancer mon analyse"}
+                <span aria-hidden>→</span>
+              </button>
+            </div>
 
-          {error && (
-            <p className="mt-4 rounded-lg border border-line-strong bg-bg/40 px-3 py-2 text-sm text-muted max-w-lg">
-              {error}
-            </p>
-          )}
+            <aside className="rounded-2xl border border-line bg-surface/60 p-5 space-y-3">
+              <p className="font-mono text-[10px] uppercase tracking-wider text-dim">Conseils</p>
+              <ul className="space-y-2">
+                {TIPS.map((tip) => (
+                  <li key={tip} className="flex items-start gap-2 text-sm text-muted">
+                    <span className="text-accent shrink-0 mt-0.5" aria-hidden>✓</span>
+                    {tip}
+                  </li>
+                ))}
+              </ul>
+            </aside>
 
+            {error && phase === "idle" && (
+              <p className="rounded-lg border border-line-strong bg-bg/40 px-3 py-2 text-sm text-muted">
+                {error}
+              </p>
+            )}
+          </div>
+        </div>
+
+        {/* CTA sticky mobile */}
+        <div className="lg:hidden fixed bottom-[68px] inset-x-0 z-20 border-t border-line bg-surface/95 backdrop-blur-xl px-5 py-3 safe-area-pb">
           <button
             type="button"
             disabled={!canAnalyze}
-            onClick={handleAnalyze}
-            className="mt-6 w-full max-w-lg rounded-xl bg-accent py-3.5 font-bold text-accent-ink disabled:opacity-40 hover:brightness-110 transition cta-shine overflow-hidden relative"
+            onClick={runAnalysis}
+            className="w-full rounded-xl bg-accent py-3.5 font-bold text-accent-ink disabled:opacity-40 hover:brightness-110 transition"
           >
-            {loading ? "Envoi…" : savedPath && !file ? "Relancer mon analyse" : "Lancer mon analyse"}
+            {!hasPhoto
+              ? "Ajoute une photo"
+              : !quota.canAnalyze
+                ? "Quota épuisé"
+                : savedPath && !file
+                  ? "Relancer mon analyse"
+                  : "Lancer mon analyse"}
           </button>
         </div>
+      </AppContainer>
+    </>
+  );
+}
 
-        <aside className="rounded-2xl border border-line bg-surface p-5 space-y-4">
-          <p className="font-mono text-[10px] uppercase tracking-wider text-dim">Conseils</p>
-          <ul className="space-y-3">
-            {TIPS.map((tip) => (
-              <li key={tip} className="flex items-start gap-2.5 text-sm text-muted">
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="shrink-0 mt-0.5" aria-hidden>
-                  <path d="M3 7l3 3 5-6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" className="text-accent" />
-                </svg>
-                {tip}
-              </li>
-            ))}
-          </ul>
-          <div className="pt-2 border-t border-line">
-            <Link href="/app" className="text-xs text-dim hover:text-muted transition">
-              ← Retour au dashboard
-            </Link>
-          </div>
-        </aside>
+function QuotaBanner({ quota }: { quota: QuotaStatus }) {
+  return (
+    <div
+      className={`mb-5 flex flex-wrap items-center justify-between gap-3 rounded-xl border px-4 py-3 ${
+        quota.unlimited
+          ? "border-accent/25 bg-accent/8"
+          : quota.canAnalyze
+            ? "border-line bg-surface/60"
+            : "border-line-strong bg-bg/40"
+      }`}
+    >
+      <div>
+        <p className="font-mono text-[10px] uppercase tracking-wider text-dim mb-0.5">
+          Quota analyses
+        </p>
+        <p className={`text-sm font-medium ${quota.unlimited ? "text-accent" : "text-text"}`}>
+          {quota.unlimited ? "Illimité (admin)" : quota.label}
+        </p>
       </div>
-    </AppContainer>
+      <p className="text-xs text-muted max-w-[220px] text-right">{quota.hint}</p>
+    </div>
   );
 }
