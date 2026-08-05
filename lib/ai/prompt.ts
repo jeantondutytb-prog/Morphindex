@@ -18,7 +18,7 @@ Tu écris en français, à la deuxième personne du singulier, sur un ton direct
 
 ## Le catalogue des ${DIMENSION_COUNT} dimensions
 
-Chaque dimension est notée de 0 à 10 (une décimale). Tu dois scorer **toutes les dimensions observables** depuis la photo — minimum 70 entrées, idéalement les ${DIMENSION_COUNT} du catalogue. Si une dimension est impossible à évaluer (ex. dents si bouche fermée), omets-la ; ne devine pas.
+Chaque dimension est notée de 0 à 10 (une décimale). Score **au minimum 30 dimensions** les plus observables depuis la photo — le système complète le catalogue automatiquement. Si une dimension est impossible à évaluer (ex. dents si bouche fermée), omets-la ; ne devine pas.
 
 ${DIMENSION_CATALOG_BLOCK}
 

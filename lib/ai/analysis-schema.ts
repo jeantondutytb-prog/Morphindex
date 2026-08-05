@@ -23,7 +23,7 @@ export const analysisSchema = z.object({
     composition: score,
     dents: score,
   }),
-  dimensions: z.array(dimensionScore).min(70).max(90),
+  dimensions: z.array(dimensionScore).min(25).max(90),
   indice_actuel: score,
   indice_atteignable: score,
   points: z.array(z.object({
@@ -83,7 +83,7 @@ export const ANALYSIS_JSON_SCHEMA = {
         additionalProperties: false,
         required: ["id", "score"],
         properties: {
-          id: { type: "string", enum: [...DIMENSION_IDS] },
+          id: { type: "string" },
           score: { type: "number" },
         },
       },
@@ -97,7 +97,7 @@ export const ANALYSIS_JSON_SCHEMA = {
         additionalProperties: false,
         required: ["dimension", "libelle", "impact"],
         properties: {
-          dimension: { type: "string", enum: [...DIMENSION_IDS] },
+          dimension: { type: "string" },
           libelle: { type: "string" },
           impact: { type: "string", enum: ["faible", "moyen", "fort"] },
         },
@@ -110,7 +110,7 @@ export const ANALYSIS_JSON_SCHEMA = {
       properties: {
         vision: { type: "string" },
         axes_cibles: { type: "array", items: { type: "string", enum: [...DOMAINS] } },
-        dimensions_cibles: { type: "array", items: { type: "string", enum: [...DIMENSION_IDS] } },
+        dimensions_cibles: { type: "array", items: { type: "string" } },
       },
     },
     plan_semaines: {
@@ -140,7 +140,7 @@ export const ANALYSIS_JSON_SCHEMA = {
           frequence: { type: "string" },
           semaine_debut: { type: "integer" },
           pourquoi: { type: "string" },
-          dimension: { type: ["string", "null"], enum: [...DIMENSION_IDS, null] },
+          dimension: { type: ["string", "null"] },
           detail: { type: "string" },
         },
       },

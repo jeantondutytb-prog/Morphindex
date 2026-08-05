@@ -9,6 +9,7 @@ import { AppCard, AppNavPill, AppSectionLabel } from "@/components/app/ui";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { DOMAINS } from "@/lib/ai/analysis-schema";
 import { dimensionLabel, type DimensionScore } from "@/lib/ai/dimensions";
+import { domainScoresFromStored, parseStoredDimensions } from "@/lib/ai/normalize-analysis";
 import { parseRoutinePayload, fallbackRoutineResume, resolveWeekPlans } from "@/lib/routine/data";
 
 type Point = {
@@ -64,9 +65,9 @@ export default async function RapportPage({ params }: { params: Promise<{ id: st
   const showFull = analysis?.unlocked || profile?.is_admin;
 
   if (analysis && showFull && analysis.status === "done") {
-    const scores = analysis.scores as Scores;
+    const scores = domainScoresFromStored(analysis.scores) ?? (analysis.scores as Scores);
     const points = analysis.points as Point[];
-    const dimensions = (analysis.dimensions as DimensionScore[] | null) ?? null;
+    const dimensions = parseStoredDimensions(analysis);
     const routinePayload = parseRoutinePayload(analysis.routine);
     const routineResume =
       routinePayload.resume ??

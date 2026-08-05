@@ -82,8 +82,8 @@ describe("analysisSchema", () => {
     expect(analysisSchema.safeParse(ko).success).toBe(false);
   });
 
-  it("refuse moins de 70 dimensions", () => {
-    expect(analysisSchema.safeParse({ ...valide, dimensions: valide.dimensions.slice(0, 50) }).success).toBe(false);
+  it("refuse moins de 25 dimensions", () => {
+    expect(analysisSchema.safeParse({ ...valide, dimensions: valide.dimensions.slice(0, 20) }).success).toBe(false);
   });
 
   it("refuse une dimension inconnue", () => {

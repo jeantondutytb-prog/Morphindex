@@ -1,6 +1,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { analysisSchema, ANALYSIS_JSON_SCHEMA, type Analysis } from "./analysis-schema";
 import { SYSTEM_PROMPT, buildUserContext } from "./prompt";
+import { normalizeAnalysis } from "./normalize-analysis";
 import { buildFakeAnalysisData } from "./fake-analysis";
 import type { OnboardingData } from "@/lib/onboarding/schema";
 
@@ -40,7 +41,7 @@ if (!_fakeCheck.success) {
 
 async function runFakeAnalysis(): Promise<AnalysisResult> {
   await new Promise((resolve) => setTimeout(resolve, 2000));
-  return { ok: true, data: FAKE_ANALYSIS_DATA, cacheRead: 0 };
+  return { ok: true, data: normalizeAnalysis(FAKE_ANALYSIS_DATA), cacheRead: 0 };
 }
 
 export async function runAnalysis(
@@ -114,7 +115,7 @@ export async function runAnalysis(
 
     return {
       ok: true,
-      data: parsed.data,
+      data: normalizeAnalysis(parsed.data),
       cacheRead: response.usage.cache_read_input_tokens ?? 0,
     };
   } catch (e) {

@@ -9,6 +9,22 @@ import { consumeCreditOrReject, refundCredit } from "@/lib/credits/quota";
 
 export const maxDuration = 120;
 
+function userFacingError(detail: string): string {
+  if (/invalid_output|sortie non conforme/i.test(detail)) {
+    return "L'IA n'a pas produit un rapport valide. Réessaie dans un instant.";
+  }
+  if (/refusal|refus/i.test(detail)) {
+    return "Photo refusée par les filtres de sécurité. Utilise une autre photo.";
+  }
+  if (/api_error|APIError|401|403|authentication/i.test(detail)) {
+    return "Service d'analyse indisponible. Réessaie plus tard.";
+  }
+  if (/column.*dimensions|dimensions.*column/i.test(detail)) {
+    return "Erreur base de données. Contacte le support.";
+  }
+  return "L'analyse n'a pas abouti. Réessaie.";
+}
+
 export async function POST(req: Request) {
   const supabase = await createServerClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -45,9 +61,13 @@ export async function POST(req: Request) {
     .insert({ user_id: user.id, mode: "soft", status: "pending", model_used: "claude-sonnet-5" })
     .select("id").single();
 
+  if (!analysis) {
+    return NextResponse.json({ error: "Impossible de créer l'analyse." }, { status: 500 });
+  }
+
   try {
     const { data: blob } = await admin.storage.from("photos").download(path);
-    if (!blob) throw new Error("photo introuvable");
+    if (!blob) throw new Error("photo introupable");
     const buf = Buffer.from(await blob.arrayBuffer());
     const { base64 } = await prepareForModel(buf);
 
@@ -55,16 +75,20 @@ export async function POST(req: Request) {
     if (!result.ok) throw new Error(`${result.reason}: ${result.detail}`);
 
     const blurred = await blurForPaywall(buf);
-    const blurredPath = `${user.id}/${analysis!.id}-blur.jpg`;
+    const blurredPath = `${user.id}/${analysis.id}-blur.jpg`;
     await admin.storage.from("photos").upload(blurredPath, blurred, { contentType: "image/jpeg" });
 
     const rank = { fort: 0, moyen: 1, faible: 2 } as const;
     const points = [...result.data.points].sort((a, b) => rank[a.impact] - rank[b.impact]);
 
-    await admin.from("analyses").update({
-      status: "done",
-      scores: result.data.scores,
+    const scoresPayload = {
+      ...result.data.scores,
       dimensions: result.data.dimensions,
+    };
+
+    const updatePayload = {
+      status: "done" as const,
+      scores: scoresPayload,
       indice_actuel: result.data.indice_actuel,
       indice_atteignable: result.data.indice_atteignable,
       points,
@@ -78,20 +102,40 @@ export async function POST(req: Request) {
       blurred_image_path: blurredPath,
       photo_deleted_at: null,
       unlocked: adminBypass,
-    }).eq("id", analysis!.id);
+    };
+
+    // Colonne dimensions optionnelle (migration 0007) — scores.dimensions suffit en fallback.
+    let { error: updateError } = await admin.from("analyses").update({
+      ...updatePayload,
+      dimensions: result.data.dimensions,
+    }).eq("id", analysis.id);
+
+    if (updateError?.message?.includes("dimensions")) {
+      ({ error: updateError } = await admin.from("analyses").update(updatePayload).eq("id", analysis.id));
+    }
+
+    if (updateError) throw new Error(updateError.message);
 
     await admin.from("events").insert({
       user_id: user.id, type: "analysis_done",
       payload: { cache_read: result.cacheRead, admin_bypass: adminBypass },
     });
 
-    return NextResponse.json({ analysisId: analysis!.id });
+    return NextResponse.json({ analysisId: analysis.id });
   } catch (e) {
     if (!adminBypass) await refundCredit(admin, user.id);
+    const detail = e instanceof Error ? e.message : String(e);
     await admin.from("analyses")
-      .update({ status: "failed", error_reason: String(e) })
-      .eq("id", analysis!.id);
-    await admin.from("events").insert({ user_id: user.id, type: "analysis_failed" });
-    return NextResponse.json({ error: "L'analyse n'a pas abouti. Réessaie." }, { status: 500 });
+      .update({ status: "failed", error_reason: detail.slice(0, 500) })
+      .eq("id", analysis.id);
+    await admin.from("events").insert({
+      user_id: user.id,
+      type: "analysis_failed",
+      payload: { detail: detail.slice(0, 200) },
+    });
+    return NextResponse.json(
+      { error: userFacingError(detail), code: "analysis_failed" },
+      { status: 500 },
+    );
   }
 }
