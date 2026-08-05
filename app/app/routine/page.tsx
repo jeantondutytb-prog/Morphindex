@@ -5,7 +5,7 @@ import { PageHeader } from "@/components/app/page-header";
 import { AppContainer } from "@/components/app/app-container";
 import { AppCard, AppEmptyState, AppSectionLabel } from "@/components/app/ui";
 import { getLatestAccessibleAnalysis } from "@/lib/app/analyses";
-import type { RoutineItem } from "@/lib/routine/schedule";
+import { parseRoutinePayload, fallbackRoutineResume, resolveWeekPlans } from "@/lib/routine/data";
 
 export default async function RoutinePage() {
   const supabase = await createServerClient();
@@ -41,7 +41,35 @@ export default async function RoutinePage() {
     );
   }
 
-  const routine = analysis.routine as RoutineItem[];
+  const payload = parseRoutinePayload(analysis.routine);
+  if (payload.items.length === 0) {
+    return (
+      <AppContainer narrow>
+        <PageHeader
+          kicker="Routine"
+          title="Ma routine"
+          subtitle="Aucune routine disponible pour l'instant."
+          backHref="/app"
+          backLabel="Dashboard"
+        />
+        <AppEmptyState
+          title="Pas encore de routine"
+          description="Débloque un rapport ou lance une analyse pour obtenir ta routine personnalisée."
+          actionHref="/app/photo"
+          actionLabel="Lancer une analyse"
+        />
+      </AppContainer>
+    );
+  }
+
+  const resume =
+    payload.resume ??
+    fallbackRoutineResume(
+      Number(analysis.indice_actuel),
+      Number(analysis.indice_atteignable),
+      (analysis.points as { axe: string }[]) ?? [],
+    );
+  const weekPlans = resolveWeekPlans(payload);
   const date = new Date(analysis.created_at).toLocaleDateString("fr-FR", {
     day: "numeric",
     month: "long",
@@ -61,12 +89,14 @@ export default async function RoutinePage() {
       <AppCard className="p-5 lg:p-8">
         <AppSectionLabel>Ton plan semaine par semaine</AppSectionLabel>
         <p className="text-sm text-muted mb-6 max-w-xl">
-          Un jour à la fois. Coche tout pour débloquer le lendemain.
+          Un jour à la fois. Chaque action est liée à ton analyse — objectif, détail et pourquoi inclus.
         </p>
         <RoutineTracker
           analysisId={analysis.id}
-          routine={routine}
+          routine={payload.items}
           startDate={analysis.created_at}
+          weekPlans={weekPlans}
+          resume={resume}
         />
       </AppCard>
     </AppContainer>

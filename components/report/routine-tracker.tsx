@@ -14,25 +14,90 @@ import {
   weekDayFullLabels,
   weekDayLabels,
 } from "@/lib/routine/schedule";
+import {
+  AXE_LABELS,
+  resolveWeekPlans,
+  type RoutineResume,
+  type WeekPlan,
+} from "@/lib/routine/data";
 
 function storageKey(analysisId: string, week: RoutineWeek) {
   return `morphindex-routine:${analysisId}:w${week}`;
+}
+
+function RoutineRoadmap({
+  plans,
+  activeWeek,
+  onSelect,
+}: {
+  plans: WeekPlan[];
+  activeWeek: RoutineWeek;
+  onSelect: (week: RoutineWeek) => void;
+}) {
+  return (
+    <div className="grid gap-2 sm:grid-cols-2">
+      {plans.map((plan) => (
+        <button
+          key={plan.semaine}
+          type="button"
+          onClick={() => onSelect(plan.semaine as RoutineWeek)}
+          className={`rounded-xl border px-4 py-3 text-left transition ${
+            activeWeek === plan.semaine
+              ? "border-accent/40 bg-accent/8 ring-1 ring-accent/25"
+              : "border-line bg-bg/30 hover:border-accent/20"
+          }`}
+        >
+          <p className="font-mono text-[9px] uppercase tracking-wider text-dim mb-1">
+            Semaine {plan.semaine}
+          </p>
+          <p className="text-sm font-medium text-text mb-1">{plan.titre}</p>
+          <p className="text-xs text-muted line-clamp-2">{plan.objectif}</p>
+        </button>
+      ))}
+    </div>
+  );
+}
+
+function WeekObjectiveCard({ plan }: { plan: WeekPlan }) {
+  return (
+    <div className="rounded-xl border border-accent/20 bg-accent/5 p-4 space-y-2">
+      <p className="font-mono text-[10px] uppercase tracking-wider text-accent">
+        Objectif · Semaine {plan.semaine}
+      </p>
+      <p className="font-display font-bold text-text">{plan.titre}</p>
+      <p className="text-sm text-muted leading-relaxed">{plan.objectif}</p>
+      <p className="text-xs text-dim border-t border-line/60 pt-2">
+        <span className="text-muted">Fin de semaine : </span>
+        {plan.resultat_attendu}
+      </p>
+    </div>
+  );
 }
 
 export function RoutineTracker({
   analysisId,
   routine,
   startDate,
+  weekPlans,
+  resume,
 }: {
   analysisId: string;
   routine: RoutineItem[];
   startDate: string;
+  weekPlans?: WeekPlan[] | null;
+  resume?: RoutineResume | null;
 }) {
+  const plans = useMemo(
+    () => (weekPlans?.length === 4 ? weekPlans : resolveWeekPlans({ items: routine, plan_semaines: weekPlans ?? null, resume: resume ?? null })),
+    [weekPlans, routine, resume],
+  );
+
   const start = useMemo(() => new Date(startDate), [startDate]);
   const suggestedWeek = currentRoutineWeek(start);
   const [week, setWeek] = useState<RoutineWeek>(suggestedWeek);
   const [checked, setChecked] = useState<Record<string, boolean>>({});
   const [viewDay, setViewDay] = useState<number | null>(null);
+  const [showRoadmap, setShowRoadmap] = useState(true);
 
   useEffect(() => {
     try {
@@ -66,6 +131,7 @@ export function RoutineTracker({
   const dayDone = dayTasks.filter((t) => checked[t.id]).length;
   const dayComplete = isDayComplete(dayTasks, checked);
   const canViewDay = isDayUnlocked(routine, week, displayDay, checked);
+  const activePlan = plans.find((p) => p.semaine === week);
 
   const totalTasks = countDayTasks(routine, week);
   const doneTasks = useMemo(() => {
@@ -81,7 +147,42 @@ export function RoutineTracker({
   const progress = totalTasks > 0 ? Math.round((doneTasks / totalTasks) * 100) : 0;
 
   return (
-    <div className="space-y-6 max-w-lg">
+    <div className="space-y-6 max-w-2xl">
+      {resume && (
+        <div className="rounded-xl border border-line bg-surface/50 p-4">
+          <p className="font-mono text-[10px] uppercase tracking-wider text-accent mb-2">
+            Où tu vas en 4 semaines
+          </p>
+          <p className="text-sm text-muted leading-relaxed mb-3">{resume.vision}</p>
+          <div className="flex flex-wrap gap-1.5">
+            {resume.axes_cibles.map((axe) => (
+              <span
+                key={axe}
+                className="font-mono text-[9px] uppercase tracking-wider border border-line text-dim px-2 py-0.5 rounded-full"
+              >
+                {AXE_LABELS[axe]}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div>
+        <button
+          type="button"
+          onClick={() => setShowRoadmap((v) => !v)}
+          className="flex items-center gap-2 text-sm text-muted hover:text-text transition mb-3"
+        >
+          <span className="font-mono text-[10px] uppercase tracking-wider text-dim">
+            {showRoadmap ? "Masquer" : "Voir"} le plan 4 semaines
+          </span>
+          <span aria-hidden>{showRoadmap ? "▲" : "▼"}</span>
+        </button>
+        {showRoadmap && (
+          <RoutineRoadmap plans={plans} activeWeek={week} onSelect={setWeek} />
+        )}
+      </div>
+
       <div className="flex flex-wrap gap-2">
         {ROUTINE_WEEKS.map((w) => (
           <button
@@ -101,6 +202,8 @@ export function RoutineTracker({
           </button>
         ))}
       </div>
+
+      {activePlan && <WeekObjectiveCard plan={activePlan} />}
 
       <div className="flex items-center justify-between gap-2">
         {weekDayLabels().map((short, i) => {
@@ -182,7 +285,7 @@ export function RoutineTracker({
       ) : dayTasks.length === 0 ? (
         <p className="text-sm text-dim text-center py-8">Rien de prévu ce jour.</p>
       ) : (
-        <ul className="space-y-2">
+        <ul className="space-y-3">
           {dayTasks.map((task) => {
             const done = Boolean(checked[task.id]);
             const readOnly = displayDay < currentDay;
@@ -217,15 +320,30 @@ export function RoutineTracker({
                     )}
                   </span>
                   <span className="min-w-0 flex-1">
-                    <span className={`block text-[15px] leading-snug ${done ? "line-through text-dim" : "text-text font-medium"}`}>
-                      {task.label}
+                    <span className="flex flex-wrap items-center gap-2 mb-0.5">
+                      <span className={`text-[15px] leading-snug ${done ? "line-through text-dim" : "text-text font-medium"}`}>
+                        {task.label}
+                      </span>
+                      {task.axeLabel && (
+                        <span className="font-mono text-[8px] uppercase tracking-wider text-dim border border-line px-1.5 py-0.5 rounded">
+                          {task.axeLabel}
+                        </span>
+                      )}
+                      {task.isNew && (
+                        <span className="font-mono text-[8px] uppercase tracking-wider text-accent border border-accent/25 bg-accent/8 px-1.5 py-0.5 rounded">
+                          nouveau
+                        </span>
+                      )}
                     </span>
                     {task.sublabel && (
-                      <span className="block text-xs text-dim mt-1">{task.sublabel}</span>
+                      <span className="block text-xs text-dim">{task.sublabel}</span>
                     )}
-                    {task.isNew && (
-                      <span className="inline-block mt-2 font-mono text-[8px] uppercase tracking-wider text-accent border border-accent/25 bg-accent/8 px-1.5 py-0.5 rounded">
-                        nouveau
+                    {task.detail && (
+                      <span className="block text-sm text-muted mt-2 leading-relaxed">{task.detail}</span>
+                    )}
+                    {task.pourquoi && (
+                      <span className="block text-xs text-dim mt-2 italic">
+                        Pourquoi : {task.pourquoi}
                       </span>
                     )}
                   </span>

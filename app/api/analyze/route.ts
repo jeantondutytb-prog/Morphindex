@@ -69,7 +69,11 @@ export async function POST(req: Request) {
       points,
       points_count: points.length,
       premier_point_libelle: points[0].libelle,
-      routine: result.data.routine,
+      routine: {
+        items: result.data.routine,
+        plan_semaines: result.data.plan_semaines,
+        resume: result.data.routine_resume,
+      },
       blurred_image_path: blurredPath,
       photo_deleted_at: null,
       unlocked: adminBypass,

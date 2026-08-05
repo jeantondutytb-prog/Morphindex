@@ -1,9 +1,15 @@
+import type { AXES } from "@/lib/ai/analysis-schema";
+import { AXE_LABELS } from "@/lib/routine/data";
+
 export type RoutineItem = {
   moment: "matin" | "soir" | "hebdo";
   action: string;
   produit: string | null;
   frequence: string;
   semaine_debut: number;
+  pourquoi?: string;
+  axe?: (typeof AXES)[number] | null;
+  detail?: string;
 };
 
 export const ROUTINE_WEEKS = [1, 2, 3, 4] as const;
@@ -86,6 +92,9 @@ export type RoutineDayTask = {
   itemIndex: number;
   label: string;
   sublabel?: string;
+  pourquoi?: string;
+  detail?: string;
+  axeLabel?: string;
   isNew: boolean;
 };
 
@@ -98,54 +107,71 @@ export function tasksForDay(
   const active = itemsForWeek(routine, week);
   const tasks: RoutineDayTask[] = [];
 
+  function pushTask(
+    item: RoutineItem,
+    itemIndex: number,
+    id: string,
+    isNew: boolean,
+    sublabel: string,
+  ) {
+    tasks.push({
+      id,
+      item,
+      itemIndex,
+      label: item.action,
+      sublabel,
+      pourquoi: item.pourquoi,
+      detail: item.detail,
+      axeLabel: item.axe ? AXE_LABELS[item.axe] : undefined,
+      isNew,
+    });
+  }
+
   active.forEach((item, itemIndex) => {
     const id = `${week}-${dayIndex}-${routineItemId(item, itemIndex)}`;
     const isNew = item.semaine_debut === week;
 
     if (item.moment === "hebdo") {
       if (dayIndex !== 0) return;
-      tasks.push({
-        id,
+      pushTask(
         item,
         itemIndex,
-        label: item.action,
-        sublabel: item.produit ? `${item.produit} · ${item.frequence}` : item.frequence,
+        id,
         isNew,
-      });
+        item.produit ? `${item.produit} · ${item.frequence}` : item.frequence,
+      );
       return;
     }
 
     if (isDailyFrequency(item.frequence)) {
-      tasks.push({
-        id,
+      pushTask(
         item,
         itemIndex,
-        label: item.action,
-        sublabel: [
+        id,
+        isNew,
+        [
           item.moment === "matin" ? "Matin" : "Soir",
           item.produit,
           item.frequence,
         ].filter(Boolean).join(" · "),
-        isNew,
-      });
+      );
       return;
     }
 
     const days = weeklyOccurrenceDays(item.frequence);
     if (days && !days.includes(dayIndex)) return;
 
-    tasks.push({
-      id,
+    pushTask(
       item,
       itemIndex,
-      label: item.action,
-      sublabel: [
+      id,
+      isNew,
+      [
         item.moment === "matin" ? "Matin" : "Soir",
         item.produit,
         item.frequence,
       ].filter(Boolean).join(" · "),
-      isNew,
-    });
+    );
   });
 
   return tasks.sort((a, b) => {

@@ -8,6 +8,7 @@ import { AppContainer } from "@/components/app/app-container";
 import { AppCard, AppNavPill, AppSectionLabel } from "@/components/app/ui";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { AXES } from "@/lib/ai/analysis-schema";
+import { parseRoutinePayload, fallbackRoutineResume, resolveWeekPlans } from "@/lib/routine/data";
 
 type Point = { axe: string; libelle: string; impact: "faible" | "moyen" | "fort" };
 type Scores = Record<(typeof AXES)[number], number>;
@@ -59,7 +60,15 @@ export default async function RapportPage({ params }: { params: Promise<{ id: st
   if (analysis && showFull && analysis.status === "done") {
     const scores = analysis.scores as Scores;
     const points = analysis.points as Point[];
-    const routine = analysis.routine as Parameters<typeof RoutinePanel>[0]["routine"];
+    const routinePayload = parseRoutinePayload(analysis.routine);
+    const routineResume =
+      routinePayload.resume ??
+      fallbackRoutineResume(
+        Number(analysis.indice_actuel),
+        Number(analysis.indice_atteignable),
+        points,
+      );
+    const weekPlans = resolveWeekPlans(routinePayload);
     const date = new Date(analysis.created_at).toLocaleDateString("fr-FR", {
       day: "numeric",
       month: "long",
@@ -132,7 +141,11 @@ export default async function RapportPage({ params }: { params: Promise<{ id: st
               <AppCard>
                 <AppSectionLabel>Ta routine</AppSectionLabel>
                 <h2 className="font-display font-bold text-lg mb-5 -mt-1">Semaines 1 à 4</h2>
-                <RoutinePanel routine={routine} />
+                <RoutinePanel
+                  routine={routinePayload.items}
+                  weekPlans={weekPlans}
+                  resume={routineResume}
+                />
               </AppCard>
             </section>
           </div>
