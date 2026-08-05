@@ -83,23 +83,6 @@ function FlashyProgressBar({ progress, accent = "#00E5A0" }: { progress: number;
           }}
         />
       </div>
-      <div
-        style={{
-          marginTop: 8,
-          display: "flex",
-          justifyContent: "space-between",
-          fontFamily: "ui-monospace, monospace",
-          fontSize: 13,
-          letterSpacing: "0.08em",
-          color: accent,
-          textTransform: "uppercase",
-          opacity: 0.85,
-        }}
-      >
-        <span>0</span>
-        <span>{Math.round(progress)}%</span>
-        <span>10</span>
-      </div>
     </div>
   );
 }
@@ -161,7 +144,7 @@ function ScoreCard({
       >
         {formatScore(score)}
       </p>
-      <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 16 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 28 }}>
         <span
           style={{
             width: 10,
