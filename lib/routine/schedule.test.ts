@@ -1,6 +1,9 @@
 import { describe, it, expect } from "vitest";
 import {
+  activeDayIndex,
   currentRoutineWeek,
+  isDayComplete,
+  isDayUnlocked,
   itemsForWeek,
   tasksForDay,
   type RoutineItem,
@@ -51,5 +54,31 @@ describe("tasksForDay", () => {
     expect(tasksForDay(r, 3, 1)).toHaveLength(0);
     expect(tasksForDay(r, 3, 2)).toHaveLength(1);
     expect(tasksForDay(r, 3, 4)).toHaveLength(1);
+  });
+});
+
+describe("progression par jour", () => {
+  it("jour 1 verrouillé tant que jour 0 incomplet", () => {
+    const checked = {};
+    expect(isDayUnlocked(routine, 1, 1, checked)).toBe(false);
+    const day0 = tasksForDay(routine, 1, 0);
+    const full: Record<string, boolean> = Object.fromEntries(day0.map((t) => [t.id, true]));
+    expect(isDayUnlocked(routine, 1, 1, full)).toBe(true);
+  });
+
+  it("activeDayIndex pointe sur le premier jour incomplet", () => {
+    expect(activeDayIndex(routine, 1, {})).toBe(0);
+    const day0 = tasksForDay(routine, 1, 0);
+    const partial = { [day0[0].id]: true };
+    expect(activeDayIndex(routine, 1, partial)).toBe(0);
+    const full0: Record<string, boolean> = Object.fromEntries(day0.map((t) => [t.id, true]));
+    expect(activeDayIndex(routine, 1, full0)).toBe(1);
+  });
+
+  it("isDayComplete exige toutes les tâches", () => {
+    const tasks = tasksForDay(routine, 1, 0);
+    expect(isDayComplete(tasks, {})).toBe(false);
+    expect(isDayComplete(tasks, { [tasks[0].id]: true })).toBe(false);
+    expect(isDayComplete(tasks, Object.fromEntries(tasks.map((t) => [t.id, true])))).toBe(true);
   });
 });

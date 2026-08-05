@@ -41,6 +41,45 @@ export function weekDayLabels(): string[] {
   return ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
 }
 
+export function weekDayFullLabels(): string[] {
+  return ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"];
+}
+
+export function isDayComplete(tasks: RoutineDayTask[], checked: Record<string, boolean>): boolean {
+  if (tasks.length === 0) return true;
+  return tasks.every((t) => checked[t.id]);
+}
+
+/** Premier jour non terminé (0–6), ou 6 si la semaine est finie. */
+export function activeDayIndex(
+  routine: RoutineItem[],
+  week: RoutineWeek,
+  checked: Record<string, boolean>,
+): number {
+  const labels = weekDayLabels();
+  for (let i = 0; i < labels.length; i++) {
+    const tasks = tasksForDay(routine, week, i);
+    if (tasks.length === 0) continue;
+    if (!isDayComplete(tasks, checked)) return i;
+  }
+  return labels.length - 1;
+}
+
+export function isDayUnlocked(
+  routine: RoutineItem[],
+  week: RoutineWeek,
+  dayIndex: number,
+  checked: Record<string, boolean>,
+): boolean {
+  if (dayIndex === 0) return true;
+  for (let i = 0; i < dayIndex; i++) {
+    const tasks = tasksForDay(routine, week, i);
+    if (tasks.length === 0) continue;
+    if (!isDayComplete(tasks, checked)) return false;
+  }
+  return true;
+}
+
 export type RoutineDayTask = {
   id: string;
   item: RoutineItem;

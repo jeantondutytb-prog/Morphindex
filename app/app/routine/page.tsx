@@ -60,8 +60,8 @@ export default async function RoutinePage() {
 
       <AppCard className="p-5 lg:p-8">
         <AppSectionLabel>Ton plan semaine par semaine</AppSectionLabel>
-        <p className="text-sm text-muted mb-6 max-w-2xl">
-          Chaque semaine ajoute de nouvelles étapes. Coche au fur et à mesure — matin, soir, et soins hebdomadaires.
+        <p className="text-sm text-muted mb-6 max-w-xl">
+          Un jour à la fois. Coche tout pour débloquer le lendemain.
         </p>
         <RoutineTracker
           analysisId={analysis.id}
