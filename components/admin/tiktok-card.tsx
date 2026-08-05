@@ -326,7 +326,6 @@ export const TikTokCard = forwardRef<HTMLDivElement, TikTokCardProps>(function T
             <img
               src={photoUrl}
               alt=""
-              crossOrigin="anonymous"
               style={{ width: "100%", height: "100%", objectFit: "cover" }}
             />
           ) : (

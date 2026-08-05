@@ -1,10 +1,11 @@
 "use client";
 
 import { useCallback, useMemo, useRef, useState } from "react";
-import { toPng } from "html-to-image";
+import { toBlob } from "html-to-image";
 import { TikTokCard, type ExportAspect } from "@/components/admin/tiktok-card";
 import { AppCard, AppSectionLabel } from "@/components/app/ui";
 import { EXPORT_SIZE } from "@/lib/tiktok/export-layout";
+import { downloadBlob, readFileAsDataUrl, waitForImages } from "@/lib/tiktok/export-image";
 import { SITE_NAME, siteHostname } from "@/lib/site";
 
 const DEFAULT_SCORE_ACTUEL = 6.4;
@@ -22,6 +23,7 @@ export function TikTokGenerator() {
   const [scoreActuel, setScoreActuel] = useState(DEFAULT_SCORE_ACTUEL);
   const [scorePotentiel, setScorePotentiel] = useState(DEFAULT_SCORE_POTENTIEL);
   const [downloading, setDownloading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const cardProps = { photoUrl, exportAspect, brandName, siteLabel, scoreActuel, scorePotentiel };
   const { width: cardW, height: cardH } = EXPORT_SIZE[exportAspect];
@@ -31,30 +33,44 @@ export function TikTokGenerator() {
     [cardW],
   );
 
-  const onPhotoChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+  const onPhotoChange = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    const url = URL.createObjectURL(file);
-    setPhotoUrl((prev) => {
-      if (prev) URL.revokeObjectURL(prev);
-      return url;
-    });
+    setError(null);
+    try {
+      const dataUrl = await readFileAsDataUrl(file);
+      setPhotoUrl(dataUrl);
+    } catch {
+      setError("Impossible de charger la photo. Réessaie avec un JPEG ou PNG.");
+    }
   }, []);
 
   async function downloadPng() {
     if (!exportRef.current || !photoUrl) return;
     setDownloading(true);
+    setError(null);
     try {
-      const dataUrl = await toPng(exportRef.current, {
+      await waitForImages(exportRef.current);
+      await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+
+      const blob = await toBlob(exportRef.current, {
         cacheBust: true,
         pixelRatio: 1,
         width: cardW,
         height: cardH,
+        skipFonts: true,
       });
-      const link = document.createElement("a");
-      link.download = `morphindex-tiktok-${exportAspect.replace(":", "x")}-${Date.now()}.png`;
-      link.href = dataUrl;
-      link.click();
+
+      if (!blob) {
+        throw new Error("La génération de l'image a échoué");
+      }
+
+      downloadBlob(
+        blob,
+        `morphindex-tiktok-${exportAspect.replace(":", "x")}-${Date.now()}.png`,
+      );
+    } catch {
+      setError("Le téléchargement a échoué. Réessaie ou change de navigateur (Chrome recommandé).");
     } finally {
       setDownloading(false);
     }
@@ -65,8 +81,14 @@ export function TikTokGenerator() {
       <div
         ref={exportRef}
         aria-hidden
-        className="fixed pointer-events-none opacity-0"
-        style={{ left: -9999, top: 0 }}
+        style={{
+          position: "fixed",
+          left: 0,
+          top: 0,
+          zIndex: -1,
+          visibility: "hidden",
+          pointerEvents: "none",
+        }}
       >
         <TikTokCard {...cardProps} />
       </div>
@@ -179,6 +201,12 @@ export function TikTokGenerator() {
         >
           {downloading ? "Génération…" : `Télécharger PNG (${cardW}×${cardH})`}
         </button>
+
+        {error && (
+          <p className="text-sm text-red-400/90 text-center" role="alert">
+            {error}
+          </p>
+        )}
       </div>
 
       <AppCard padding="none" className="overflow-hidden">

@@ -114,6 +114,16 @@ export default async function ComptePage() {
       </AppCard>
 
       {isAdmin && (
+        <AppCard className="mt-4 border-accent/20 bg-accent/5">
+          <AppSectionLabel>Administration</AppSectionLabel>
+          <div className="flex flex-wrap gap-3 mt-2">
+            <AppButton href="/app/admin">Vue d&apos;ensemble</AppButton>
+            <AppButton href="/app/admin/tiktok" variant="secondary">Créateur TikTok</AppButton>
+          </div>
+        </AppCard>
+      )}
+
+      {isAdmin && (
         <p className="mt-3 text-sm text-accent/80">
           Compte admin — tu peux lancer autant d&apos;analyses que tu veux.
         </p>
