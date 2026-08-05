@@ -1,10 +1,11 @@
 import { createServerClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
-import { RoutinePanel } from "@/components/report/routine";
+import { RoutineTracker } from "@/components/report/routine-tracker";
 import { PageHeader } from "@/components/app/page-header";
 import { AppContainer } from "@/components/app/app-container";
 import { AppCard, AppEmptyState, AppSectionLabel } from "@/components/app/ui";
 import { getLatestAccessibleAnalysis } from "@/lib/app/analyses";
+import type { RoutineItem } from "@/lib/routine/schedule";
 
 export default async function RoutinePage() {
   const supabase = await createServerClient();
@@ -40,7 +41,7 @@ export default async function RoutinePage() {
     );
   }
 
-  const routine = analysis.routine as Parameters<typeof RoutinePanel>[0]["routine"];
+  const routine = analysis.routine as RoutineItem[];
   const date = new Date(analysis.created_at).toLocaleDateString("fr-FR", {
     day: "numeric",
     month: "long",
@@ -52,19 +53,21 @@ export default async function RoutinePage() {
       <PageHeader
         kicker="Routine"
         title="Ma routine"
-        subtitle={`Plan d'action à partir du ${date} — semaines 1 à 4`}
+        subtitle={`Plan 4 semaines · démarré le ${date}`}
         backHref={`/app/rapport/${analysis.id}`}
         backLabel="Rapport complet"
       />
 
-      <AppCard className="p-6 lg:p-8">
-        <AppSectionLabel>Instructions</AppSectionLabel>
-        <p className="text-sm text-muted mb-8 max-w-2xl">
-          Suis ces étapes dans l&apos;ordre. Les actifs forts s&apos;introduisent progressivement.
+      <AppCard className="p-5 lg:p-8">
+        <AppSectionLabel>Ton plan semaine par semaine</AppSectionLabel>
+        <p className="text-sm text-muted mb-6 max-w-2xl">
+          Chaque semaine ajoute de nouvelles étapes. Coche au fur et à mesure — matin, soir, et soins hebdomadaires.
         </p>
-        <div className="lg:columns-2 lg:gap-10 [&>*]:break-inside-avoid">
-          <RoutinePanel routine={routine} />
-        </div>
+        <RoutineTracker
+          analysisId={analysis.id}
+          routine={routine}
+          startDate={analysis.created_at}
+        />
       </AppCard>
     </AppContainer>
   );

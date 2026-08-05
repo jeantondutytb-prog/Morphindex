@@ -52,9 +52,11 @@ const FAKE_ANALYSIS_DATA: Analysis = {
     { moment: "matin", action: "nettoyant doux pH 5,5", produit: null, frequence: "quotidien", semaine_debut: 1 },
     { moment: "matin", action: "crème solaire SPF 50 texture fluide", produit: null, frequence: "quotidien", semaine_debut: 1 },
     { moment: "soir", action: "crème hydratante légère", produit: null, frequence: "quotidien", semaine_debut: 1 },
-    { moment: "soir", action: "rétinaldéhyde 0,05 %", produit: null, frequence: "3× par semaine", semaine_debut: 3 },
     { moment: "matin", action: "sérum vitamine C 10 %", produit: null, frequence: "quotidien", semaine_debut: 2 },
+    { moment: "soir", action: "contour des yeux caféine 5 %", produit: null, frequence: "quotidien", semaine_debut: 2 },
+    { moment: "soir", action: "rétinaldéhyde 0,05 %", produit: null, frequence: "3× par semaine", semaine_debut: 3 },
     { moment: "hebdo", action: "exfoliation enzymatique douce", produit: null, frequence: "1× par semaine", semaine_debut: 4 },
+    { moment: "hebdo", action: "masque hydratant 15 min", produit: null, frequence: "1× par semaine", semaine_debut: 4 },
   ],
 };
 

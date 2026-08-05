@@ -50,7 +50,7 @@ describe("runAnalysis mode factice", () => {
     if (result.ok) {
       expect(result.cacheRead).toBe(0);
       expect(result.data.points).toHaveLength(5);
-      expect(result.data.routine).toHaveLength(6);
+      expect(result.data.routine).toHaveLength(8);
       expect(result.data.points[0].impact).toBe("fort");
       expect(result.data.points[1].impact).toBe("fort");
       expect(result.data.points[4].impact).toBe("faible");

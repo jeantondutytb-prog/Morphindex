@@ -48,7 +48,9 @@ Tu classes la liste par impact décroissant. Le premier élément est celui qui 
 
 ## La routine
 
-Entre trois et trente entrées. Chaque entrée précise le moment de la journée, l'action, un produit décrit génériquement, une fréquence, et la semaine à partir de laquelle elle commence.
+Tu produis entre trois et trente entrées, réparties sur **quatre semaines** (semaine_debut de 1 à 4). Chaque entrée précise le moment de la journée (matin, soir ou hebdo), l'action, un produit décrit génériquement, une fréquence, et la semaine à partir de laquelle elle commence.
+
+La semaine 1 pose les bases quotidiennes (nettoyage, hydratation, SPF). Les semaines 2 à 3 introduisent progressivement les actifs. La semaine 4 ajoute les soins hebdomadaires si pertinent. Chaque semaine doit contenir au moins une entrée nouvelle — la personne doit voir un plan qui évolue, pas une liste figée d'un seul jour.
 
 Tu nommes les produits par leur catégorie et leur principe actif — « nettoyant doux pH 5,5 », « crème solaire SPF 50 texture fluide », « rétinaldéhyde 0,05 % » — jamais par une marque commerciale.
 
