@@ -219,12 +219,61 @@ export const TikTokCard = forwardRef<HTMLDivElement, TikTokCardProps>(function T
           zIndex: 2,
           display: "flex",
           alignItems: "center",
-          justifyContent: "space-between",
+          minHeight: layout.siteFontSize + 48,
           padding: layout.headerPad,
         }}
       >
-        <ScanIcon />
-        <div style={{ textAlign: "center", flex: 1, padding: "0 16px" }}>
+        {/* Gauche — icône scan */}
+        <div style={{ width: 44, flexShrink: 0 }}>
+          <ScanIcon />
+        </div>
+
+        {/* Centre — CTA site (vraiment centré sur la carte) */}
+        <div
+          style={{
+            position: "absolute",
+            left: "50%",
+            top: "50%",
+            transform: "translate(-50%, -50%)",
+            maxWidth: "58%",
+            textAlign: "center",
+          }}
+        >
+          <div
+            style={{
+              display: "inline-block",
+              borderRadius: 20,
+              border: "2px solid rgba(0,229,160,0.55)",
+              background: "rgba(0,229,160,0.12)",
+              padding: "16px 32px",
+              boxShadow: "0 0 40px rgba(0,229,160,0.25), inset 0 0 20px rgba(0,229,160,0.08)",
+            }}
+          >
+            <p
+              style={{
+                margin: 0,
+                fontSize: layout.siteFontSize,
+                fontWeight: 800,
+                color: "#00E5A0",
+                lineHeight: 1.15,
+                letterSpacing: "-0.01em",
+                textShadow: "0 0 24px rgba(0,229,160,0.45)",
+              }}
+            >
+              {siteLabel}
+            </p>
+          </div>
+        </div>
+
+        {/* Droite — MorphIndex en gros */}
+        <div
+          style={{
+            marginLeft: "auto",
+            textAlign: "right",
+            flexShrink: 0,
+            maxWidth: "28%",
+          }}
+        >
           <p
             style={{
               margin: 0,
@@ -234,31 +283,14 @@ export const TikTokCard = forwardRef<HTMLDivElement, TikTokCardProps>(function T
               lineHeight: 1.1,
             }}
           >
-            {brandName}
-          </p>
-        </div>
-        <div
-          style={{
-            borderRadius: 16,
-            border: "1.5px solid rgba(0,229,160,0.45)",
-            background: "rgba(0,229,160,0.1)",
-            padding: "14px 18px",
-            maxWidth: 220,
-            textAlign: "center",
-            boxShadow: "0 0 24px rgba(0,229,160,0.15)",
-          }}
-        >
-          <p
-            style={{
-              margin: 0,
-              fontSize: 18,
-              fontWeight: 700,
-              color: "#00E5A0",
-              lineHeight: 1.3,
-              wordBreak: "break-all",
-            }}
-          >
-            {siteLabel}
+            {brandName.includes("Index") ? (
+              <>
+                {brandName.replace(/Index/i, "")}
+                <span style={{ color: "#00E5A0" }}>Index</span>
+              </>
+            ) : (
+              brandName
+            )}
           </p>
         </div>
       </div>
