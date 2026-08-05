@@ -1,4 +1,4 @@
-import { createCanvas, GlobalFonts, loadImage, type SKRSContext2D } from "@napi-rs/canvas";
+import { createCanvas, GlobalFonts, loadImage, type Image, type SKRSContext2D } from "@napi-rs/canvas";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import {
@@ -99,6 +99,19 @@ function drawScanIcon(ctx: SKRSContext2D, x: number, y: number) {
   ctx.lineWidth = 1.5;
   ctx.stroke();
   ctx.restore();
+}
+
+function drawImageCover(
+  ctx: SKRSContext2D,
+  img: Image,
+  cx: number,
+  cy: number,
+  diameter: number,
+) {
+  const scale = Math.max(diameter / img.width, diameter / img.height);
+  const w = img.width * scale;
+  const h = img.height * scale;
+  ctx.drawImage(img, cx - w / 2, cy - h / 2, w, h);
 }
 
 function drawProgressBar(
@@ -254,7 +267,7 @@ export async function renderTikTokPng(input: TikTokRenderInput): Promise<Buffer>
   ctx.arc(photoCx, photoCy, photoR, 0, Math.PI * 2);
   ctx.clip();
   const img = await loadImage(input.photoDataUrl);
-  ctx.drawImage(img, photoCx - photoR, photoCy - photoR, layout.photoDiameter, layout.photoDiameter);
+  drawImageCover(ctx, img, photoCx, photoCy, layout.photoDiameter);
   ctx.restore();
 
   drawScoreCard(ctx, padX, cardY, cardW, cardH, "Indice", input.scoreActuel, layout.scoreFontSize);
