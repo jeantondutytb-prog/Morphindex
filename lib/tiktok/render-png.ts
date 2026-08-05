@@ -155,28 +155,20 @@ function drawScoreCard(
 
   ctx.font = `800 ${scoreFontSize}px InterExtraBold`;
   ctx.fillStyle = TEXT;
-  const scoreY = y + 36 + scoreFontSize;
+  const scoreY = y + 36 + scoreFontSize * 0.88;
   ctx.fillText(formatScore(score), x + 24, scoreY);
 
+  const tierY = scoreY + scoreFontSize * 0.42 + 12;
   ctx.beginPath();
-  ctx.arc(x + 29, scoreY + 20, 5, 0, Math.PI * 2);
+  ctx.arc(x + 29, tierY, 5, 0, Math.PI * 2);
   ctx.fillStyle = ACCENT;
   ctx.fill();
 
   ctx.font = "700 24px InterBold";
   ctx.fillStyle = TEXT;
-  ctx.fillText(tier, x + 44, scoreY + 26);
+  ctx.fillText(tier, x + 44, tierY + 6);
 
-  drawProgressBar(ctx, x + 24, y + h - 52, w - 48, progress);
-
-  ctx.font = "500 12px JetBrainsMono";
-  ctx.fillStyle = ACCENT;
-  ctx.globalAlpha = 0.85;
-  ctx.fillText("0", x + 24, y + h - 18);
-  ctx.textAlign = "center";
-  ctx.fillText(`${Math.round(progress)}%`, x + w / 2, y + h - 18);
-  ctx.textAlign = "right";
-  ctx.fillText("10", x + w - 24, y + h - 18);
+  drawProgressBar(ctx, x + 24, y + h - 40, w - 48, progress);
   ctx.globalAlpha = 1;
   ctx.textAlign = "left";
 }
