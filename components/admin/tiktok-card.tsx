@@ -1,22 +1,22 @@
 "use client";
 
 import { forwardRef } from "react";
+import {
+  EXPORT_LAYOUT,
+  EXPORT_SIZE,
+  type ExportAspect,
+} from "@/lib/tiktok/export-layout";
 import { formatScore, scoreProgress, scoreTier } from "@/lib/tiktok/score-tier";
 
-export type PhotoAspect = "1:1" | "2:3";
+export type { ExportAspect };
 
 export type TikTokCardProps = {
   photoUrl: string | null;
-  photoAspect: PhotoAspect;
+  exportAspect: ExportAspect;
   brandName: string;
   siteLabel: string;
   scoreActuel: number;
   scorePotentiel: number;
-};
-
-const PHOTO_SIZE: Record<PhotoAspect, { width: number; height: number; radius: number }> = {
-  "1:1": { width: 560, height: 560, radius: 28 },
-  "2:3": { width: 480, height: 720, radius: 28 },
 };
 
 function ScanIcon() {
@@ -108,10 +108,14 @@ function ScoreCard({
   label,
   score,
   accent = "#00E5A0",
+  scoreFontSize,
+  minHeight,
 }: {
   label: string;
   score: number;
   accent?: string;
+  scoreFontSize: number;
+  minHeight: number;
 }) {
   const tier = scoreTier(score);
   const progress = scoreProgress(score);
@@ -127,7 +131,7 @@ function ScoreCard({
         boxShadow: `0 0 32px ${accent}33, inset 0 0 24px ${accent}0d`,
         display: "flex",
         flexDirection: "column",
-        minHeight: 240,
+        minHeight,
       }}
     >
       <p
@@ -147,7 +151,7 @@ function ScoreCard({
         style={{
           margin: "16px 0 0",
           fontFamily: "system-ui, sans-serif",
-          fontSize: 72,
+          fontSize: scoreFontSize,
           fontWeight: 800,
           lineHeight: 1,
           color: "#F5F6F7",
@@ -176,17 +180,19 @@ function ScoreCard({
 }
 
 export const TikTokCard = forwardRef<HTMLDivElement, TikTokCardProps>(function TikTokCard(
-  { photoUrl, photoAspect, brandName, siteLabel, scoreActuel, scorePotentiel },
+  { photoUrl, exportAspect, brandName, siteLabel, scoreActuel, scorePotentiel },
   ref,
 ) {
-  const photoFrame = PHOTO_SIZE[photoAspect];
+  const { width, height } = EXPORT_SIZE[exportAspect];
+  const layout = EXPORT_LAYOUT[exportAspect];
+  const d = layout.photoDiameter;
 
   return (
     <div
       ref={ref}
       style={{
-        width: 1080,
-        height: 1920,
+        width,
+        height,
         position: "relative",
         overflow: "hidden",
         background: "#08090B",
@@ -214,7 +220,7 @@ export const TikTokCard = forwardRef<HTMLDivElement, TikTokCardProps>(function T
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          padding: "56px 48px 0",
+          padding: layout.headerPad,
         }}
       >
         <ScanIcon />
@@ -222,7 +228,7 @@ export const TikTokCard = forwardRef<HTMLDivElement, TikTokCardProps>(function T
           <p
             style={{
               margin: 0,
-              fontSize: 52,
+              fontSize: layout.brandFontSize,
               fontWeight: 800,
               letterSpacing: "-0.02em",
               lineHeight: 1.1,
@@ -257,6 +263,7 @@ export const TikTokCard = forwardRef<HTMLDivElement, TikTokCardProps>(function T
         </div>
       </div>
 
+      {/* Portrait — toujours en cercle */}
       <div
         style={{
           position: "relative",
@@ -265,17 +272,17 @@ export const TikTokCard = forwardRef<HTMLDivElement, TikTokCardProps>(function T
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          padding: photoAspect === "2:3" ? "24px 48px" : "40px 48px",
+          padding: layout.portraitPad,
         }}
       >
         <div
           style={{
-            width: photoFrame.width,
-            height: photoFrame.height,
-            borderRadius: photoFrame.radius,
+            width: d,
+            height: d,
+            borderRadius: "50%",
             overflow: "hidden",
-            border: "3px solid rgba(0,229,160,0.45)",
-            boxShadow: "0 0 60px rgba(0,229,160,0.25), 0 0 120px rgba(0,229,160,0.1)",
+            border: "3px solid rgba(0,229,160,0.35)",
+            boxShadow: "0 0 60px rgba(0,229,160,0.2), 0 0 120px rgba(0,229,160,0.08)",
             background: "#0C0E12",
             display: "flex",
             alignItems: "center",
@@ -293,7 +300,7 @@ export const TikTokCard = forwardRef<HTMLDivElement, TikTokCardProps>(function T
           ) : (
             <div style={{ textAlign: "center", color: "#5C6470", padding: 32 }}>
               <ScanIcon />
-              <p style={{ marginTop: 16, fontSize: 22 }}>{photoAspect}</p>
+              <p style={{ marginTop: 16, fontSize: 22 }}>Photo</p>
             </div>
           )}
         </div>
@@ -305,11 +312,22 @@ export const TikTokCard = forwardRef<HTMLDivElement, TikTokCardProps>(function T
           zIndex: 2,
           display: "flex",
           gap: 24,
-          padding: "0 48px 72px",
+          padding: layout.scorePad,
         }}
       >
-        <ScoreCard label="Indice" score={scoreActuel} />
-        <ScoreCard label="Potentiel" score={scorePotentiel} accent="#00E5A0" />
+        <ScoreCard
+          label="Indice"
+          score={scoreActuel}
+          scoreFontSize={layout.scoreFontSize}
+          minHeight={layout.scoreCardMinHeight}
+        />
+        <ScoreCard
+          label="Potentiel"
+          score={scorePotentiel}
+          accent="#00E5A0"
+          scoreFontSize={layout.scoreFontSize}
+          minHeight={layout.scoreCardMinHeight}
+        />
       </div>
     </div>
   );
