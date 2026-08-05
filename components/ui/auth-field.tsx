@@ -25,7 +25,7 @@ export const AuthInput = forwardRef<
         id={inputId}
         type={type}
         placeholder={resolvedPlaceholder}
-        className={`w-full rounded-xl border border-line/80 bg-surface/50 px-4 py-3.5 text-[15px] text-text placeholder:text-dim/70 outline-none transition-all focus:border-accent/40 focus:bg-surface/80 focus:ring-1 focus:ring-accent/15 ${className}`}
+        className={`auth-input w-full rounded-xl border border-line/80 bg-bg px-4 py-3.5 text-[15px] text-text placeholder:text-dim/70 outline-none transition-colors focus:border-accent/40 focus:ring-1 focus:ring-accent/15 ${className}`}
         {...props}
       />
     </div>

@@ -320,6 +320,25 @@ body { font-family: var(--font-sans); }
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
+/* ── Auth inputs — dark theme + autofill fix ── */
+
+.auth-input {
+  color-scheme: dark;
+  background-color: var(--color-bg);
+}
+
+.auth-input:-webkit-autofill,
+.auth-input:-webkit-autofill:hover,
+.auth-input:-webkit-autofill:focus,
+.auth-input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px var(--color-bg) inset !important;
+  box-shadow: 0 0 0 1000px var(--color-bg) inset !important;
+  -webkit-text-fill-color: var(--color-text) !important;
+  caret-color: var(--color-text);
+  border-color: color-mix(in srgb, var(--color-accent) 40%, var(--color-line)) !important;
+  transition: background-color 99999s ease-in-out 0s;
+}
+
 .animate-tab-in {
   animation: tab-in 0.35s cubic-bezier(0.22, 0.61, 0.36, 1) both;
 }
