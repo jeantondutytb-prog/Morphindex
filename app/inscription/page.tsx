@@ -64,10 +64,7 @@ export default function InscriptionPage() {
   }
 
   return (
-    <AuthLayout
-      title="Créer un compte"
-      subtitle="3 minutes pour ton premier indice. Photo supprimée après analyse."
-    >
+    <AuthLayout title="Créer un compte">
       <form onSubmit={handleSubmit} className="space-y-4">
         <AuthInput
           label="Email"

@@ -40,6 +40,7 @@ export default function MotDePasseOubliePage() {
             label="Email"
             type="email"
             name="email"
+            placeholder="nom@email.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required

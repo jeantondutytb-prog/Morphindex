@@ -1,19 +1,31 @@
 import { forwardRef } from "react";
 
+const DEFAULT_PLACEHOLDERS: Partial<Record<string, string>> = {
+  email: "nom@email.com",
+  password: "****",
+};
+
 export const AuthInput = forwardRef<
   HTMLInputElement,
-  React.InputHTMLAttributes<HTMLInputElement> & { label: string }
->(function AuthInput({ label, id, className = "", ...props }, ref) {
+  React.InputHTMLAttributes<HTMLInputElement> & { label: string; hideLabel?: boolean }
+>(function AuthInput({ label, id, className = "", hideLabel, type, placeholder, ...props }, ref) {
   const inputId = id ?? props.name;
+  const resolvedPlaceholder =
+    placeholder ?? (type ? DEFAULT_PLACEHOLDERS[type] : undefined);
+
   return (
     <div>
-      <label htmlFor={inputId} className="block font-mono text-[10px] uppercase tracking-[.12em] text-dim mb-2">
-        {label}
-      </label>
+      {!hideLabel && (
+        <label htmlFor={inputId} className="block font-mono text-[10px] uppercase tracking-[.12em] text-dim mb-2">
+          {label}
+        </label>
+      )}
       <input
         ref={ref}
         id={inputId}
-        className={`w-full rounded-xl border border-line/80 bg-surface/50 px-4 py-3.5 text-[15px] text-text placeholder:text-dim outline-none transition-all focus:border-accent/40 focus:bg-surface/80 focus:ring-1 focus:ring-accent/15 ${className}`}
+        type={type}
+        placeholder={resolvedPlaceholder}
+        className={`w-full rounded-xl border border-line/80 bg-surface/50 px-4 py-3.5 text-[15px] text-text placeholder:text-dim/70 outline-none transition-all focus:border-accent/40 focus:bg-surface/80 focus:ring-1 focus:ring-accent/15 ${className}`}
         {...props}
       />
     </div>
@@ -37,40 +49,6 @@ export function AuthButton({
   );
 }
 
-export function AuthCheckbox({
-  checked,
-  onChange,
-  children,
-}: {
-  checked: boolean;
-  onChange: (v: boolean) => void;
-  children: React.ReactNode;
-}) {
-  return (
-    <label className="flex items-start gap-3 cursor-pointer group">
-      <span className="relative mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-md border border-line bg-bg/60 transition-colors group-hover:border-accent/40">
-        <input
-          type="checkbox"
-          checked={checked}
-          onChange={(e) => onChange(e.target.checked)}
-          className="peer sr-only"
-        />
-        <svg
-          width="12"
-          height="12"
-          viewBox="0 0 12 12"
-          fill="none"
-          className={`transition-opacity ${checked ? "opacity-100" : "opacity-0"}`}
-          aria-hidden
-        >
-          <path d="M2.5 6l2.5 2.5 4.5-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-accent" />
-        </svg>
-      </span>
-      <span className="text-sm text-muted leading-relaxed">{children}</span>
-    </label>
-  );
-}
-
 export function AuthError({ message }: { message: string }) {
   if (!message) return null;
   return (
@@ -81,5 +59,5 @@ export function AuthError({ message }: { message: string }) {
 }
 
 export function AuthFooterLink({ children }: { children: React.ReactNode }) {
-  return <p className="mt-8 pt-6 border-t border-line/80 text-sm text-dim">{children}</p>;
+  return <p className="mt-8 pt-6 border-t border-line/80 text-sm text-dim text-center">{children}</p>;
 }

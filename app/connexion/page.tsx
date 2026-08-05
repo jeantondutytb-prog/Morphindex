@@ -29,7 +29,7 @@ export default function ConnexionPage() {
   }
 
   return (
-    <AuthLayout title="Connexion" subtitle="Accède à ton dashboard et tes rapports.">
+    <AuthLayout title="Connexion">
       <form onSubmit={handleSubmit} className="space-y-4">
         <AuthInput
           label="Email"
