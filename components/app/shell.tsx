@@ -120,7 +120,7 @@ export function AppShell({
           <div className="rounded-2xl border border-accent/20 bg-gradient-to-br from-accent/10 via-accent/5 to-transparent p-4 relative overflow-hidden">
             <div className="absolute -right-4 -top-4 size-20 rounded-full bg-accent/10 blur-2xl" aria-hidden />
             <p className="font-display text-sm font-bold mb-1 relative">Nouvelle analyse</p>
-            <p className="text-xs text-dim mb-3 relative">7 axes · indice · routine</p>
+            <p className="text-xs text-dim mb-3 relative">90 dimensions · indice · routine</p>
             <Link
               href="/app/photo"
               className="relative block text-center rounded-xl bg-accent py-2.5 text-xs font-bold text-accent-ink hover:brightness-110 transition cta-shine overflow-hidden"

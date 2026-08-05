@@ -1,6 +1,7 @@
 import type { RoutineItem } from "@/lib/routine/schedule";
 import { itemsForWeek, ROUTINE_WEEKS } from "@/lib/routine/schedule";
 import { AXE_LABELS, resolveWeekPlans, type RoutineResume, type WeekPlan } from "@/lib/routine/data";
+import { dimensionLabel, DOMAIN_LABELS } from "@/lib/ai/dimensions";
 
 const MOMENT_LABELS = { matin: "Matin", soir: "Soir", hebdo: "Hebdomadaire" } as const;
 
@@ -55,9 +56,14 @@ export function RoutinePanel({
                         <span className="text-text font-medium">{item.action}</span>
                         {item.produit && <span className="text-dim"> · {item.produit}</span>}
                         <span className="text-dim"> · {item.frequence}</span>
-                        {item.axe && (
+                        {item.dimension && (
                           <span className="ml-2 font-mono text-[8px] uppercase text-dim border border-line px-1.5 py-0.5 rounded">
-                            {AXE_LABELS[item.axe]}
+                            {dimensionLabel(item.dimension)}
+                          </span>
+                        )}
+                        {!item.dimension && item.axe && (
+                          <span className="ml-2 font-mono text-[8px] uppercase text-dim border border-line px-1.5 py-0.5 rounded">
+                            {DOMAIN_LABELS[item.axe as keyof typeof DOMAIN_LABELS] ?? item.axe}
                           </span>
                         )}
                         {item.detail && (

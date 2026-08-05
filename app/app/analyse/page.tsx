@@ -7,7 +7,7 @@ import { AppContainer } from "@/components/app/app-container";
 
 const STEPS = [
   "Lecture de la photo…",
-  "Analyse des sept axes…",
+  "Analyse des 90 dimensions…",
   "Calcul de l'indice…",
   "Génération de la routine…",
   "Finalisation…",

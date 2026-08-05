@@ -1,4 +1,5 @@
-import type { AXES } from "@/lib/ai/analysis-schema";
+import type { Domain } from "@/lib/ai/dimensions";
+import { DOMAIN_LABELS, dimensionLabel, domainOfDimension } from "@/lib/ai/dimensions";
 import type { RoutineItem } from "@/lib/routine/schedule";
 
 export type WeekPlan = {
@@ -10,7 +11,8 @@ export type WeekPlan = {
 
 export type RoutineResume = {
   vision: string;
-  axes_cibles: (typeof AXES)[number][];
+  axes_cibles: Domain[];
+  dimensions_cibles?: string[];
 };
 
 export type RoutinePayload = {
@@ -64,10 +66,16 @@ export function serializeRoutinePayload(payload: RoutinePayload): unknown {
 export function fallbackWeekPlans(routine: RoutineItem[]): WeekPlan[] {
   return ([1, 2, 3, 4] as const).map((semaine) => {
     const newItems = routine.filter((item) => item.semaine_debut === semaine);
-    const axes = [...new Set(newItems.map((i) => i.axe).filter(Boolean))];
+    const labels = [
+      ...new Set(
+        newItems
+          .map((i) => (i.dimension ? dimensionLabel(i.dimension) : null))
+          .filter(Boolean),
+      ),
+    ];
     const focus =
-      axes.length > 0
-        ? axes.slice(0, 2).join(", ")
+      labels.length > 0
+        ? labels.slice(0, 2).join(" · ")
         : newItems.map((i) => i.action).slice(0, 2).join(" · ") || "habitudes quotidiennes";
 
     return {
@@ -90,21 +98,21 @@ export function resolveWeekPlans(payload: RoutinePayload): WeekPlan[] {
 export function fallbackRoutineResume(
   indiceActuel: number,
   indiceAtteignable: number,
-  points: { axe: string }[],
+  points: { dimension?: string; axe?: string }[],
 ): RoutineResume {
-  const axes = [...new Set(points.slice(0, 3).map((p) => p.axe))] as RoutineResume["axes_cibles"];
+  const domains = [
+    ...new Set(
+      points.slice(0, 5).map((p) => {
+        if (p.dimension) return domainOfDimension(p.dimension);
+        return p.axe as Domain | undefined;
+      }).filter(Boolean),
+    ),
+  ] as Domain[];
+
   return {
-    vision: `En 4 semaines, tu poses les bases pour viser un indice autour de ${indiceAtteignable.toFixed(1).replace(".", ",")} (aujourd'hui ${indiceActuel.toFixed(1).replace(".", ",")}), en travaillant d'abord sur ${axes.join(", ") || "tes points faibles"}.`,
-    axes_cibles: axes.length > 0 ? axes : ["peau"],
+    vision: `En 4 semaines, tu poses les bases pour viser un indice autour de ${indiceAtteignable.toFixed(1).replace(".", ",")} (aujourd'hui ${indiceActuel.toFixed(1).replace(".", ",")}), en travaillant ${domains.length > 0 ? `sur ${domains.map((d) => DOMAIN_LABELS[d]).join(", ")}` : "tes dimensions les plus faibles"}.`,
+    axes_cibles: domains.length > 0 ? domains : ["peau"],
   };
 }
 
-export const AXE_LABELS: Record<(typeof AXES)[number], string> = {
-  peau: "Peau",
-  cernes: "Cernes",
-  pilosite: "Pilosité",
-  coupe: "Coupe",
-  posture: "Posture",
-  composition: "Composition",
-  dents: "Dents",
-};
+export { DOMAIN_LABELS as AXE_LABELS };

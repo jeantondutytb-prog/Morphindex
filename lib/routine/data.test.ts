@@ -25,11 +25,11 @@ describe("parseRoutinePayload", () => {
 describe("fallbackWeekPlans", () => {
   it("génère 4 semaines", () => {
     const plans = fallbackWeekPlans([
-      { moment: "matin", action: "SPF", produit: null, frequence: "quotidien", semaine_debut: 1, axe: "peau" },
-      { moment: "soir", action: "Rétinol", produit: null, frequence: "quotidien", semaine_debut: 3, axe: "peau" },
+      { moment: "matin", action: "SPF", produit: null, frequence: "quotidien", semaine_debut: 1, dimension: "peau_hydratation" },
+      { moment: "soir", action: "Rétinol", produit: null, frequence: "quotidien", semaine_debut: 3, dimension: "peau_texture" },
     ]);
     expect(plans).toHaveLength(4);
     expect(plans[0].semaine).toBe(1);
-    expect(plans[2].objectif).toMatch(/peau/i);
+    expect(plans[2].objectif).toMatch(/texture|Rétinol/i);
   });
 });

@@ -57,7 +57,7 @@ export function LockedReportPreview({
               <span className="font-mono text-[10px] text-dim">Ton rapport</span>
             </div>
             <span className="font-mono text-[10px] text-accent border border-accent/25 bg-accent/8 px-2 py-0.5 rounded-full">
-              softmaxing · 7 axes
+              softmaxing · 90 dimensions
             </span>
           </div>
 

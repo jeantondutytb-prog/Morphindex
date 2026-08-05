@@ -64,6 +64,7 @@ export async function POST(req: Request) {
     await admin.from("analyses").update({
       status: "done",
       scores: result.data.scores,
+      dimensions: result.data.dimensions,
       indice_actuel: result.data.indice_actuel,
       indice_atteignable: result.data.indice_atteignable,
       points,

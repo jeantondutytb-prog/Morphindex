@@ -59,7 +59,7 @@ export function DashboardBento({
           <div className="relative">
             <p className="font-display text-xl lg:text-2xl font-extrabold mb-2">Lance ta première analyse</p>
             <p className="text-muted mb-6 max-w-md mx-auto">
-              Photo, 7 axes, indice et routine personnalisée — livraison en quelques minutes.
+              Photo, 90 dimensions, indice et routine personnalisée — livraison en quelques minutes.
             </p>
             <Link
               href="/app/photo"

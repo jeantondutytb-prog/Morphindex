@@ -1,5 +1,5 @@
-import type { AXES } from "@/lib/ai/analysis-schema";
-import { AXE_LABELS } from "@/lib/routine/data";
+import type { DimensionId } from "@/lib/ai/dimensions";
+import { getDimensionLabel, domainOfDimension, DOMAIN_LABELS } from "@/lib/ai/dimensions";
 
 export type RoutineItem = {
   moment: "matin" | "soir" | "hebdo";
@@ -8,7 +8,9 @@ export type RoutineItem = {
   frequence: string;
   semaine_debut: number;
   pourquoi?: string;
-  axe?: (typeof AXES)[number] | null;
+  dimension?: DimensionId | null;
+  /** @deprecated ancien format */
+  axe?: string | null;
   detail?: string;
 };
 
@@ -94,7 +96,7 @@ export type RoutineDayTask = {
   sublabel?: string;
   pourquoi?: string;
   detail?: string;
-  axeLabel?: string;
+  dimensionTag?: string;
   isNew: boolean;
 };
 
@@ -122,7 +124,11 @@ export function tasksForDay(
       sublabel,
       pourquoi: item.pourquoi,
       detail: item.detail,
-      axeLabel: item.axe ? AXE_LABELS[item.axe] : undefined,
+      dimensionTag: item.dimension
+        ? getDimensionLabel(item.dimension)
+        : item.axe
+          ? DOMAIN_LABELS[item.axe as keyof typeof DOMAIN_LABELS] ?? item.axe
+          : undefined,
       isNew,
     });
   }

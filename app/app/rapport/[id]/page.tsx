@@ -7,11 +7,17 @@ import { PageHeader } from "@/components/app/page-header";
 import { AppContainer } from "@/components/app/app-container";
 import { AppCard, AppNavPill, AppSectionLabel } from "@/components/app/ui";
 import { createAdminClient } from "@/lib/supabase/admin";
-import type { AXES } from "@/lib/ai/analysis-schema";
+import type { DOMAINS } from "@/lib/ai/analysis-schema";
+import { dimensionLabel, type DimensionScore } from "@/lib/ai/dimensions";
 import { parseRoutinePayload, fallbackRoutineResume, resolveWeekPlans } from "@/lib/routine/data";
 
-type Point = { axe: string; libelle: string; impact: "faible" | "moyen" | "fort" };
-type Scores = Record<(typeof AXES)[number], number>;
+type Point = {
+  dimension?: string;
+  axe?: string;
+  libelle: string;
+  impact: "faible" | "moyen" | "fort";
+};
+type Scores = Record<(typeof DOMAINS)[number], number>;
 
 async function getPreview(id: string, userId: string) {
   const admin = createAdminClient();
@@ -60,6 +66,7 @@ export default async function RapportPage({ params }: { params: Promise<{ id: st
   if (analysis && showFull && analysis.status === "done") {
     const scores = analysis.scores as Scores;
     const points = analysis.points as Point[];
+    const dimensions = (analysis.dimensions as DimensionScore[] | null) ?? null;
     const routinePayload = parseRoutinePayload(analysis.routine);
     const routineResume =
       routinePayload.resume ??
@@ -117,7 +124,7 @@ export default async function RapportPage({ params }: { params: Promise<{ id: st
               </p>
             </AppCard>
             <section id="scores" className="scroll-mt-24">
-              <ScoresPanel scores={scores} />
+              <ScoresPanel scores={scores} dimensions={dimensions} />
             </section>
           </aside>
 
@@ -130,7 +137,14 @@ export default async function RapportPage({ params }: { params: Promise<{ id: st
                   {points.map((p, i) => (
                     <li key={i} className="flex items-start gap-3 rounded-xl border border-line/80 bg-bg/30 px-4 py-3 text-sm lg:text-base">
                       <ImpactBadge impact={p.impact} />
-                      <span className="text-muted">{p.libelle}</span>
+                      <span className="min-w-0 flex-1">
+                        <span className="text-muted">{p.libelle}</span>
+                        {p.dimension && (
+                          <span className="block mt-1 font-mono text-[9px] uppercase text-dim">
+                            {dimensionLabel(p.dimension)}
+                          </span>
+                        )}
+                      </span>
                     </li>
                   ))}
                 </ul>

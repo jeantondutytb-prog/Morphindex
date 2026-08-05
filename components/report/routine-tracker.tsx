@@ -324,9 +324,9 @@ export function RoutineTracker({
                       <span className={`text-[15px] leading-snug ${done ? "line-through text-dim" : "text-text font-medium"}`}>
                         {task.label}
                       </span>
-                      {task.axeLabel && (
+                      {task.dimensionTag && (
                         <span className="font-mono text-[8px] uppercase tracking-wider text-dim border border-line px-1.5 py-0.5 rounded">
-                          {task.axeLabel}
+                          {task.dimensionTag}
                         </span>
                       )}
                       {task.isNew && (
