@@ -37,6 +37,7 @@ export async function POST(req: Request) {
   const session = await getStripe().checkout.sessions.create({
     mode: isOneTimePayment(formule) ? "payment" : "subscription",
     line_items: [{ price: PRICE_IDS[formule], quantity: 1 }],
+    allow_promotion_codes: true,
     customer_email: user.email,
     client_reference_id: user.id,
     metadata: {
