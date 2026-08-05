@@ -47,10 +47,13 @@ async function runFakeAnalysis(): Promise<AnalysisResult> {
 export async function runAnalysis(
   imageBase64: string,
   profile: OnboardingData,
+  followUpBlock?: string,
 ): Promise<AnalysisResult> {
   if (isFakeAnalysisEnabled()) {
     return runFakeAnalysis();
   }
+
+  const userText = buildUserContext(profile, followUpBlock);
 
   try {
     const params = {
@@ -72,7 +75,7 @@ export async function runAnalysis(
               type: "image" as const,
               source: { type: "base64" as const, media_type: "image/jpeg" as const, data: imageBase64 },
             },
-            { type: "text" as const, text: buildUserContext(profile) },
+            { type: "text" as const, text: userText },
           ],
         },
       ],

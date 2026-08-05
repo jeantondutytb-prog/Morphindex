@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { NEW_ANALYSIS_OFFER, type Formule } from "@/lib/stripe/products";
+import { FOLLOW_UP_OFFER, type Formule } from "@/lib/stripe/products";
 
 export function BuyAnalysisButton({
   className = "",
@@ -42,7 +42,7 @@ export function BuyAnalysisButton({
         "w-full rounded-xl border border-accent/30 bg-accent/10 py-3.5 font-bold text-accent hover:bg-accent/15 transition disabled:opacity-50"
       }
     >
-      {loading ? "Redirection…" : (label ?? `Acheter une analyse — ${NEW_ANALYSIS_OFFER.price}`)}
+      {loading ? "Redirection…" : (label ?? `Analyse de suivi — ${FOLLOW_UP_OFFER.price}`)}
     </button>
   );
 }

@@ -4,6 +4,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { prepareForModel } from "@/lib/image/prepare";
 import { blurForPaywall } from "@/lib/image/blur";
 import { runAnalysis } from "@/lib/ai/analyze";
+import { buildFollowUpContext, type PreviousAnalysisSnapshot } from "@/lib/ai/follow-up-context";
 import { onboardingSchema } from "@/lib/onboarding/schema";
 import { consumeCreditOrReject, refundCredit, shouldUnlockReport } from "@/lib/credits/quota";
 
@@ -60,8 +61,35 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "photo non enregistrée" }, { status: 400 });
   }
 
+  let parentAnalysisId: string | null = null;
+  let followUpBlock: string | undefined;
+
+  if (consumeSource === "prepaid") {
+    const { data: previous } = await admin
+      .from("analyses")
+      .select(
+        "id, created_at, indice_actuel, indice_atteignable, scores, dimensions, points, routine",
+      )
+      .eq("user_id", user.id)
+      .eq("status", "done")
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (previous) {
+      parentAnalysisId = previous.id;
+      followUpBlock = buildFollowUpContext(previous as PreviousAnalysisSnapshot);
+    }
+  }
+
   const { data: analysis } = await admin.from("analyses")
-    .insert({ user_id: user.id, mode: "soft", status: "pending", model_used: "claude-sonnet-5" })
+    .insert({
+      user_id: user.id,
+      mode: "soft",
+      status: "pending",
+      model_used: "claude-sonnet-5",
+      parent_analysis_id: parentAnalysisId,
+    })
     .select("id").single();
 
   if (!analysis) {
@@ -70,11 +98,11 @@ export async function POST(req: Request) {
 
   try {
     const { data: blob } = await admin.storage.from("photos").download(path);
-    if (!blob) throw new Error("photo introupable");
+    if (!blob) throw new Error("photo introuvable");
     const buf = Buffer.from(await blob.arrayBuffer());
     const { base64 } = await prepareForModel(buf);
 
-    const result = await runAnalysis(base64, p.data);
+    const result = await runAnalysis(base64, p.data, followUpBlock);
     if (!result.ok) throw new Error(`${result.reason}: ${result.detail}`);
 
     const blurred = await blurForPaywall(buf);
@@ -107,7 +135,6 @@ export async function POST(req: Request) {
       unlocked: adminBypass || (consumeSource != null && shouldUnlockReport(consumeSource)),
     };
 
-    // Colonne dimensions optionnelle (migration 0007) — scores.dimensions suffit en fallback.
     let { error: updateError } = await admin.from("analyses").update({
       ...updatePayload,
       dimensions: result.data.dimensions,
@@ -121,7 +148,11 @@ export async function POST(req: Request) {
 
     await admin.from("events").insert({
       user_id: user.id, type: "analysis_done",
-      payload: { cache_read: result.cacheRead, admin_bypass: adminBypass },
+      payload: {
+        cache_read: result.cacheRead,
+        admin_bypass: adminBypass,
+        follow_up: Boolean(parentAnalysisId),
+      },
     });
 
     return NextResponse.json({ analysisId: analysis.id });

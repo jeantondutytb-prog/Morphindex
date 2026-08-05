@@ -23,7 +23,7 @@ const FAQ = [
   },
   {
     q: "Combien d'analyses puis-je faire ?",
-    a: "La première analyse est incluse à l'inscription. Ensuite, ton abonnement inclut 2 analyses par mois — suffisant pour suivre une routine sur plusieurs semaines.",
+    a: "La première analyse est gratuite (aperçu flouté). Un abonnement débloque ton rapport et te donne accès au produit. Pour mesurer ta progression quelques semaines plus tard, une analyse de suivi est disponible à 7,90 € — elle complète et compare avec ta première analyse.",
   },
   {
     q: "Puis-je me rétracter après paiement ?",

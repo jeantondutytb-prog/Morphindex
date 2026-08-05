@@ -22,7 +22,7 @@ export async function POST(req: Request) {
 
   const intent = checkoutIntent(formule);
 
-  if (intent === "unlock_report" && !analysisId) {
+  if (intent === "subscription" && !analysisId) {
     return NextResponse.json({ error: "rapport introuvable" }, { status: 400 });
   }
 
